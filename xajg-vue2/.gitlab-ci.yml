@@ -1,0 +1,69 @@
+image: node:14.17.6
+
+stages:
+  - install
+  - build_and_deploy
+
+
+cache:
+  key:
+    files:
+      - package.json
+  paths:
+    - node_modules
+
+install:
+  stage: install
+  tags:
+    - font
+  only:
+    - test
+  script:
+    - echo "install开始"
+    - node -v
+    - npm cache clean --force
+    - npm install --registry=https://registry.npmmirror.com/
+    - echo "install结束"
+
+
+build:
+  stage: build_and_deploy
+  tags:
+    - font
+  only:
+    - test
+  script:
+    - echo "build开始"
+    - npm run build
+    - echo "build结束"
+    - echo $PWD
+    - ls
+  artifacts:
+    paths:
+      - dist
+
+deploy:
+  stage: build_and_deploy
+  tags:
+    - font
+  only:
+    - test
+  before_script:
+    - 'which ssh-agent || (yum update update -y && yum install openssh-client git -y )'
+    - eval $(ssh-agent -s)
+    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+
+    - ssh-keyscan 192.168.10.110 >> ~/.ssh/known_hosts
+    - chmod 644 ~/.ssh/known_hosts
+  script:
+    - echo "拷贝文件开始"
+    - echo $PWD
+    - ssh root@192.168.10.110 'rm -rf /data/data2/app/xacx/nginx/html/*'
+    - scp -r dist/* root@192.168.10.110:/data/data2/app/xacx/nginx/html
+    - echo "拷贝文件结束"
+    # 此处直接用ssh命令，并且将后面要重启jar包的命令放在和ssh同一行执行
+  needs:
+    - build
+

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <meta name="referrer" content="no-referrer" />
+  <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"> -->
+  <link rel="icon" href="<%= BASE_URL %>favicon.ico" />
+  <title id="dynamicTitle"></title>
+</head>
+
+<body>
+  <noscript>
+    <strong>We're sorry but <%= htmlWebpackPlugin.options.title %> doesn't work
+        properly without JavaScript enabled. Please enable it to
+        continue.</strong>
+  </noscript>
+  <div id="app"></div>
+  <!-- built files will be auto injected -->
+</body>
+<!-- built files will be auto injected -->
+<!-- Gantt -->
+<!-- <script defer src="/static/dhtmlxgantt/dhtmlxgantt.js"></script>
+<script defer src="/static/dhtmlxgantt/dhtmlxgantt_marker.js"></script>
+<script defer src="/static/dhtmlxgantt/locale_cn.js"></script> -->
+
+<!-- <script defer src="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.js"></script> -->
+<!-- <link rel="stylesheet" href="https://cdn.dhtmlx.com/gantt/edge/dhtmlxgantt.css"> -->
+<!-- BIM引擎
+      第一步：先引入相关css及js文件 -->
+<link href="/static/Cesium/Widgets/widgets.css" rel="stylesheet" />
+<script src="/static/Cesium/Cesium.js"></script>
+<script src="/static/Cesium/BIMGISEngine.Reviewer.js"></script>
+<!-- BIM引擎-->
+
+
+<!-- Gantt end-->
+
+<!-- 西瓜播放器 -->
+<!-- <link rel="prefetch" href="https://unpkg.byted-static.com/xgplayer/3.0.10/dist/index.min.css">
+<script defer src="https://unpkg.byted-static.com/xgplayer/3.0.10/dist/index.min.js" charset="utf-8"></script>
+<script defer src="https://unpkg.byted-static.com/xgplayer-hls/3.0.10/dist/index.min.js" charset="utf-8"></script> -->
+<!--end -->
+<style scoped lang="scss">
+  body {
+    margin: 0px;
+    border: 0px;
+    padding: 0px;
+  }
+
+  /* 弹窗默认样式 */
+  .el-dialog {
+    border-radius: 5px;
+    overflow: hidden;
+
+    .el-dialog__header {
+      /* background-color: #c5dce4; */
+      border-bottom: 1px solid #ebeef5;
+    }
+
+    .el-dialog__body {
+      /* min-height: 40vh; */
+      overflow: auto;
+    }
+
+    .el-dialog__footer {
+      border-top: 1px solid #ebeef5;
+      display: flex;
+      justify-content: flex-end;
+    }
+  }
+
+  /* 处理  iframe  页面 dialog */
+  .wbench-el-dialog {
+    max-height: 100%;
+    overflow: auto;
+  }
+
+  /* 处理  iframe  页面 dialog */
+  /* .wbench-el-dialog:not(.is-fullscreen) {
+    max-height: 70vh;
+
+    .el-dialog__body {
+      max-height: calc(85vh - 45px);
+      overflow: auto;
+    }
+  } */
+  .wbench-form-header {
+    .wbench-btn-image.large {
+      /* filter: grayscale(1) contrast(1) invert(1); */
+      filter: drop-shadow(100px 0 #fff) !important;
+      transform: translate(-100px) !important;
+    }
+
+    .wbench-btn-image {
+      color: #fff;
+      filter: drop-shadow(200px 0 #409eff);
+      transform: translate(-200px);
+    }
+  }
+
+  /*
+    * table 默认选中样式
+     */
+  .el-table__body tr.current-row>td {
+    background-color: #014acb;
+    color: #fff;
+  }
+
+  .el-table__body tr.current-row:hover>td {
+    background-color: #014acb !important;
+    color: #fff !important;
+  }
+
+  .el-table--enable-row-hover .el-table__body tr:hover>td {
+    background: rgba(18, 152, 250, 0.14);
+  }
+
+  /* dialog   头部 样式*/
+  .el-dialog__header {
+    background-color: #014ACB !important;
+    padding: 16px;
+
+    .el-dialog__title {
+      color: #fff !important;
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+      color: #fff !important;
+    }
+  }
+
+  /*
+      iframe 页面  顶部发送按钮的样式
+    */
+  .wbench-form-header .send-btn {
+    background-color: #014ACB !important;
+    color: #fff !important;
+  }
+
+  /* ====================================== */
+
+  /* 普通弹窗页面 */
+  .el-dialog__wrapper {
+    .el-dialog__body {
+      .el-form-item__content {
+        .el-textarea__inner {
+          color: #333 !important;
+        }
+
+        .el-input.is-disabled {
+
+          .el-input__inner,
+          .el-textarea__inner {
+            color: #333 !important;
+          }
+        }
+      }
+    }
+  }
+
+  /* el-table */
+  .el-table {
+    .el-table__row {
+      .is-disabled {
+
+        .el-input__inner,
+        .el-textarea__inner {
+          color: #333 !important;
+        }
+      }
+    }
+  }
+
+  button.el-button.el-button--medium {
+    min-width: 30px;
+  }
+
+  .download-qrcode:not([class*=" "]) {
+    display: none;
+  }
+
+  /* 预警消息 */
+  .waring-box {
+    width: 401px;
+    height: 313px;
+    background-image: url("static/img/home/yjxx.png");
+    background-size: cover;
+  }
+
+  /* 
+    .apph5-parent {
+      .el-icon-view:before {
+        content: "预览";
+        font-size: 14px;
+        color: #1298fa;
+      }
+      .el-icon-download:before{
+        content: "下载";
+        font-size: 14px;
+        color: #1298fa;
+      }
+    } */
+</style>
+
+</html>

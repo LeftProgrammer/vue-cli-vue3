@@ -1,0 +1,259 @@
+// @import '~ant-design-vue/es/style/themes/default.less';
+
+.EnginePage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+
+  .layout-content {
+    width: 100%;
+    height: 100%;
+  }
+
+  .cesiumContainer {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .footer-box {
+    position: absolute;
+    bottom: 10px;
+    padding: 0;
+    left: 50%;
+    transform: translate(-50%, 0);
+    border-radius: 3px;
+    z-index: 1;
+
+    .footer-btn {
+      display: flex;
+      overflow-x: auto;
+      // position: absolute;
+      // bottom: 10px;
+      // padding: 0;
+      // left: 50%;
+      background-color: #001529cc;
+      // border-radius: 3px;
+      // z-index: 1;
+      // display: flex;
+      // transform: translate(-50%, 0);
+
+      .btn-tool {
+        text-align: center;
+        margin: 0;
+        padding: 5px 10px;
+        cursor: pointer;
+      }
+
+      .iconfont {
+        font-size: 24px;
+        color: #ffffff;
+      }
+
+      .iconfont:hover {
+        color: #00ffc5;
+      }
+
+      .btn-tool:hover {
+        background-color: #666;
+        border-radius: 3px;
+
+        >.iconfont {
+          color: #00ffc5;
+        }
+      }
+
+      /deep/.ant-tooltip {
+        .ant-tooltip-inner {
+          background-color: #001529CC;
+          border-radius: 3px;
+          padding: 0px;
+
+          .meature-btn {
+            text-align: center;
+            margin: 0px;
+            padding: 2px 8px;
+            cursor: pointer;
+          }
+
+          .meature-btn:hover {
+            background-color: #666;
+            border-radius: 3px;
+          }
+        }
+      }
+    }
+  }
+}
+
+.side-frame {
+
+  /deep/.ant-card-body {
+    padding: 5px;
+
+    .ant-table {
+      color: rgba(255, 255, 255, 0.9);
+    }
+  }
+
+  /deep/.side-frame-btn {
+    text-align: right;
+
+    .ant-btn {
+      height: 26px;
+      padding: 0 20px;
+    }
+  }
+}
+
+
+
+.left-nav {
+  position: absolute;
+  width: 50px;
+  background-color: #001529cc;
+  z-index: 1;
+  height: 100%;
+  text-align: center;
+  overflow: hidden;
+
+  .item {
+    cursor: pointer;
+    width: 100%;
+    padding: 10px 0;
+
+    img {
+      width: 24px;
+      height: 24px;
+    }
+
+    span {
+      color: rgb(221, 215, 215);
+      display: block;
+      font-size: 12px;
+      margin-top: 3px;
+    }
+  }
+
+  .item:hover {
+    background-color: #02162bcc;
+  }
+}
+
+/deep/.ant-table-thead>tr>th,
+/deep/.ant-table-tbody>tr>td {
+  padding: 6px;
+}
+
+/deep/.ant-table.ant-table-bordered .ant-table-title {
+  padding: 6px;
+}
+
+/deep/.ant-form-item {
+  margin-bottom: 10px;
+}
+
+/deep/.ant-switch {
+  width: 60px;
+  border: 1px solid #d9d9d966;
+}
+
+/deep/.ant-list-item-action {
+  margin-left: 0;
+}
+
+/deep/.ant-modal-content {
+  background-color: #001529cc;
+  color: #fff;
+
+  .ant-modal-header {
+    background-color: transparent;
+    border-color: rgba(232, 232, 232, 0.5);
+    padding: 10px 24px;
+
+    .ant-modal-title {
+      color: #ffffff;
+    }
+  }
+
+  .ant-modal-body {
+    padding: 15px;
+  }
+
+  .ant-modal-footer {
+    border-color: rgba(232, 232, 232, 0.5);
+    border: none;
+    padding-bottom: 15px;
+
+    .ant-btn {
+      height: 28px;
+      padding: 0 12px;
+    }
+
+    .ant-btn:first-child {
+      background-color: transparent;
+      color: #fff;
+
+      &:hover {
+        color: #21ad8d;
+      }
+    }
+
+  }
+
+  .ant-modal-close {
+    color: #ffffff;
+  }
+
+  .ant-modal-close-x {
+    line-height: 43px;
+    height: 43px;
+  }
+
+  .ant-form-item {
+    margin-bottom: 0;
+  }
+
+  .ant-form-item:not(:first-child) {
+    margin-top: 10px;
+  }
+
+  .ant-form-item-label {
+    line-height: 32px;
+  }
+
+  .ant-form-item-control {
+    line-height: 32px;
+  }
+}
+
+/deep/.color-picker {
+  display: flex;
+  align-items: center;
+
+  .ant-form-item-control-wrapper {
+    .ant-form-item-children {
+      display: flex;
+
+      input {
+        width: calc(97% - 32px);
+      }
+
+      .m-colorPicker {
+        width: 32px;
+        margin-left: 3%;
+        border: 1px solid #d9d9d9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .box.open {
+          z-index: 999;
+        }
+      }
+    }
+
+  }
+
+}

@@ -1,0 +1,14 @@
+diff --git a/package.json b/package.json
+index 2943104931deda68a0e14a38c58fb60d55213d31..8fb71ef799d13835b7cabec0c3d25b021e955946 100644
+--- a/package.json
++++ b/package.json
+@@ -37,7 +37,8 @@
+     ".": {
+       "require": "./index.cjs",
+       "import": "./Source/Cesium.js"
+-    }
++    },
++    "./Build/Cesium/Widgets/widgets.css": "./Build/Cesium/Widgets/widgets.css"
+   },
+   "type": "module",
+   "devDependencies": {

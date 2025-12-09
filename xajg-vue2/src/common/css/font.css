@@ -1,0 +1,17 @@
+@font-face {
+    font-family: 'mhiora';
+    src: url('../font/mhiora.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'KONSHIN';
+    src: url('../font/KONSHIN.TTF') format('truetype');
+}
+
+.mhiora {
+    font-family: 'mhiora';
+}
+
+.KONSHIN {
+    font-family: "KONSHIN";
+}

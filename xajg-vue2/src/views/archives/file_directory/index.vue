@@ -1,0 +1,728 @@
+<template>
+  <div class="page-archival-catalogue">
+    <TreeTableLayout
+      :page="searchData"
+      @pageSizeChange="handelPageSizeChange"
+      @pageCurrentChange="handelCurrentChange"
+      @query="handelSearchButtonClick"
+      @reset="handelResetButtonClick"
+      title="节点列表"
+    >
+      <template slot="form">
+        <el-form :model="searchData" :inline="true">
+          <el-form-item label="节点名称">
+            <el-input v-model="searchData.nodeName" clearable placeholder="请输入" />
+          </el-form-item>
+          <el-form-item label="更新人">
+            <el-input
+              v-model="searchData.updateUserName"
+              clearable
+              placeholder="请输入"
+            />
+          </el-form-item>
+          <el-form-item label="更新日期">
+            <el-date-picker
+              v-model="date"
+              clearable
+              type="daterange"
+              value-format="yyyy-MM-dd"
+              range-separator="-"
+            />
+          </el-form-item>
+        </el-form>
+      </template>
+      <template slot="opratebtns">
+        <el-button type="primary" icon="el-icon-plus" @click="addDialog">新增</el-button>
+      </template>
+      <template slot="table">
+        <div class="content">
+          <div class="left-content">
+            <div class="tree-wrapper" :style="{ width: treeWidth + 'px' }">
+              <el-tree
+                ref="tree"
+                :highlight-current="true"
+                class="tree"
+                :data="treeData"
+                :props="defaultProps"
+                default-expand-all
+                :filter-node-method="filterNode"
+                @node-click="handelNodeClick"
+                node-key="id"
+                :expand-on-click-node="false"
+              >
+                <span
+                  slot-scope="{ data }"
+                  class="custom-tree-node"
+                  :title="data.nodeName"
+                >
+                  <i
+                    :class="
+                      data.children.length > 0
+                        ? 'el-icon-folder-opened'
+                        : 'el-icon-folder'
+                    "
+                    style="color: #014acb"
+                  />
+                  <el-tooltip effect="dark" :content="data.nodeName" placement="top">
+                    <span>{{ data.nodeName }}</span>
+                  </el-tooltip>
+                </span>
+              </el-tree>
+            </div>
+            <!-- <DragLine @moveEnd="handelMoveEnd" :minMoveX="0"></DragLine> -->
+          </div>
+
+          <div class="table-wrapper">
+            <el-table :data="tableData" stripe height="100%" border>
+              <el-table-column label="序号" align="center" width="54">
+                <template #default="{ $index }">
+                  {{ $index + 1 + (searchData.current - 1) * searchData.pageSize }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="nodeName"
+                label="节点名称"
+                show-overflow-tooltip
+                header-align="center"
+              >
+                <template #default="{ row }">
+                  <el-link type="primary" :underline="false" @click="showRow(row)">{{
+                    row.nodeName
+                  }}</el-link>
+                </template>
+              </el-table-column>
+              <el-table-column prop="code" label="节点编码" align="center" width="120" />
+              <el-table-column
+                prop="updateUserName"
+                label="更新人"
+                align="center"
+                width="120"
+              />
+              <el-table-column
+                prop="updateDate"
+                label="更新日期"
+                width="120"
+                align="center"
+              >
+                <template #default="{ row }">
+                  {{ dateFormat(row.updateDate) }}
+                </template>
+              </el-table-column>
+              <el-table-column
+                prop="name"
+                label="操作"
+                align="center"
+                width="180"
+                fixed="right"
+              >
+                <template #default="{ row, $index }">
+                  <list-button
+                    :data="row"
+                    :btns="[
+                      { title: '编辑', method: 'edit' },
+                      { title: '删除', method: 'delete' },
+                      {
+                        title: '上移',
+                        method: 'moveupPreArFile',
+                        disabled: !row.canMoveUp
+                      },
+                      {
+                        title: '下移',
+                        method: 'movedownPreArFile',
+                        disabled: !row.canMoveDown
+                      }
+                    ]"
+                    @edit="changeRow"
+                    @moveupPreArFile="moveupPreArFile"
+                    @movedownPreArFile="movedownPreArFile"
+                    @delete="deleteFileCatalogueTree"
+                  />
+                  <!-- <div class="table-btn">
+                    <el-link type="primary" @click="changeRow(row)"
+                      >编辑</el-link
+                    >
+                    <el-link type="danger" @click="deleteFileCatalogueTree(row)"
+                      >删除</el-link
+                    >
+                    <el-dropdown
+                      @command="handleCommand($event, row)"
+                      trigger="click"
+                    >
+                      <el-link type="primary">更多</el-link>
+                      <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item
+                          command="moveUp"
+                          :disabled="!row.canMoveUp"
+                          >上移</el-dropdown-item
+                        >
+                        <el-dropdown-item
+                          command="moveDown"
+                          :disabled="!row.canMoveDown"
+                          >下移</el-dropdown-item
+                        >
+                      </el-dropdown-menu>
+                    </el-dropdown>
+                  </div> -->
+                </template>
+              </el-table-column>
+            </el-table>
+          </div>
+        </div>
+      </template>
+    </TreeTableLayout>
+    <el-dialog
+      v-if="showDialog"
+      :visible.sync="showDialog"
+      width="500px"
+      :title="title"
+      v-draggable
+      append-to-body
+      :close-on-click-modal="false"
+    >
+      <el-form ref="addForm" :rules="rules" :model="addData" label-width="100px">
+        <template v-if="isAdd">
+          <el-form-item label="选中的节点">
+            <el-input v-model="selectionNode.nodeName" disabled />
+          </el-form-item>
+        </template>
+
+        <el-form-item label="节点名称" prop="nodeName">
+          <el-input
+            v-model="addData.nodeName"
+            :disabled="isSHow"
+            placeholder="请输入节点名称"
+          />
+        </el-form-item>
+        <el-form-item label="节点编码" prop="code">
+          <el-input
+            v-model="addData.code"
+            :disabled="isSHow"
+            placeholder="请输入节点名称"
+          />
+        </el-form-item>
+        <el-form-item label="更新人" prop="updateUserName">
+          <el-input v-model="addData.updateUserName" disabled placeholder="更新人" />
+        </el-form-item>
+        <el-form-item label="更新时间" prop="updateDate">
+          <el-input v-model="addData.updateDate" disabled placeholder="更新时间" />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" align="center" class="dialog-footer">
+        <el-button @click="showDialog = false">{{ isSHow ? "关闭" : "取消" }}</el-button>
+        <el-button v-if="!isSHow" type="primary" @click="handelDialogConfirm"
+          >确定</el-button
+        >
+      </div>
+    </el-dialog>
+
+    <!-- 上传档案表单 -->
+    <upload-form
+      :visible.sync="uploadFormVisible"
+      :node-data="currentUploadNode"
+      @upload-success="handleUploadSuccess"
+    />
+  </div>
+</template>
+
+<script>
+import {
+  getArchiveFileCatalogueManagerTree,
+  getFileCatalogueTreeDetailed,
+  fileCatalogueTreeFindList,
+  saveFileCatalogueTree,
+  deleteFileCatalogueTree,
+  updateFileCatalogueTree,
+  movedownFileTable,
+  moveupFileTable
+} from "@/api/archives.js";
+import { dateFormat } from "@/utils";
+import { mapGetters } from "vuex";
+
+import CorSelect from "@/components/CorSelect/index";
+import TreeTableLayout from "@/components/ContentLayout/TreeTable";
+import DragLine from "../shared_component/DragLine";
+import ListButton from "@/components/ListButton";
+
+export default {
+  name: "file-directory",
+  components: {
+    TreeTableLayout,
+    CorSelect,
+    DragLine,
+    ListButton
+  },
+  computed: {
+    ...mapGetters(["loginInfo"])
+  },
+  data() {
+    return {
+      queryTree: null,
+      treeData: [],
+      defaultProps: {
+        children: "children",
+        label: "nodeName"
+      },
+      searchData: {
+        id: "",
+        total: 0,
+        current: 1,
+        pageSize: 20,
+        startDate: null,
+        endDate: null
+      },
+      tableData: [],
+      showDialog: false,
+      addData: { mode: 1, isFile: 0, unitType: "", unitName: "" },
+      selectionNode: {},
+      title: "",
+      rules: {
+        nodeName: {
+          required: true,
+          message: "请输入节点名称",
+          trigger: "blur"
+        },
+        code: {
+          required: true,
+          message: "请输入节点编码",
+          trigger: "blur"
+        }
+      },
+      isAdd: false,
+      isSHow: false,
+      date: [],
+      modalShow: false,
+      treeWidth: 267,
+      // 上传表单相关
+      uploadFormVisible: false,
+      currentUploadNode: {}
+    };
+  },
+  watch: {
+    queryTree(val) {
+      this.$refs.tree.filter(val);
+    }
+  },
+  mounted() {
+    this.getTreeData();
+  },
+  methods: {
+    dateFormat,
+    filterNode(value, data) {
+      if (!value) return true;
+      return data.label.indexOf(value) !== -1;
+    },
+    async getTreeData() {
+      const res = await this.getFileCatalogueManagerTree();
+      if (res?.length > 0) {
+        this.treeData = res;
+        const defaultNode = res[0];
+        console.log("defaultNode", defaultNode.nodeName, defaultNode.id);
+        this.selectionNode = defaultNode;
+        this.$nextTick(() => {
+          const node = this.$refs.tree.getNode(defaultNode.id);
+          this.$refs.tree.setCurrentNode(node.data);
+          this.fileCatalogueTreeFindList();
+        });
+      } else {
+        this.treeData = [];
+      }
+    },
+    async reGetTreeData() {
+      const res = await this.getFileCatalogueManagerTree();
+      if (res?.length > 0) {
+        this.$nextTick(() => {
+          const node = this.$refs.tree.getNode(this.selectionNode.id);
+          this.selectionNode = node.data;
+          this.$refs.tree.setCurrentNode(node.data);
+          this.fileCatalogueTreeFindList();
+        });
+      } else {
+        this.treeData = [];
+        this.selectionNode = {};
+      }
+    },
+    async getFileCatalogueManagerTree() {
+      try {
+        const { data, success, message } = await getArchiveFileCatalogueManagerTree();
+
+        if (!success) {
+          this.$message.error("获取文件目录树失败：" + message);
+          return false;
+        }
+        this.treeData = data;
+        return data;
+      } catch (err) {
+        console.error(err);
+        this.$message.error("获取文件目录树失败");
+        return false;
+      }
+    },
+    // 点击搜索按按钮
+    handelSearchButtonClick() {
+      this.searchData.current = 1;
+      this.fileCatalogueTreeFindList();
+    },
+    // 查表格数据
+
+    handelResetButtonClick() {
+      this.date = [];
+      this.searchData.id = this.selectionNode.id;
+      this.searchData.current = 1;
+      this.searchData.pageSize = 20;
+      this.searchData.size = 20;
+      this.fileCatalogueTreeFindList();
+    },
+    handelNodeClick(data, node, own) {
+      this.selectionNode = data;
+      this.searchData.id = data.id;
+      this.searchData.current = 1;
+      this.fileCatalogueTreeFindList();
+    },
+    async fileCatalogueTreeFindList() {
+      try {
+        const searchData = { ...this.searchData, entity: {} };
+        if (this.date?.length > 0) {
+          searchData.entity.startDate = this.date[0];
+          searchData.entity.endDate = this.date[1];
+        } else {
+          searchData.entity.startDate = null;
+          searchData.entity.endDate = null;
+        }
+        searchData.entity.id = this.selectionNode.id;
+        searchData.entity.updateUserName = this.searchData.updateUserName;
+        searchData.entity.nodeName = this.searchData.nodeName;
+        const { data, success, message } = await fileCatalogueTreeFindList(searchData);
+
+        if (!success) {
+          this.$message.error("查询失败：" + message);
+          return false;
+        }
+        this.tableData = data.records;
+        this.searchData.total = data.total;
+      } catch (err) {
+        console.error(err);
+        this.$message.error("查询失败");
+        return false;
+      }
+    },
+    // 点击添加按钮
+    addDialog() {
+      this.title = "新增";
+      this.showDialog = true;
+      this.isAdd = true;
+      this.isSHow = false;
+      this.addData = {
+        mode: 0,
+        nodeName: "",
+        code: "",
+        isFile: 0,
+        updateUserName: this.loginInfo.username,
+        updateDate: this.dateFormat(new Date()),
+        updateUser: this.loginInfo.userId,
+        unitType: this.selectionNode.unitType || "",
+        unitName: this.selectionNode.unitName || ""
+      };
+    },
+    // 添加节点
+    async saveFileCatalogueTree() {
+      if (!this.selectionNode) {
+        this.$message.error("请先选择左侧节点！");
+        return;
+      }
+      debugger;
+      try {
+        if (this.addData.mode === 1) {
+          // 添加根节点
+          this.addData.pid = 0;
+        } else {
+          this.addData.pid = this.selectionNode.id;
+        }
+        console.log("新增节点", this.addData);
+        const { data, success, message } = await saveFileCatalogueTree(this.addData);
+
+        if (!success) {
+          this.$message.error("添加失败：" + message);
+          return false;
+        }
+        this.reGetTreeData();
+        this.showDialog = false;
+        return true;
+      } catch (err) {
+        console.error(err);
+        this.$message.error("添加失败");
+        return false;
+      }
+    },
+    // 切换一页有多少条数据
+    handelPageSizeChange(page) {
+      this.searchData.current = 1;
+      this.searchData.pageSize = page.pageSize;
+      this.searchData.size = page.pageSize; // 添加这一行
+      this.fileCatalogueTreeFindList();
+    },
+    // 切换页数
+    handelCurrentChange(page) {
+      this.searchData.current = page.current;
+      this.fileCatalogueTreeFindList();
+    },
+    async updateFileCatalogueTree() {
+      try {
+        const { data, success, message } = await updateFileCatalogueTree({
+          nodeName: this.addData.nodeName,
+          code: this.addData.code,
+          isFile: this.addData.isFile,
+          id: this.addData.id,
+          pid: this.addData.pid,
+          unitType: this.addData.unitType,
+          unitName: this.addData.unitName
+        });
+        if (!success) {
+          this.$message.error("修改失败：" + message);
+          return false;
+        }
+        this.$message.success("修改成功");
+        this.showDialog = false;
+        this.reGetTreeData();
+        return data;
+      } catch (err) {
+        console.error(err);
+        this.$message.error("修改失败");
+        return false;
+      }
+    },
+    // 点击查看节点
+    showRow(row) {
+      this.title = "详情";
+      this.addData = row;
+      this.addData.isFile = this.addData.isFile ? parseInt(this.addData.isFile) : 0;
+      this.addData.updateDate = this.dateFormat(this.addData.updateDate);
+
+      this.isAdd = false;
+      this.isSHow = true;
+      this.showDialog = true;
+    },
+    // 关闭dialog
+    handelDialogConfirm() {
+      this.$refs.addForm.validate((valid) => {
+        if (valid) {
+          if (this.isAdd) {
+            // 添加
+            this.saveFileCatalogueTree();
+          } else if (!this.isAdd && !this.isSHow) {
+            // 编辑
+            this.updateFileCatalogueTree();
+          } else {
+            // 查看
+            this.showDialog = false;
+          }
+        }
+      });
+    },
+    // 点击编辑按钮
+    changeRow(row) {
+      this.addData = JSON.parse(JSON.stringify(row));
+      this.addData.isFile = this.addData.isFile ? parseInt(this.addData.isFile) : 0;
+      this.addData.updateDate = this.dateFormat(this.addData.updateDate);
+
+      this.showDialog = true;
+      this.title = "编辑";
+      this.isAdd = false;
+      this.isSHow = false;
+    },
+    beforeDelete() {
+      return this.$confirm("是否要删除这条数据 ?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      });
+    },
+    // 删除数据
+    async deleteFileCatalogueTree(row) {
+      try {
+        // await this.beforeDelete();
+        const { data, success, message } = await deleteFileCatalogueTree(row);
+        if (!success) {
+          this.$message.error("删除失败：" + message);
+          return false;
+        }
+        this.$message.success("删除成功!");
+        this.reGetTreeData();
+        return true;
+      } catch (error) {
+        console.error(error);
+        if (error !== "cancel") {
+          this.$message.error("删除失败");
+        }
+        return false;
+      }
+    },
+    // 向下移动一行
+    async movedownPreArFile(row) {
+      try {
+        const { data, success, message } = await movedownFileTable(row.id);
+        if (!success) {
+          this.$message.error("移动失败：" + message);
+          return false;
+        }
+        this.$message.success("移动成功");
+        this.reGetTreeData();
+        return true;
+      } catch (error) {
+        console.error(error);
+        this.$message.error("移动失败");
+        return false;
+      }
+    },
+    // 向上移动一行
+    async moveupPreArFile(row) {
+      try {
+        const { data, success, message } = await moveupFileTable(row.id);
+        if (!success) {
+          this.$message.error("移动失败：" + message);
+          return false;
+        }
+        this.$message.success("移动成功");
+        this.reGetTreeData();
+        return true;
+      } catch (error) {
+        console.error(error);
+        this.$message.error("移动失败");
+        return false;
+      }
+    },
+    handelCreateCorpClick() {
+      if (!this.isSHow) {
+        this.modalShow = true;
+      }
+    },
+    modalEvt({ data }) {
+      this.modalShow = false;
+      this.addData.unitName = (data || []).map((item) => item.corpName).join(",");
+      this.addData.unitType = (data || []).map((item) => item.corpId).join(",");
+      this.$refs.addForm.validateField("unitName");
+    },
+    modalEvtCancel() {
+      this.modalShow = false;
+    },
+    handelMoveEnd(moveX) {
+      this.treeWidth = this.treeWidth + moveX;
+    },
+    // 上传文件
+    uploadFile(row) {
+      this.currentUploadNode = row;
+      this.uploadFormVisible = true;
+    },
+    // 上传成功回调
+    handleUploadSuccess() {
+      this.$message.success("文件上传成功");
+      this.fileCatalogueTreeFindList();
+    },
+    handleCommand(command, row) {
+      switch (command) {
+        case "moveUp":
+          this.moveupPreArFile(row);
+          break;
+        case "moveDown":
+          this.movedownPreArFile(row);
+          break;
+        case "delete":
+          this.deleteFileCatalogueTree(row);
+          break;
+        default:
+          break;
+      }
+    }
+  }
+};
+</script>
+
+<style scoped lang="scss">
+.page-archival-catalogue {
+  height: 100%;
+  overflow: hidden;
+  color: #fff;
+  .content {
+    width: 100%;
+    display: flex;
+    height: 100%;
+    gap: 16px;
+    .left-content {
+      height: 100%;
+      position: relative;
+      /deep/ .el-tree-node__content {
+        .custom-tree-node {
+          flex: 1;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: flex;
+          span {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+          }
+        }
+      }
+      &:hover {
+        .drag-line {
+          width: 5px;
+          background-color: #e4e1e1;
+        }
+      }
+    }
+    .tree-wrapper {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      //   resize: horizontal;
+    }
+    .table-wrapper {
+      flex: 1;
+      width: 0;
+    }
+  }
+  .tree-wrapper {
+    width: 267px;
+    float: left;
+    height: 100%;
+    border: #e5e5e5 1px solid;
+    overflow: auto;
+    .tree-inner-wrapper {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      height: 100%;
+      overflow-y: hidden;
+      .tree {
+        overflow: auto;
+        height: calc(100% - 80px);
+        background-color: unset;
+        color: #515b81;
+        margin-top: 10px;
+        .tree-icon {
+          margin-right: 5px;
+          &.el-icon-folder {
+            color: #35a5ff;
+          }
+          &.el-icon-tickets {
+            color: #ff6601;
+          }
+        }
+      }
+    }
+  }
+  .main {
+    float: right;
+    width: calc(100% - 289px);
+    height: 100%;
+    overflow: auto;
+    padding: 20px 20px 20px 0;
+  }
+  .table-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+}
+</style>

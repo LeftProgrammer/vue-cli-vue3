@@ -1,0 +1,129 @@
+{
+  "ntkoSignMapConfig": {
+    "_exp":"路由名",
+    "fundAllocation": {
+      "_exp":"需要签章的节点，key: word模板中书签名，如果书签不存在代表手动签章 value: 流程节点信息",
+      "projectManager": {
+        "_exp": "flowNodeName: 流程节点名称; required: 是否必须签字(暂未实现); showDate: 是否展示日期弹框",
+        "flowNodeName": "项目经理签字",
+        "required": false,
+        "showDate": true
+      },
+      "secretarySeal": {
+        "flowNodeName": "施工单位文秘盖章",
+        "required": false,
+        "showDate": true
+      },
+      "projectEngineer": {
+        "flowNodeName": "管理局分管项目工程师签字",
+        "required": false,
+        "showDate": true
+      },
+      "projectManagementLeader": {
+        "flowNodeName": "管理局项目管理部门负责人签字",
+        "required": false,
+        "showDate": true
+      },
+      "financeDepartment": {
+        "flowNodeName": "管理局资金监管小组复审签字",
+        "required": false,
+        "showDate": true
+      },
+      "administration": {
+        "flowNodeName": "管理局分管工程建设局领导签字",
+        "required": false,
+        "showDate": true
+      },
+      "financeSeal": {
+        "flowNodeName": "财务部文秘盖章",
+        "required": false,
+        "showDate": true
+      }
+    },
+    "designSendDoc": {
+      "SecretarySeal": {
+        "flowNodeName": "文秘盖章",
+        "required": false,
+        "showDate": true
+      }
+    },
+    "supervisionSendDoc": {
+      "SecretarySeal": {
+        "flowNodeName": "文秘盖章",
+        "required": false,
+        "showDate": true
+      }
+    },
+    "constructionReceiveDoc": {
+      "SecretarySeal": {
+        "flowNodeName": "文秘盖章",
+        "required": false,
+        "showDate": true
+      }
+    },
+    "thirdPartyReceiveDoc": {
+      "SecretarySeal": {
+        "flowNodeName": "文秘盖章",
+        "required": false,
+        "showDate": true
+      }
+    },
+    "thirdPartySendDoc": {
+      "SecretarySeal": {
+        "flowNodeName": "文秘盖章",
+        "required": false,
+        "showDate": true
+      }
+    },
+    "SupervisionLog": {
+      "recordingPersonnel": {
+        "flowNodeName": "",
+        "required": false
+      },
+      "stamp": {
+        "flowNodeName": "自由流程审核",
+        "required": false,
+        "showDate": true
+      }
+    },
+    "ConstructionLogV3": {
+      "productionRecorder": {
+        "flowNodeName": "",
+        "required": false
+      },
+      "leader": {
+        "flowNodeName": "带班领导或审核人",
+        "required": false
+      },
+      "carry": {
+        "flowNodeName": "接班人员",
+        "required": false
+      }
+    }
+  },
+  "keySignUser": [
+    "luojiexiong",
+    "yerong",
+    "cdymdgxmb_sfw",
+    "zngsqqgcjl_sfw",
+    "zngsdldjl_sfw",
+    "cdyhsbjl_sfw",
+    "zssjmdgsgj_sfw",
+    "gzbmdgya_sfw",
+    "gzbmdgdldxyb_sfw",
+    "ztsbjmdgkjql_sfw",
+    "dwyjgl1_sfw",
+    "dwyjgl2_sfw",
+    "syjczx_sfw",
+    "cljczx_sfw",
+    "cjyzlyp_sfw",
+    "cdyszhzhpt_sfw",
+    "dladmin",
+    "zjszmdg_sfw",
+    "scxnzxxmb_sfw",
+    "scxnzxjlb_sfw",
+    "jhkj_sfw",
+    "ztsyj_sfw",
+    "wtjczx_sfw"
+  ]
+}

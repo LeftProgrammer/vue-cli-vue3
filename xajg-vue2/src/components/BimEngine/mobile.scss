@@ -1,0 +1,34 @@
+#EnginePage.mobile-box {
+  .footer-mobile {
+    width: 100vw;
+    bottom: 0;
+    z-index: 15;
+  }
+}
+
+.ant-notification-topRight {
+  top: 0 !important;
+  margin-right: 0;
+  width: 100vw;
+  max-width: 100vw;
+}
+
+.ant-notification .engine-notification {
+  top: 0;
+}
+
+.tip-notification {
+  top: -35px !important;
+}
+
+.ant-col-6 {
+  width: 25% !important;
+}
+
+.ant-col-18 {
+  width: 75% !important;
+}
+
+.ant-modal-wrap{
+  z-index: 99999;
+}
