@@ -1,0 +1,33 @@
+$check-blue: #4878e7;
+$border-color: #e8e8e8;
+$bg-blue: #4878e7;
+
+%clearfix {
+  *zoom: 1;
+
+  &:after {
+    content: "";
+    display: block;
+    width: 0;
+    clear: both;
+    visibility: hidden;
+    font-size: 0;
+    height: 0;
+  }
+}
+
+.staff-box {
+  position: fixed;
+  width: 900px;
+  height: 670px;
+  left: 50%;
+  top: 50%;
+  margin-left: -450px;
+  margin-top: -335px;
+  background-color: #fff;
+  z-index: 4000;
+  border-radius: 2px;
+  box-shadow: #939393 0 0 10px;
+  -webkit-box-shadow: #939393 0 0 10px;
+  -moz-box-shadow: #939393 0 0 10px;
+}

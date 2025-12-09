@@ -1,0 +1,24 @@
+.el-breadcrumb__inner,
+.el-breadcrumb__inner a {
+  font-weight: 400 !important;
+}
+
+.el-upload__input {
+  display: none;
+}
+
+.small-padding .cell {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.fixed-width .el-button--mini {
+  padding: 7px 10px;
+  width: 60px;
+}
+
+.el-dialog__footer {
+  background: #fff;
+}
+
+// 其余 Element UI 覆盖样式保持与旧项目一致，已迁入

@@ -1,0 +1,71 @@
+@import "./variables.module.scss";
+@import "./mixin.scss";
+@import "./transition.scss";
+@import "./element-ui.scss";
+@import "./sidebar.scss";
+@import "./btn.scss";
+@import "./staff.scss";
+$main: #1a74f0;
+$fontColor: #626262;
+
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: SourceHanSansCN;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+  color: $fontColor;
+}
+
+.fromapp {
+  touch-action: auto;
+  transform: scale(1);
+  transform-origin: left top;
+  min-width: 1200px;
+  height: 100%;
+  position: absolute;
+}
+
+#app {
+  height: 100%;
+
+  & > div:not(.app-wrapper) {
+    margin: 15px;
+    width: calc(100% - 30px);
+  }
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
+.no-padding {
+  padding: 0px !important;
+}
+
+.padding-content {
+  padding: 4px 0;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.h100 {
+  height: 100%;
+}
+
+// 其余样式保持与旧项目一致，已从旧项目 index.scss 迁入
