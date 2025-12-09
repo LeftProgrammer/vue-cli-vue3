@@ -3,6 +3,7 @@ import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { getToken, setToken } from "@/utils/auth";
 import config from "@/utils/config";
+import store from "@/store";
 
 NProgress.configure({ showSpinner: false });
 
@@ -36,6 +37,14 @@ router.beforeEach(async (to, from, next) => {
   }
 
   if (token) {
+    const loginInfo = store.state.user && store.state.user.loginInfo;
+    if (!loginInfo || !loginInfo.userId) {
+      try {
+        await config.init();
+        await store.dispatch("user/getInfo");
+      } catch (e) {}
+    }
+
     if (to.path === "/login") {
       next({ path: config.getLoginedPath() });
       NProgress.done();

@@ -124,7 +124,7 @@
 <script>
 import pkg from "../../../package.json";
 import config from "@/utils/config";
-import { getLoginPublicKey, getConfig } from "@/api/user";
+import { getLoginPublicKey, getConfig, repeatedLogin } from "@/api/user";
 import JSEncrypt from "jsencrypt";
 
 export default {
@@ -275,6 +275,26 @@ export default {
           // ignore storage error
         }
 
+        const doAfterLoginSuccess = async () => {
+          try {
+            await this.$store.dispatch("user/getInfo");
+          } catch (e) {
+            // ignore getInfo error, 页面依然可以进入
+          }
+          const targetPath =
+            (this.redirect && this.redirect !== "/login" && this.redirect) ||
+            config.getLoginedPath() ||
+            "/homeIndex/index";
+          config.init(() => {
+            this.$router
+              .push({
+                path: targetPath,
+                query: this.otherQuery,
+              })
+              .catch(() => {});
+          });
+        };
+
         this.loading = true;
         try {
           await this.fetchLoginPublicKey();
@@ -288,18 +308,26 @@ export default {
           };
           const res = await this.$store.dispatch("user/login", submitData);
           if (res && res.success) {
-            const targetPath =
-              (this.redirect && this.redirect !== "/login" && this.redirect) ||
-              config.getLoginedPath() ||
-              "/homeIndex/index";
-            config.init(() => {
-              this.$router
-                .push({
-                  path: targetPath,
-                  query: this.otherQuery,
-                })
-                .catch(() => {});
-            });
+            try {
+              const repeatRes = await repeatedLogin();
+              if (
+                repeatRes &&
+                !repeatRes.success &&
+                repeatRes.message === "请修改密码"
+              ) {
+                this.$router
+                  .push({
+                    path: this.redirect || "/",
+                    query: this.otherQuery,
+                  })
+                  .catch(() => {});
+                return;
+              }
+            } catch (e) {
+              // ignore repeatedLogin error
+            }
+
+            await doAfterLoginSuccess();
           } else if (res && res.message) {
             this.errorMsg = "*" + res.message;
           } else {

@@ -62,7 +62,7 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getInfo({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token)
         .then((response) => {
@@ -72,7 +72,9 @@ const actions = {
             return;
           }
           commit("SET_USERINFO", data);
-          commit("SET_AUTH", data.permissions || []);
+          const permissions = data.permissions || [];
+          commit("SET_AUTH", permissions);
+          dispatch("permission/generateRoutes", permissions, { root: true });
           resolve(data);
         })
         .catch((error) => {
