@@ -1,20 +1,35 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+
+const Login = () => import("@/views/login/index.vue");
+const HomeIndex = () => import("@/views/homeIndex/index.vue");
+const NotFound = () => import("@/views/error-page/404.vue");
 
 const routes = [
   {
-    path: "/",
-    name: "home",
-    component: HomeView,
+    path: "/login",
+    name: "login",
+    component: Login,
+    meta: { hidden: true },
   },
   {
-    path: "/about",
-    name: "about",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/AboutView.vue"),
+    path: "/homeIndex/index",
+    name: "homeIndex",
+    component: HomeIndex,
+    meta: { title: "首页" },
+  },
+  {
+    path: "/404",
+    name: "404",
+    component: NotFound,
+    meta: { hidden: true },
+  },
+  {
+    path: "/",
+    redirect: "/homeIndex/index",
+  },
+  {
+    path: "/:pathMatch(.*)*",
+    redirect: "/404",
   },
 ];
 
