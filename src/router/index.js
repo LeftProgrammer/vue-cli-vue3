@@ -1,6 +1,7 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 
 const Login = () => import("@/views/login/index.vue");
+const Layout = () => import("@/layout/index.vue");
 const HomeIndex = () => import("@/views/homeIndex/index.vue");
 const NotFound = () => import("@/views/error-page/404.vue");
 
@@ -12,10 +13,17 @@ const routes = [
     meta: { hidden: true },
   },
   {
-    path: "/homeIndex/index",
-    name: "homeIndex",
-    component: HomeIndex,
-    meta: { title: "首页" },
+    path: "/homeIndex",
+    component: Layout,
+    redirect: "/homeIndex/index",
+    children: [
+      {
+        path: "index",
+        name: "homeIndex",
+        component: HomeIndex,
+        meta: { title: "首页" },
+      },
+    ],
   },
   {
     path: "/404",
