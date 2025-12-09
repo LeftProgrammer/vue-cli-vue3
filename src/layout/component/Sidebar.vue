@@ -1,26 +1,40 @@
 <template>
   <aside class="app-sidebar">
     <el-menu
-      class="el-menu-vertical"
+      class="sideBar-menu"
       :default-active="activeMenu"
+      :background-color="variables.menuBg"
+      :text-color="variables.menuText"
+      :active-text-color="variables.menuActiveText"
       router
-      background-color="#014acb"
-      text-color="#ffffff"
-      active-text-color="#ffd04b"
     >
-      <el-menu-item index="/homeIndex/index">
-        <span>首页</span>
+      <el-menu-item
+        v-for="item in menuItems"
+        :key="item.path"
+        :index="item.path"
+      >
+        <span>{{ item.title }}</span>
       </el-menu-item>
     </el-menu>
   </aside>
 </template>
 
 <script>
+import variables from "@/styles/variables.module.scss";
+
 export default {
   name: "LayoutSidebar",
+  data() {
+    return {
+      menuItems: [{ path: "/homeIndex/index", title: "首页" }],
+    };
+  },
   computed: {
     activeMenu() {
       return this.$route.path;
+    },
+    variables() {
+      return variables;
     },
   },
 };
@@ -33,8 +47,13 @@ export default {
   color: #ffffff;
 }
 
-.el-menu-vertical {
+.sideBar-menu {
   border-right: none;
   height: 100%;
+  padding-top: 18px;
+}
+
+.el-menu {
+  font-size: 16px;
 }
 </style>
