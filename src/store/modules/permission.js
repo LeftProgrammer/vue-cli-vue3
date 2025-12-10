@@ -8,22 +8,31 @@ function hasPermission(permissions, menu) {
 
 export function filterAsyncRoutes(routes, permissions) {
   const res = [];
-  if (routes && routes.length) {
-    routes.forEach((route) => {
-      const tmp = { ...route };
-      if (hasPermission(permissions, tmp)) {
-        if (tmp.children && tmp.children.length) {
-          tmp.children = filterAsyncRoutes(tmp.children, permissions);
-        } else {
-          tmp.meta = {
-            title: tmp.name,
-          };
-        }
-        tmp.todoCount = 0;
-        res.push(tmp);
+  if (!routes || !routes.length) return res;
+
+  routes.forEach((route) => {
+    const tmp = { ...route };
+
+    // 先递归过滤子节点
+    if (tmp.children && tmp.children.length) {
+      tmp.children = filterAsyncRoutes(tmp.children, permissions);
+    }
+
+    const hasChildren = tmp.children && tmp.children.length > 0;
+    const allowedSelf = hasPermission(permissions, tmp);
+
+    // 规则：父节点本身有权限，或者存在任一有权限的子节点，则保留父节点
+    if (allowedSelf || hasChildren) {
+      if (!hasChildren) {
+        tmp.meta = {
+          title: tmp.name,
+        };
       }
-    });
-  }
+      tmp.todoCount = 0;
+      res.push(tmp);
+    }
+  });
+
   return res;
 }
 

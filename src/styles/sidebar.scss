@@ -12,5 +12,59 @@
     transition: width 0.28s;
     height: 100%;
     overflow: hidden;
+
+    // Element Plus 子菜单选中/未选中图标切换
+    .el-sub-menu {
+      &.is-active {
+        .el-sub-menu__title {
+          > .menu-item {
+            color: #014acb !important;
+            .icon-pic-h {
+              display: none;
+            }
+          }
+        }
+      }
+      &:not(.is-active) {
+        .icon-pic-s {
+          display: none;
+        }
+      }
+    }
+
+    .el-menu-item {
+      &.is-active {
+        .icon-pic-h {
+          display: none;
+        }
+      }
+      &:not(.is-active) {
+        .icon-pic-s {
+          display: none;
+        }
+      }
+    }
+
+    .icon-pic {
+      width: 16px;
+      height: 16px;
+      margin-right: 8px;
+      margin-left: 10px;
+    }
+  }
+
+  .el-sub-menu__title {
+    min-height: 100%;
+    .el-sub-menu {
+      transition: margin-left 0.28s;
+      margin-left: $sideBarWidth;
+      &.is-opened > .el-sub-menu__title .el-submenu__icon-arrow {
+        transition: width 0.28s;
+      }
+      .nest-menu {
+        .el-sub-menu__title {
+        }
+      }
+    }
   }
 }

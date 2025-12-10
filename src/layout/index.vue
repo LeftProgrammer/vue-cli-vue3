@@ -3,7 +3,7 @@
     <AppNavbar />
     <div class="app-content">
       <div class="sidebar-div">
-        <div v-if="!$route.meta || !$route.meta.hiddenSidebar" class="sidebar-container">
+        <div v-if="!$route?.meta?.hiddenSidebar" class="sidebar-container">
           <AppSidebar />
         </div>
       </div>
@@ -15,7 +15,7 @@
 <script>
 import AppNavbar from "./component/Navbar.vue";
 import AppMain from "./component/AppMain.vue";
-import AppSidebar from "./component/Sidebar.vue";
+import AppSidebar from "./component/Sidebar/index.vue";
 
 export default {
   name: "LayoutIndex",
