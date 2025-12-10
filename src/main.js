@@ -7,6 +7,7 @@ import "element-plus/dist/index.css";
 import "normalize.css/normalize.css";
 import "@/styles/index.scss";
 import "./permission";
+import { download as handleExportDownload } from "@/utils/request";
 
 const app = createApp(App);
 
@@ -42,6 +43,37 @@ const bus = {
 };
 
 app.config.globalProperties.$bus = bus;
+
+// 兼容旧项目的本地存储工具
+app.config.globalProperties.$getStorage = (key) => {
+  if (!key) return null;
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (raw) {
+      try {
+        return JSON.parse(raw);
+      } catch (e) {
+        return raw;
+      }
+    }
+  } catch (e) {}
+
+  if (key === "userInfo") {
+    return store.getters && store.getters.loginInfo;
+  }
+  return null;
+};
+
+app.config.globalProperties.$setStorage = (key, value) => {
+  if (!key) return;
+  try {
+    const raw = typeof value === "string" ? value : JSON.stringify(value || {});
+    window.localStorage.setItem(key, raw);
+  } catch (e) {}
+};
+
+// 兼容旧项目的导出工具
+app.config.globalProperties.$handleExport = handleExportDownload;
 
 app.directive("thousands", {
   mounted(el) {

@@ -27,6 +27,19 @@ const routes = [
     ],
   },
   {
+    path: "/common",
+    component: Layout,
+    redirect: "/common/message",
+    children: [
+      {
+        path: "message",
+        name: "common-message",
+        component: () => import("@/views/common/message/index.vue"),
+        meta: { title: "我的消息" },
+      },
+    ],
+  },
+  {
     path: "/password",
     name: "password",
     component: Password,
