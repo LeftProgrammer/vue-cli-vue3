@@ -74,7 +74,8 @@ service.interceptors.request.use(
       time: currentTime,
     };
 
-    if (!loadingInstance) {
+    // showLoading 显式为 false 时，不展示全局 Loading（用于心跳等静默请求）
+    if (!loadingInstance && config.showLoading !== false) {
       loadingInstance = ElLoading.service({
         fullscreen: true,
         lock: true,

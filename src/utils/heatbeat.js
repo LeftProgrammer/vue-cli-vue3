@@ -9,6 +9,7 @@ function heartbeat() {
   return request({
     url: "/api/online-heartbeat?t=" + new Date().getTime(),
     method: "get",
+    showLoading: false, // 心跳请求不显示全局 Loading，避免页面闪烁
   });
 }
 
