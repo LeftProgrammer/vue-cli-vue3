@@ -30,13 +30,83 @@ html {
   touch-action: auto;
   transform: scale(1);
   transform-origin: left top;
+  // min-height: 900px;
   min-width: 1200px;
   height: 100%;
   position: absolute;
 }
 
+.apph5 {
+  width: 100%;
+  min-width: 100%;
+
+  .confirmWinClass {
+    width: 99vw;
+  }
+
+  .page-leave {
+    .file-name {
+      width: 220px !important;
+    }
+    padding: 0 !important;
+
+    .el-form .el-form-item {
+      display: flex;
+      align-items: center;
+    }
+    .el-form-item__label {
+      font-size: 12px;
+      line-height: inherit;
+      align-content: center !important;
+      max-width: 60px !important;
+      min-width: 60px !important;
+      width: 60px !important;
+    }
+
+    .el-form-item__content {
+      flex: 1;
+      margin-left: 0px !important;
+    }
+  }
+
+  .el-form-item__label {
+    // position: relative;
+    display: inline-grid;
+    left: -10px;
+    /* 设置相对定位作为星号的定位基准 */
+    text-align: justify;
+    text-align-last: justify;
+    line-height: 20px;
+  }
+
+  .el-form-item.is-required > .el-form-item__label::before {
+    content: "*";
+    left: -5px;
+    color: red;
+    position: absolute;
+    margin-right: 0 !important;
+    margin-top: 1px;
+  }
+}
+
 #app {
   height: 100%;
+
+  & > .flow-form-page {
+    // width: 100%;
+    // height: 100%;
+    // padding: 15px;
+  }
+
+  & > .is-disabled {
+    // width: 100%;
+    // height: 100%;
+    // padding: 15px;
+    .el-input__inner,
+    .el-textarea__inner {
+      color: #333 !important;
+    }
+  }
 
   & > div:not(.app-wrapper) {
     margin: 15px;
@@ -60,12 +130,288 @@ html {
   padding: 4px 0;
 }
 
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+.fr {
+  float: right;
+}
+
+.fl {
+  float: left;
+}
+
+.pr-5 {
+  padding-right: 5px;
+}
+
+.pl-5 {
+  padding-left: 5px;
+}
+
+.block {
+  display: block;
+}
+
+.pointer {
+  cursor: pointer;
+}
+
+.inlineBlock {
+  display: block;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
 .cursor-pointer {
   cursor: pointer;
+}
+
+//main-container全局样式
+
+.components-container {
+  margin: 30px 50px;
+  position: relative;
+}
+
+.pagination-container {
+  margin-top: 10px;
+}
+
+.table-page-content {
+  background: white;
+  overflow: hidden;
+  border-radius: 10px;
+  padding: 0 10px;
+}
+
+.filter-container {
+  padding: 10px;
+
+  h3 {
+    display: inline-block;
+    line-height: 32px;
+    font-size: 16px;
+    color: #313234;
+  }
+
+  .filter-title {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 30px;
+    line-height: 32px;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  .filter-item {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+  }
+
+  .filter-label {
+    line-height: 1;
+    font-size: 14px;
+    margin-left: 20px;
+    color: rgb(98, 98, 98);
+  }
+
+  .filter-label:first-child {
+    margin-left: 0;
+  }
+}
+
+//refine vue-multiselect plugin
+.multiselect {
+  line-height: 16px;
+}
+
+.multiselect--active {
+  z-index: 1000 !important;
+}
+
+.text-more {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  display: block;
 }
 
 .h100 {
   height: 100%;
 }
 
-// 其余样式保持与旧项目一致，已从旧项目 index.scss 迁入
+.custom-tree {
+  height: calc(100% - 50px);
+  overflow-y: auto;
+  margin-top: 10px;
+
+  .tree-label {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    font-size: 15px;
+    font-weight: 500;
+    padding-right: 8px;
+    position: relative;
+    color: $main;
+
+    .tree-icon {
+      margin-right: 5px;
+    }
+
+    .tree-text {
+      max-width: 180px;
+      min-width: 70px;
+    }
+
+    .btn-box {
+      position: absolute;
+      color: $main;
+      visibility: hidden;
+      right: 0;
+      background: white;
+
+      i {
+        margin-right: 5px;
+      }
+    }
+  }
+
+  .tree-label:hover {
+    .btn-box {
+      visibility: visible;
+    }
+  }
+}
+
+.el-form {
+  .el-input.is-disabled .el-input__inner {
+    // color: $main;
+  }
+
+  .file-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+
+    .file-add {
+      background: #f6f6f6;
+      justify-content: space-around;
+    }
+
+    .file-item {
+      width: 80px;
+      height: 80px;
+      position: relative;
+      color: $main;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-around;
+      margin-right: 10px;
+
+      .file {
+        width: 40px;
+        margin-top: 10px;
+      }
+
+      .name {
+        max-width: 100%;
+        font-size: 12px;
+        line-height: 14px;
+      }
+
+      .close {
+        position: absolute;
+        right: 2px;
+        top: 2px;
+        cursor: pointer;
+      }
+    }
+
+    .file-item:hover {
+      background: #f6f6f6;
+    }
+  }
+}
+
+.wbench-el-dialog .el-dialog__header {
+  background: $main;
+  padding: 16px !important;
+  height: auto !important;
+  line-height: normal !important;
+
+  .el-dialog__title {
+    color: #fff;
+    font-weight: normal;
+  }
+  button.el-dialog__headerbtn {
+    top: 12px !important;
+  }
+}
+.wbench-el-dialog .el-dialog__body {
+  padding: 16px !important;
+}
+
+.wbench-el-dialog.form .el-dialog__body,
+.wbench-el-dialog.process .el-dialog__body {
+  height: calc(100% - 55px);
+  margin-top: 0px;
+}
+
+.wbench-el-dialog .wbench-el-dialog-main {
+  height: calc(100% - 0px);
+}
+
+.wbench-form-header .send-btn {
+  background: $main;
+}
+
+.user-select .el-dialog__header {
+  background: $main;
+}
+
+//.el-dialog__title:before
+//{
+//  content: " | ";
+//}
+.wbench-process-page {
+  box-sizing: content-box;
+}
+
+.widget-render .widget-design {
+  .el-textarea.is-disabled .el-textarea__inner {
+    // color: #1A74F0;
+  }
+}
+
+.el-image-viewer__btn.el-image-viewer__close {
+  color: #fff;
+}
+

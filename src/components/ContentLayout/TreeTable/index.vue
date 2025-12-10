@@ -1,0 +1,215 @@
+<template>
+  <div class="treetable-content" :class="{ 'no-header': !$slots.headerrow }">
+    <div v-if="$slots.headerrow" class="header-row">
+      <slot name="headerrow"></slot>
+    </div>
+    <el-row
+      class="content-row position-relative"
+      :class="{ noSplitpane: !useSplitpane }"
+    >
+      <TableLayout
+        ref="tableLayoutRef"
+        :title="title"
+        :page="page"
+        :showForm="showForm"
+        :showPage="showPage"
+        :showSearchBtns="showSearchBtns"
+        :showExportBtn="false"
+        @pageSizeChange="(val) => $emit('pageSizeChange', val)"
+        @pageCurrentChange="(val) => $emit('pageCurrentChange', val)"
+        @reset="(q) => $emit('reset', q)"
+        @query="(q) => $emit('query', q)"
+        @initExportParams="(params) => $emit('initExportParams', params)"
+      >
+        <template #form>
+          <slot name="form" />
+        </template>
+
+        <template #tree>
+          <slot name="tree" />
+        </template>
+
+        <template #searchBtnsAppend>
+          <slot name="searchBtnsAppend" />
+        </template>
+
+        <template #table="{ getIndex }">
+          <slot name="table" :getIndex="getIndex" />
+        </template>
+
+        <template #opratebtns>
+          <slot name="opratebtns" />
+          <el-button v-if="showExportBtn" size="small" @click="handleExport">
+            <svg-icon icon-class="export" class="icon" />
+            导出列表
+          </el-button>
+        </template>
+      </TableLayout>
+    </el-row>
+  </div>
+</template>
+
+<script>
+import TableLayout from "@/components/ContentLayout/Table/index.vue";
+
+export default {
+  name: "ContentLayout-TreeTable",
+  components: {
+    TableLayout,
+  },
+  props: {
+    // 是否展示分页器
+    showPage: {
+      type: Boolean,
+      default: true,
+    },
+    // 是否展示 form 内容区
+    showForm: {
+      type: Boolean,
+      default: true,
+    },
+    // 是否展示搜索区按钮
+    showSearchBtns: {
+      type: Boolean,
+      default: true,
+    },
+    // 是否展示导出按钮
+    showExportBtn: {
+      type: Boolean,
+      default: false,
+    },
+    // 分页参数
+    page: {
+      type: Object,
+      default: () => ({
+        size: 20,
+        current: 1,
+        total: 0,
+      }),
+    },
+    // 标题
+    title: {
+      type: String,
+      default: "树标题",
+    },
+    // 是否使用 splitpane（目前仅保留样式开关）
+    useSplitpane: {
+      type: Boolean,
+      default: true,
+    },
+    // 树节点默认宽度（预留）
+    defaultPercent: {
+      type: Number,
+      default: 16,
+    },
+    minPercent: {
+      type: Number,
+      default: 5,
+    },
+  },
+  methods: {
+    // 导出列表：直接调用内部 TableLayout 的导出逻辑
+    handleExport() {
+      const table = this.$refs.tableLayoutRef;
+      if (table && typeof table.handleExport === "function") {
+        table.handleExport();
+      }
+    },
+  },
+};
+</script>
+
+<style lang="scss" scoped>
+.treetable-content {
+  height: 100%;
+  background: #fff;
+
+  // el-tree 选中项背景颜色（保持旧项目风格）
+  ::v-deep .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+    background-color: #e6f9ff;
+    font-weight: bold;
+
+    .el-tree-node__label {
+      color: #1298fa;
+    }
+  }
+
+  // el-tree 聚焦样式
+  ::v-deep .el-tree-node:focus > .el-tree-node__content {
+    background-color: #ffffff;
+  }
+
+  ::v-deep {
+    .el-tree-node__content {
+      height: 32px;
+
+      .el-tree-node__label {
+        color: #86909c;
+        font-size: 14px;
+        width: 100%;
+        display: inline-block;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .el-tree-node__expand-icon {
+        padding: 4px;
+        color: #545d6d;
+        font-size: 18px;
+      }
+
+      .is-leaf {
+        color: transparent;
+        cursor: default;
+      }
+    }
+
+    .el-tree-node__content:hover {
+      .el-tree-node__label {
+        color: #5bacf8;
+      }
+
+      background-color: #e8f9ff;
+    }
+  }
+
+  .header-row {
+    height: 40px;
+  }
+
+  .content-row {
+    height: calc(100% - 40px);
+
+    ::v-deep .el-tree {
+      & > .el-tree-node > .el-tree-node__content > .el-tree-node__label,
+      & > .el-tree-node > .el-tree-node__content > div > .el-tree-node__label {
+        font-size: 16px;
+        font-weight: 500;
+        color: #4e5969;
+        line-height: 19px;
+      }
+
+      & > .el-tree-node.is-current > .el-tree-node__content .el-tree-node__label {
+        color: #1298fa;
+      }
+    }
+
+    .table {
+      height: 100%;
+    }
+
+    &.noSplitpane {
+      ::v-deep .splitter-pane-resizer {
+        pointer-events: none;
+      }
+    }
+  }
+
+  &.no-header {
+    .content-row {
+      height: calc(100% - 0px);
+    }
+  }
+}
+</style>
