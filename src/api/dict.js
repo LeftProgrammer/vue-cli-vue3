@@ -10,3 +10,14 @@ export function getDictItemList(dictType) {
     method: "get",
   });
 }
+
+/**
+ * 清理字典缓存
+ * @param {string} dictType
+ */
+export function refreshDictItemList(dictType) {
+  return request({
+    url: `/api/common/dict/refresh/${dictType}`,
+    method: "get",
+  });
+}

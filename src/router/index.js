@@ -3,6 +3,7 @@ import { createRouter, createWebHashHistory } from "vue-router";
 const Login = () => import("@/views/login/index.vue");
 const Layout = () => import("@/layout/index.vue");
 const HomeIndex = () => import("@/views/homeIndex/index.vue");
+const Password = () => import("@/views/password/index.vue");
 const NotFound = () => import("@/views/error-page/404.vue");
 
 const routes = [
@@ -24,6 +25,12 @@ const routes = [
         meta: { title: "首页" },
       },
     ],
+  },
+  {
+    path: "/password",
+    name: "password",
+    component: Password,
+    meta: { hidden: true },
   },
   {
     path: "/404",

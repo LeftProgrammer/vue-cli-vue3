@@ -19,12 +19,27 @@
           </div>
           <template #dropdown>
             <el-dropdown-menu>
+              <el-dropdown-item command="password">修改密码</el-dropdown-item>
+              <el-dropdown-item v-if="isSystem" command="clearDict">
+                清理字典缓存
+              </el-dropdown-item>
               <el-dropdown-item command="logout">退出登录</el-dropdown-item>
             </el-dropdown-menu>
           </template>
         </el-dropdown>
       </div>
     </div>
+
+    <!-- 修改密码弹窗 -->
+    <el-dialog
+      v-model="changePassVisible"
+      title="修改密码"
+      width="630px"
+      :close-on-press-escape="true"
+      :close-on-click-modal="false"
+    >
+      <PasswordPage />
+    </el-dialog>
   </div>
 </template>
 
@@ -32,11 +47,20 @@
 import LogoBox from "./Logo.vue";
 import { mapGetters } from "vuex";
 import { getToken } from "@/utils/auth";
+import { refreshDictItemList } from "@/api/dict";
+import { ElMessage, ElMessageBox } from "element-plus";
+import PasswordPage from "@/views/password/index.vue";
 
 export default {
   name: "LayoutNavbar",
   components: {
     LogoBox,
+    PasswordPage,
+  },
+  data() {
+    return {
+      changePassVisible: false,
+    };
   },
   computed: {
     ...mapGetters(["loginInfo", "hasLarge"]),
@@ -44,25 +68,58 @@ export default {
       const info = this.loginInfo || {};
       return info.nickName || info.realName || "用户";
     },
+    // 是否为系统级账号（system/super），用于控制“清理字典缓存”入口
+    isSystem() {
+      const info = this.loginInfo || {};
+      const username = info.username || info.userName || "";
+      return username === "system" || username === "super";
+    },
   },
   methods: {
     handleCommand(command) {
       if (command === "logout") {
         this.handleLogout();
+      } else if (command === "password") {
+        this.goChangePassword();
+      } else if (command === "clearDict") {
+        this.handleClearDict();
       }
     },
     handleLogout() {
-      const ok = window.confirm("确定退出登录？");
-      if (!ok) return;
-      this.$store
-        .dispatch("user/logout")
+      ElMessageBox.confirm("确定退出登录？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(() => {
-          this.$router.push("/login");
+          this.$store
+            .dispatch("user/logout")
+            .then(() => {
+              this.$router.push("/login");
+            })
+            .finally(() => {
+              // 刷新以清理运行时状态
+              window.location.reload();
+            });
         })
-        .finally(() => {
-          // 刷新以清理运行时状态
-          window.location.reload();
+        .catch(() => {
+          // 点击取消，不做处理
         });
+    },
+    goChangePassword() {
+      this.changePassVisible = true;
+    },
+    async handleClearDict() {
+      try {
+        const res = await refreshDictItemList("qdxtpz");
+        if (res && res.success) {
+          ElMessage.success("清理成功！");
+        } else {
+          ElMessage.error((res && res.message) || "清理失败！");
+        }
+      } catch (error) {
+        ElMessage.error("清理失败！");
+      }
     },
     openLargeScreen() {
       const token = getToken();

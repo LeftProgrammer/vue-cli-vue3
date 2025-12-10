@@ -80,20 +80,7 @@ export default {
       );
     },
   },
-  mounted() {
-    // 调试：查看每个菜单节点的子节点情况
-    console.log(
-      "[SidebarItem] item",
-      this.item && this.item.permCode,
-      {
-        hasChildren: !!(this.children && this.children.length),
-        childrenCount: this.children ? this.children.length : 0,
-        displayChildrenCount: this.childrenForDisplay
-          ? this.childrenForDisplay.length
-          : 0,
-      }
-    );
-  },
+  mounted() {},
   methods: {
     handleMenuClick(route) {
       const url = this.resolvePath(route);
