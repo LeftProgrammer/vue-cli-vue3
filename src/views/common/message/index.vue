@@ -12,8 +12,8 @@
       </template>
 
       <template #table>
-        <el-table ref="multipleTable" :data="tableData" height="100%" style="width: 100%" border>
-          <el-table-column label="消息标题" prop="noticeTitle" align="left"/>
+        <el-table ref="multipleTable" :data="tableData" height="100%" border>
+          <el-table-column label="消息标题" prop="noticeTitle" align="left" width="640"/>
           <el-table-column
             label="发起人"
             prop="sendUserRealName"

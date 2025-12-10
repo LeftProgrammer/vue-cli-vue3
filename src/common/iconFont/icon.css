@@ -1,0 +1,122 @@
+/* 在线链接服务仅供平台体验和调试使用，平台不承诺服务的稳定性，企业客户需下载字体包自行发布使用并做好备份。 */
+@font-face {
+	font-family: 'iconfont';  /* Project id 4212649 */
+	src: url('//at.alicdn.com/t/c/font_4212649_hqlve9j1g6.woff2?t=1716866253561') format('woff2'),
+	url('//at.alicdn.com/t/c/font_4212649_hqlve9j1g6.woff?t=1716866253561') format('woff'),
+	url('//at.alicdn.com/t/c/font_4212649_hqlve9j1g6.ttf?t=1716866253561') format('truetype');
+}
+
+.iconfont {
+	font-family: "iconfont" !important;
+	font-size: 16px;
+	font-style: normal;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+
+.icon-light-add:before {
+	content: "\e602";
+}
+.icon-light-scalc:before {
+	content: "\e603";
+}
+
+.icon-blur-add:before {
+	content: "\e601";
+}
+.icon-blur-scalc:before {
+	content: "\e61a";
+}
+.icon-stop:before {
+	content: "\e614";
+}
+.icon-scale:before {
+	content: "\ee44";
+}
+.icon-big:before {
+	content: "\ee45";
+}
+
+.icon-down2:before {
+	content: "\e637";
+}
+
+.icon-up2:before {
+	content: "\e62e";
+}
+.icon-right:before {
+	content: "\e63b";
+}
+
+.icon-down2:before {
+	content: "\e637";
+}
+
+.icon-left:before {
+	content: "\e641";
+}
+
+
+.icon-point:before {
+	content: "\e672";
+}
+
+.icon-passwordView:before {
+	content: "\e60c";
+}
+.icon-passwordNotView:before {
+	content: "\e687";
+}
+
+.circle:before {
+	content: "\ea9f";
+}
+
+.icon-add:before {
+	content: "\e627";
+}
+
+.icon-view:before {
+	content: "\e607";
+}
+
+.icon-edit:before {
+	content: "\e656";
+}
+
+.icon-delete:before {
+	content: "\e645";
+}
+
+.icon-checked:before {
+	content: "\e60b";
+}
+
+.icon-menu:before {
+	content: "\e643";
+}
+
+.icon-up:before {
+	content: "\e610";
+}
+
+.icon-down:before {
+	content: "\e611";
+}
+
+.icon-ping:before {
+	content: "\e630";
+}
+
+.icon-reset:before {
+	content: "\e648";
+}
+
+.icon-edit2:before {
+	content: "\e8ac";
+}
+
+.icon-rightTwo:before {
+	content: "\e6c9";
+}

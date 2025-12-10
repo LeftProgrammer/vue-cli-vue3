@@ -8,6 +8,14 @@
 $main: #1a74f0;
 $fontColor: #626262;
 
+:root {
+  /* 与旧项目 theme color 保持一致 */
+  --el-color-primary: #014acb;
+  --el-color-success: #00B42A;
+  --el-color-warning: #FF7D00;
+  --el-color-danger: #F53F3F;
+}
+
 body {
   height: 100%;
   -moz-osx-font-smoothing: grayscale;
