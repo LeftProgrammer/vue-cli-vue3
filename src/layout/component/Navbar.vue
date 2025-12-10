@@ -7,6 +7,12 @@
     </div>
     <div class="right-menu">
       <div class="avatar-wrapper">
+        <!-- 综合展示按钮（有 large 权限时显示） -->
+        <div v-if="hasLarge" class="font-topBar" @click="openLargeScreen">
+          <div class="icon-topBar dmgHome" />
+          <div class="text">综合展示</div>
+        </div>
+
         <el-dropdown @command="handleCommand" placement="bottom-start">
           <div class="font-topBar">
             <span class="text">{{ displayName }}</span>
@@ -24,7 +30,8 @@
 
 <script>
 import LogoBox from "./Logo.vue";
-import { removeToken } from "@/utils/auth";
+import { mapGetters } from "vuex";
+import { getToken } from "@/utils/auth";
 
 export default {
   name: "LayoutNavbar",
@@ -32,17 +39,10 @@ export default {
     LogoBox,
   },
   computed: {
+    ...mapGetters(["loginInfo", "hasLarge"]),
     displayName() {
-      const infoStr = localStorage.getItem("userInfo");
-      if (!infoStr) {
-        return "用户";
-      }
-      try {
-        const info = JSON.parse(infoStr);
-        return info.nickName || info.realName || "用户";
-      } catch (e) {
-        return "用户";
-      }
+      const info = this.loginInfo || {};
+      return info.nickName || info.realName || "用户";
     },
   },
   methods: {
@@ -54,8 +54,24 @@ export default {
     handleLogout() {
       const ok = window.confirm("确定退出登录？");
       if (!ok) return;
-      removeToken();
-      this.$router.push("/login");
+      this.$store
+        .dispatch("user/logout")
+        .then(() => {
+          this.$router.push("/login");
+        })
+        .finally(() => {
+          // 刷新以清理运行时状态
+          window.location.reload();
+        });
+    },
+    openLargeScreen() {
+      const token = getToken();
+      const origin = window.location.origin;
+      if (!token) {
+        window.open(`${origin}/large-screen/`, "_blank");
+        return;
+      }
+      window.open(`${origin}/large-screen/?token=${token}`, "_blank");
     },
   },
 };
@@ -117,6 +133,18 @@ export default {
 
 .font-topBar .text {
   text-indent: 4px;
+}
+
+.font-topBar .icon-topBar {
+  width: 22px;
+  height: 22px;
+}
+
+.font-topBar .dmgHome {
+  background-image: url("@/assets/img/system/navi.png");
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
 }
 
 .el-dropdown {

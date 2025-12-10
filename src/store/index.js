@@ -2,6 +2,7 @@ import { createStore } from "vuex";
 import user from "./modules/user";
 import dict from "./modules/dict";
 import permission from "./modules/permission";
+import tagsView from "./modules/tagsView";
 import getters from "./getters";
 
 const store = createStore({
@@ -9,6 +10,7 @@ const store = createStore({
     user,
     dict,
     permission,
+    tagsView,
   },
   state: {
     baseUrl: undefined,

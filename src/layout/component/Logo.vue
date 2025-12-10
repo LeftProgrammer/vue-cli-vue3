@@ -1,10 +1,22 @@
 <template>
-  <div class="sidebar-logo-container"></div>
+  <div class="sidebar-logo-container" @click="handelClick"></div>
 </template>
 
 <script>
 export default {
   name: "SidebarLogo",
+  methods: {
+    // 点击 Logo 返回首页，并设置 permCode 以保持菜单高亮在“工作中心”
+    handelClick() {
+      this.$router.push({
+        path: "/homeIndex/index",
+        query: {
+          permCode: "home",
+          name: "工作中心",
+        },
+      });
+    },
+  },
 };
 </script>
 
@@ -19,7 +31,10 @@ export default {
   color: #ffffff;
   height: 40px;
   width: 134px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.12);
+  // 使用系统 Logo 作为背景图片，保持与旧项目一致
+  background-image: url("@/assets/img/system/logo.png");
+  background-position: center;
+  background-size: 100%;
+  background-repeat: no-repeat;
 }
 </style>
