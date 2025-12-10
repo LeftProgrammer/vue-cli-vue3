@@ -3,6 +3,8 @@ import { ElMessage, ElLoading } from "element-plus";
 import { saveAs } from "file-saver";
 import router from "@/router";
 import { getToken, removeToken } from "@/utils/auth";
+import errorCode from "@/utils/errorCode";
+import { blobValidate } from "@/utils/utils";
 
 let loadingInstance = null;
 
@@ -139,10 +141,20 @@ service.interceptors.response.use(
       } else {
         removeToken();
       }
-    } else if (status === 404 || status === 500) {
-      // 这里按需补充全局错误提示
     } else if (error && error.errorCode === 10000) {
       // 请求节流，不提示
+    } else if (status === 404 || status === 500) {
+      // 这里按需补充全局错误提示
+      const msg = errorCode[status] || "请求错误";
+      ElMessage.error(msg);
+    } else if (status) {
+      const serverMsg =
+        (error.response &&
+          error.response.data &&
+          (error.response.data.message || error.response.data.msg)) ||
+        error.message;
+      const msg = serverMsg || errorCode[status] || errorCode.default;
+      ElMessage.error(msg);
     } else {
       console.log("error---", error);
     }
@@ -162,18 +174,21 @@ export function download(url, params, filename, config = {}) {
       ...config,
     })
     .then(async (data) => {
-      if (data && data.type === "application/json") {
+      const isBlob = blobValidate(data);
+      if (isBlob) {
+        const blob = new Blob([data]);
+        saveAs(blob, filename);
+      } else if (data) {
         try {
           const text = await data.text();
           const obj = JSON.parse(text);
-          const msg = obj.msg || obj.message || "下载失败";
-          ElMessage.error(msg);
+          const code = obj.code;
+          const msgFromCode =
+            (code && errorCode[code]) || obj.msg || obj.message || "下载失败";
+          ElMessage.error(msgFromCode);
         } catch (e) {
           ElMessage.error("下载文件出现错误，请联系管理员！");
         }
-      } else if (data) {
-        const blob = new Blob([data]);
-        saveAs(blob, filename);
       }
       closeLoading();
     })

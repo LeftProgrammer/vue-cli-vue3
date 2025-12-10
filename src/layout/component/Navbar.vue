@@ -13,7 +13,7 @@
           <div class="text">综合展示</div>
         </div>
 
-        <el-dropdown @command="handleCommand" placement="bottom-start">
+        <el-dropdown class="user-dropdown" placement="bottom-start" @command="handleCommand">
           <div class="font-topBar">
             <span class="text">{{ displayName }}</span>
           </div>
@@ -204,8 +204,17 @@ export default {
   background-repeat: no-repeat;
 }
 
-.el-dropdown {
+.user-dropdown {
   display: flex;
   align-items: center;
+
+  // 覆盖 Element Plus 内部触发元素在获得/失去焦点时的描边样式
+  :deep(.el-tooltip__trigger),
+  :deep(.el-dropdown-link),
+  :deep(.el-dropdown-selfdefine) {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: transparent !important;
+  }
 }
 </style>
