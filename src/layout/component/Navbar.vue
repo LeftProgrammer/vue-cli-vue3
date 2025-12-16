@@ -13,6 +13,8 @@
           <div class="text">综合展示</div>
         </div>
 
+        <NoticeBar />
+
         <el-dropdown class="user-dropdown" placement="bottom-start" @command="handleCommand">
           <div class="font-topBar">
             <span class="text">{{ displayName }}</span>
@@ -45,6 +47,7 @@
 
 <script>
 import LogoBox from "./Logo.vue";
+import NoticeBar from "@/components/NoticeBar/index.vue";
 import { mapGetters } from "vuex";
 import { getToken } from "@/utils/auth";
 import { refreshDictItemList } from "@/api/dict";
@@ -55,6 +58,7 @@ export default {
   name: "LayoutNavbar",
   components: {
     LogoBox,
+    NoticeBar,
     PasswordPage,
   },
   data() {

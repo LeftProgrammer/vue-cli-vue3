@@ -3,6 +3,7 @@
     v-model="dialogShow"
     title="信息"
     width="40%"
+    class="wbench-el-dialog"
     :destroy-on-close="true"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
@@ -62,6 +63,7 @@ import { FormMixin } from "@/mixins/FormMixin";
 export default {
   name: "MessageDataform",
   mixins: [FormMixin],
+  emits: ["closed"],
   data() {
     return {
       dialogShow: false,
@@ -71,12 +73,6 @@ export default {
       formDataRules: {},
       tableData: [],
     };
-  },
-  methods: {
-    closedHandle() {
-      this.dialogShow = false;
-      this.$emit("closed", this.formData);
-    },
   },
   watch: {
     visible: {
@@ -89,6 +85,12 @@ export default {
       },
       immediate: true,
       deep: true,
+    },
+  },
+  methods: {
+    closedHandle() {
+      this.dialogShow = false;
+      this.$emit("closed", this.formData);
     },
   },
 };

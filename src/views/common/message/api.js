@@ -2,6 +2,21 @@ import request from "@/utils/request";
 
 const prefix = "/api";
 
+export function getNoticeReadedCount() {
+  return request({
+    url: `${prefix}/system/notices/count`,
+    method: "get",
+    showLoading: false,
+  });
+}
+
+export function getNoticeDetail(noticeId) {
+  return request({
+    url: `${prefix}/system/notices/${noticeId}`,
+    method: "get",
+  });
+}
+
 export function notices(id) {
   return request({
     url: `${prefix}/system/notices/${id}`,
