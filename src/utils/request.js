@@ -7,12 +7,69 @@ import errorCode from "@/utils/errorCode";
 import { blobValidate } from "@/utils/utils";
 
 let loadingInstance = null;
+let loadingTimer = null;
+let loadingStartAt = 0;
+let activeRequestCount = 0;
+const LOADING_DELAY_MS = 150;
+const MIN_LOADING_DURATION_MS = 300;
 
 function closeLoading() {
   if (loadingInstance) {
     loadingInstance.close();
     loadingInstance = null;
   }
+}
+
+function beginLoading(config) {
+  if (config && config.showLoading === false) {
+    return;
+  }
+  activeRequestCount += 1;
+  if (activeRequestCount !== 1) {
+    return;
+  }
+  if (loadingTimer) {
+    clearTimeout(loadingTimer);
+    loadingTimer = null;
+  }
+  loadingTimer = setTimeout(() => {
+    loadingTimer = null;
+    if (activeRequestCount <= 0 || loadingInstance) {
+      return;
+    }
+    loadingStartAt = Date.now();
+    loadingInstance = ElLoading.service({
+      fullscreen: true,
+      lock: true,
+      text: "加载中...",
+      background: "rgba(0, 0, 0, 0.7)",
+    });
+  }, LOADING_DELAY_MS);
+}
+
+function endLoading() {
+  activeRequestCount = Math.max(0, activeRequestCount - 1);
+  if (activeRequestCount > 0) {
+    return;
+  }
+  if (loadingTimer) {
+    clearTimeout(loadingTimer);
+    loadingTimer = null;
+  }
+  if (!loadingInstance) {
+    return;
+  }
+  const elapsed = Date.now() - (loadingStartAt || 0);
+  const remaining = Math.max(0, MIN_LOADING_DURATION_MS - elapsed);
+  if (remaining === 0) {
+    closeLoading();
+    return;
+  }
+  setTimeout(() => {
+    if (activeRequestCount === 0) {
+      closeLoading();
+    }
+  }, remaining);
 }
 
 function loginOut() {
@@ -29,12 +86,6 @@ function loginOut() {
     });
 }
 
-const service = axios.create({
-  baseURL: "",
-  withCredentials: true,
-  timeout: 300000,
-});
-
 let lastRequestInfo = {
   url: "",
   params: {},
@@ -43,8 +94,14 @@ let lastRequestInfo = {
 
 const throttleDelay = 1000;
 
+const service = axios.create({
+  baseURL: "",
+  withCredentials: true,
+  timeout: 300000,
+});
+
 service.interceptors.request.use(
-  (config) => {
+  config => {
     if (!config.url) {
       const errReq = {
         tips: "请求路径不能为空！",
@@ -58,8 +115,7 @@ service.interceptors.request.use(
     if (
       !config.enableThrottle &&
       config.url === lastRequestInfo.url &&
-      JSON.stringify(config.data || {}) ===
-        JSON.stringify(lastRequestInfo.params || {}) &&
+      JSON.stringify(config.data || {}) === JSON.stringify(lastRequestInfo.params || {}) &&
       currentTime - lastRequestInfo.time < throttleDelay
     ) {
       const jieliu = {
@@ -76,15 +132,7 @@ service.interceptors.request.use(
       time: currentTime,
     };
 
-    // showLoading 显式为 false 时，不展示全局 Loading（用于心跳等静默请求）
-    if (!loadingInstance && config.showLoading !== false) {
-      loadingInstance = ElLoading.service({
-        fullscreen: true,
-        lock: true,
-        text: "加载中...",
-        background: "rgba(0, 0, 0, 0.7)",
-      });
-    }
+    beginLoading(config);
 
     const token = getToken();
     if (token) {
@@ -94,15 +142,15 @@ service.interceptors.request.use(
 
     return config;
   },
-  (error) => {
+  error => {
     console.error("请求异常", error);
     return Promise.reject(error);
   }
 );
 
 service.interceptors.response.use(
-  (response) => {
-    closeLoading();
+  response => {
+    endLoading();
     const res = response.data;
     if (response.status !== 200) {
       ElMessage({
@@ -132,8 +180,8 @@ service.interceptors.response.use(
 
     return res;
   },
-  (error) => {
-    closeLoading();
+  error => {
+    endLoading();
     const status = error.response && error.response.status;
     if (status === 401) {
       if (window.location.href.indexOf("login") === -1) {
@@ -163,7 +211,7 @@ service.interceptors.response.use(
 );
 
 export function download(url, params, filename, config = {}) {
-  loadingInstance = ElLoading.service({
+  const downloadLoadingInstance = ElLoading.service({
     text: "正在下载数据，请稍候",
     background: "rgba(0, 0, 0, 0.7)",
   });
@@ -171,9 +219,10 @@ export function download(url, params, filename, config = {}) {
     .post(url, params, {
       headers: { "Content-Type": "application/json;charset=utf-8" },
       responseType: "blob",
+      showLoading: false,
       ...config,
     })
-    .then(async (data) => {
+    .then(async data => {
       const isBlob = blobValidate(data);
       if (isBlob) {
         const blob = new Blob([data]);
@@ -183,19 +232,19 @@ export function download(url, params, filename, config = {}) {
           const text = await data.text();
           const obj = JSON.parse(text);
           const code = obj.code;
-          const msgFromCode =
-            (code && errorCode[code]) || obj.msg || obj.message || "下载失败";
+          const msgFromCode = (code && errorCode[code]) || obj.msg || obj.message || "下载失败";
           ElMessage.error(msgFromCode);
         } catch (e) {
           ElMessage.error("下载文件出现错误，请联系管理员！");
         }
       }
-      closeLoading();
     })
-    .catch((err) => {
+    .catch(err => {
       console.error(err);
       ElMessage.error("下载文件出现错误，请联系管理员！");
-      closeLoading();
+    })
+    .finally(() => {
+      downloadLoadingInstance.close();
     });
 }
 

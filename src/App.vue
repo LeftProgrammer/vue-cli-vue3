@@ -41,6 +41,7 @@ import { socket } from "@/utils/socket";
 import { dateFormat, fromApp } from "@/utils";
 import { allowLogin, disallowLogin, logout } from "@/api/user";
 import { setToken } from "@/utils/auth";
+import { getToken } from "@/utils/auth";
 import heatbeat from "@/utils/heatbeat";
 import config from "@/utils/config";
 
@@ -72,12 +73,16 @@ export default {
       }
     }
 
-    // 建立 WebSocket 连接，并监听登录通知
-    socket.connect && socket.connect();
-    this.registerNoticeListener();
+    // 仅在已登录（存在 token）时才建立连接/心跳，避免退出后仍重连刷 /ws/info
+    const token = getToken();
+    if (token) {
+      // 建立 WebSocket 连接，并监听登录通知
+      socket.connect && socket.connect();
+      this.registerNoticeListener();
 
-    // 启动心跳（heatbeat.start 内部有幂等保护）
-    heatbeat.start();
+      // 启动心跳（heatbeat.start 内部有幂等保护）
+      heatbeat.start();
+    }
 
     // 如后续需要区分关闭/刷新，可放开下面两行
     // window.addEventListener("beforeunload", this.autoLogoutBefore);
@@ -86,6 +91,9 @@ export default {
   beforeUnmount() {
     // 取消 NOTICE 监听
     socket.off && socket.off("NOTICE", this.handleNotice);
+
+    // 断开 WebSocket 连接，避免残留重连请求 /ws/info
+    socket.disconnect && socket.disconnect();
 
     // 关闭心跳
     heatbeat.clear();

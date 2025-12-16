@@ -1,5 +1,7 @@
 import { login, logout, getInfo } from "@/api/user";
 import { getToken, setToken, removeToken } from "@/utils/auth";
+import heatbeat from "@/utils/heatbeat";
+import { socket } from "@/utils/socket";
 
 const state = {
   loginInfo: {},
@@ -45,17 +47,27 @@ const actions = {
     const { username, password, kaptcha } = userInfo;
     return new Promise((resolve, reject) => {
       login({ username: username.trim(), password, kaptcha })
-        .then((response) => {
+        .then(response => {
           if (response.success) {
             const token = response.data && response.data.token;
             if (token) {
               setToken(token);
               commit("SET_TOKEN", token);
+              try {
+                socket.connect && socket.connect();
+              } catch (e) {
+                void e;
+              }
+              try {
+                heatbeat.start();
+              } catch (e) {
+                void e;
+              }
             }
           }
           resolve(response);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -65,7 +77,7 @@ const actions = {
   getInfo({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token)
-        .then((response) => {
+        .then(response => {
           const { data } = response;
           if (!data) {
             reject("Verification failed, please login again.");
@@ -77,7 +89,7 @@ const actions = {
           dispatch("permission/generateRoutes", permissions, { root: true });
           resolve(data);
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
         });
     });
@@ -93,24 +105,46 @@ const actions = {
           removeToken();
           resolve();
         })
-        .catch((error) => {
+        .catch(error => {
           reject(error);
+        })
+        .finally(() => {
+          try {
+            heatbeat.clear();
+          } catch (e) {
+            void e;
+          }
+          try {
+            socket.disconnect && socket.disconnect();
+          } catch (e) {
+            void e;
+          }
         });
     });
   },
 
   // remove token
   resetToken({ commit }) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       commit("SET_TOKEN", "");
       commit("SET_ROLES", []);
       removeToken();
+      try {
+        heatbeat.clear();
+      } catch (e) {
+        void e;
+      }
+      try {
+        socket.disconnect && socket.disconnect();
+      } catch (e) {
+        void e;
+      }
       resolve();
     });
   },
 
   setCredentials({ commit }, credentials) {
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       commit("setCredentials", credentials);
       resolve();
     });

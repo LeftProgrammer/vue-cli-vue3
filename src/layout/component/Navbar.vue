@@ -94,12 +94,11 @@ export default {
         .then(() => {
           this.$store
             .dispatch("user/logout")
-            .then(() => {
-              this.$router.push("/login");
+            .catch(() => {
+              // 忽略登出接口异常，仍然回到登录页
             })
             .finally(() => {
-              // 刷新以清理运行时状态
-              window.location.reload();
+              this.$router.replace("/login").catch(() => {});
             });
         })
         .catch(() => {

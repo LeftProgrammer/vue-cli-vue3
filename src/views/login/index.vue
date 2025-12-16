@@ -194,26 +194,41 @@ export default {
       }
     },
     async fetchLoginPublicKey() {
-      if (this.pubKey) {
+      try {
+        console.log("获取公钥");
+        const res = await getLoginPublicKey();
+        if (!res || !res.success) {
+          this.errorMsg = "*获取公钥失败:" + (res && res.message || "");
+          throw new Error(this.errorMsg);
+        }
+        this.pubKey = res.data;
         return this.pubKey;
+      } catch (error) {
+        this.errorMsg = "*获取公钥失败";
+        throw error;
       }
-      const res = await getLoginPublicKey();
-      if (!res || !res.success) {
-        throw new Error((res && res.message) || "获取公钥失败");
-      }
-      this.pubKey = res.data;
-      return this.pubKey;
     },
     encryptPassword(password) {
       if (!password) {
         return "";
       }
       if (!this.pubKey) {
-        return password;
+        return password; // 原项目在没有公钥时会使用明文
       }
-      const encryptor = new JSEncrypt();
-      encryptor.setPublicKey(this.pubKey);
-      return encryptor.encrypt(password) || "";
+      try {
+        const encrypt = new JSEncrypt();
+        encrypt.setPublicKey(this.pubKey);
+        const encrypted = encrypt.encrypt(password);
+        if (!encrypted) {
+          this.errorMsg = "*密码加密失败";
+          return "";
+        }
+        return encrypted;
+      } catch (error) {
+        this.errorMsg = "*密码加密过程出错";
+        console.error("加密错误:", error);
+        return "";
+      }
     },
     loadRememberInfo() {
       try {
