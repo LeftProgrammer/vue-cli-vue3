@@ -426,10 +426,10 @@ export default {
       exportUrl({ year: moment(this.selectedYear).format('YYYY') }).then(
         (res) => {
           this.viewFileName = res.data.fileName
-          this.url = res.data.requestRelativeUrl.replace(
-            'http://minio:9000',
-            window.location.origin
-          )
+          this.url =
+            window.location.origin +
+            new URL(res.data.requestRelativeUrl).pathname +
+            new URL(res.data.requestRelativeUrl).search
           this.dialogShow = true
         }
       )
@@ -438,10 +438,9 @@ export default {
       exportUrl({ year: moment(this.selectedYear).format('YYYY') }).then(
         (res) => {
           window.open(
-            res.data.requestRelativeUrl.replace(
-              'http://minio:9000',
-              window.location.origin
-            )
+            window.location.origin +
+              new URL(res.data.requestRelativeUrl).pathname +
+              new URL(res.data.requestRelativeUrl).search
           )
         }
       )

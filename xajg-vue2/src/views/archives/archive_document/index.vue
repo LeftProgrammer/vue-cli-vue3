@@ -15,16 +15,16 @@
           <el-form-item v-if="showBackBtn">
             <el-button icon="el-icon-back" @click="goBack">返回</el-button>
           </el-form-item>
-          <el-form-item v-if="showSearchBtns" label="文件题名">
+          <el-form-item v-if="showSearchBtns" label="文件编号">
             <el-input
-              v-model="searchData.documentTitle"
+              v-model="searchData.documentCode"
               clearable
               placeholder="请输入"
             />
           </el-form-item>
-          <el-form-item v-if="showSearchBtns" label="文件编号">
+          <el-form-item v-if="showSearchBtns" label="文件题名">
             <el-input
-              v-model="searchData.documentCode"
+              v-model="searchData.documentTitle"
               clearable
               placeholder="请输入"
             />
@@ -43,17 +43,49 @@
         </el-form>
       </template>
       <template v-if="showOperateBtns" slot="opratebtns">
-        <el-button type="primary" icon="el-icon-plus" @click="handleAdd">新增</el-button>
-        <el-button icon="el-icon-upload2" @click="handleImport">导入</el-button>
+        <el-button
+          type="primary"
+          icon="el-icon-plus"
+          style="margin-right: 10px"
+          @click="handleAdd"
+        >新增</el-button>
+        <el-upload
+          ref="importUpload"
+          :action="importAction"
+          :data="importData"
+          :headers="importHeaders"
+          :show-file-list="false"
+          :before-upload="beforeImport"
+          :on-success="handleImportSuccess"
+          :on-error="handleImportError"
+          accept=".xlsx,.xls"
+        >
+          <el-button icon="el-icon-upload2" :loading="importLoading">导入</el-button>
+        </el-upload>
+        <el-button
+          type="danger"
+          icon="el-icon-delete"
+          :disabled="selectedRows.length === 0"
+          style="margin-left: 10px"
+          @click="handleBatchDelete"
+        >批量删除</el-button>
       </template>
       <template slot="table">
         <el-table
+          ref="tableRef"
           v-loading="loading"
           :data="tableData"
           height="100%"
           stripe
           border
+          @selection-change="handleSelectionChange"
         >
+          <el-table-column
+            v-if="showOperateBtns"
+            type="selection"
+            width="50"
+            align="center"
+          />
           <el-table-column label="序号" align="center" width="60">
             <template #default="{ $index }">
               {{ $index + 1 + (searchData.current - 1) * searchData.pageSize }}
@@ -153,10 +185,8 @@
 
 <script>
 import { defineComponent } from "vue";
-import {
-  getDocumentPage,
-  deleteDocument,
-} from "@/api/archivesManage";
+import { getDocumentPage, deleteDocument, deleteDocumentBatch } from "@/api/archivesManage";
+import { getToken } from "@/utils/auth";
 import TreeTableLayout from "@/components/ContentLayout/TreeTable";
 import ListButton from "@/components/ListButton";
 import DocumentForm from "./form.vue";
@@ -239,7 +269,29 @@ export default defineComponent({
       dialogTitle: "",
       isView: false,
       currentDocumentId: "",
+      // 导入相关
+      importLoading: false,
+      // 多选相关
+      selectedRows: [],
     };
+  },
+  computed: {
+    // 导入接口地址
+    importAction() {
+      return "/api/archives/document/import";
+    },
+    // 导入附加参数
+    importData() {
+      return {
+        volumeId: this.volumeInfo.volumeId,
+      };
+    },
+    // 导入请求头
+    importHeaders() {
+      return {
+        "X-Token": getToken(),
+      };
+    },
   },
   created() {
     // 优先从 props 获取案卷信息，否则从路由参数获取
@@ -278,7 +330,7 @@ export default defineComponent({
       this.loading = true;
       try {
         const params = {
-          pageNum: this.searchData.current,
+          current: this.searchData.current,
           pageSize: this.searchData.pageSize,
           entity: {
             volumeId: this.volumeInfo.volumeId,
@@ -392,9 +444,72 @@ export default defineComponent({
     handleFormSuccess() {
       this.getList();
     },
-    // 导入
-    handleImport() {
-      this.$message.info("导入功能开发中");
+    // 导入前校验
+    beforeImport(file) {
+      const isExcel =
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel";
+      if (!isExcel) {
+        this.$message.error("只能上传 Excel 文件（.xlsx 或 .xls）");
+        return false;
+      }
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        this.$message.error("文件大小不能超过 10MB");
+        return false;
+      }
+      this.importLoading = true;
+      return true;
+    },
+    // 导入成功
+    handleImportSuccess(response) {
+      this.importLoading = false;
+      if (response.success) {
+        this.$message.success(response.data);
+        this.getList();
+      } else {
+        this.$message.error(response.message || "导入失败");
+      }
+    },
+    // 导入失败
+    handleImportError(error) {
+      this.importLoading = false;
+      console.error("导入失败:", error);
+      this.$message.error("导入失败，请稍后重试");
+    },
+    // 多选变化
+    handleSelectionChange(selection) {
+      this.selectedRows = selection;
+    },
+    // 批量删除
+    handleBatchDelete() {
+      if (this.selectedRows.length === 0) {
+        this.$message.warning("请先选择要删除的文件");
+        return;
+      }
+      this.$confirm(`确定要删除选中的 ${this.selectedRows.length} 个文件吗？`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
+        .then(async () => {
+          try {
+            const ids = this.selectedRows.map((row) => row.id);
+            const { success, data, message } = await deleteDocumentBatch(ids);
+            if (success) {
+              this.$message.success(data || "删除成功");
+              this.selectedRows = [];
+              this.getList();
+            } else {
+              this.$message.error(message || "删除失败");
+            }
+          } catch (error) {
+            console.error(error);
+            this.$message.error("删除失败");
+          }
+        })
+        .catch(() => {});
     },
   },
 });

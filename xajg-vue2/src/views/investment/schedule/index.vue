@@ -258,7 +258,8 @@ export default {
       this.getTableData()
     },
     handelResetButtonClick() {
-      this.pageParams = {}
+      this.searchData.name = ''
+      this.$refs.tree.filter('')
       this.getTableData()
     },
     handleSaveSuccess() {

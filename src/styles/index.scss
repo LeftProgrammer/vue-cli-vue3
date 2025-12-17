@@ -11,9 +11,27 @@ $fontColor: #626262;
 :root {
   /* 与旧项目 theme color 保持一致 */
   --el-color-primary: #014acb;
+  /* Element Plus hover/focus 等会用到派生变量，若不补齐会仍使用默认主题(#409EFF)的派生色 */
+  --el-color-primary-dark-2: #013ba2;
+  --el-color-primary-light-3: #2765d3;
+  --el-color-primary-light-5: #80a5e5;
+  --el-color-primary-light-7: #b2c9ef;
+  --el-color-primary-light-8: #ccdbf5;
+  --el-color-primary-light-9: #e6edfa;
   --el-color-success: #00B42A;
   --el-color-warning: #FF7D00;
   --el-color-danger: #F53F3F;
+}
+
+@supports (color: color-mix(in srgb, #000 0%, #fff 100%)) {
+  :root {
+    --el-color-primary-dark-2: color-mix(in srgb, var(--el-color-primary) 80%, #000);
+    --el-color-primary-light-3: color-mix(in srgb, var(--el-color-primary) 85%, #fff);
+    --el-color-primary-light-5: color-mix(in srgb, var(--el-color-primary) 50%, #fff);
+    --el-color-primary-light-7: color-mix(in srgb, var(--el-color-primary) 30%, #fff);
+    --el-color-primary-light-8: color-mix(in srgb, var(--el-color-primary) 20%, #fff);
+    --el-color-primary-light-9: color-mix(in srgb, var(--el-color-primary) 10%, #fff);
+  }
 }
 
 body {

@@ -257,6 +257,18 @@ export function deleteDocument(id) {
   });
 }
 
+/**
+ * 批量删除文件
+ * @param {Array} ids - 文件ID数组
+ */
+export function deleteDocumentBatch(ids) {
+  return request({
+    url: "/api/archives/document/deleteBatch",
+    method: "post",
+    data: ids,
+  });
+}
+
 // ==================== 综合检索 ====================
 
 /**

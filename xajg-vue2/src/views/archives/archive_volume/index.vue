@@ -7,10 +7,10 @@
       :volume-code="currentVolume.volumeCode"
       :volume-title="currentVolume.volumeTitle"
       :show-back-btn="true"
-      :show-page="false"
+      :show-page="true"
       :show-search-btns="false"
-      :show-operate-btns="false"
-      :show-action-column="false"
+      :show-operate-btns="true"
+      :show-action-column="true"
       @back="handleDocumentBack"
     />
 
@@ -271,10 +271,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import {
-  getVolumePage,
-  deleteVolume,
-} from "@/api/archivesManage";
+import { getVolumePage, deleteVolume } from "@/api/archivesManage";
 import { getProjectList } from "@/api/archivesManage";
 import TreeTableLayout from "@/components/ContentLayout/TreeTable";
 import ListButton from "@/components/ListButton";
@@ -409,7 +406,7 @@ export default defineComponent({
       this.loading = true;
       try {
         const params = {
-          pageNum: this.searchData.current,
+          current: this.searchData.current,
           pageSize: this.searchData.pageSize,
           entity: {
             projectId: this.currentProject.id,
@@ -514,15 +511,11 @@ export default defineComponent({
     },
     // 删除
     handleDelete(row) {
-      this.$confirm(
-        "确定要删除该案卷吗？",
-        "提示",
-        {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          type: "warning",
-        }
-      )
+      this.$confirm("确定要删除该案卷吗？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      })
         .then(async () => {
           try {
             const { success, message } = await deleteVolume(row.id);
@@ -559,32 +552,31 @@ export default defineComponent({
     gap: 16px;
 
     .left-content {
-      width: 280px;
-      flex-shrink: 0;
-      border: 1px solid #e4e7ed;
-      border-radius: 4px;
-      display: flex;
-      flex-direction: column;
-
-      .tree-wrapper {
-        flex: 1;
-        padding: 12px;
-        overflow: auto;
-
-        .filter-input {
-          margin-bottom: 12px;
-        }
-
+      height: 100%;
+      position: relative;
+      /deep/ .el-tree-node__content {
         .custom-tree-node {
-          display: flex;
-          align-items: center;
+          flex: 1;
           overflow: hidden;
-
+          display: flex;
           span {
+            flex: 1;
             overflow: hidden;
             text-overflow: ellipsis;
-            white-space: nowrap;
           }
+        }
+      }
+
+      .tree-wrapper {
+        width:275px;
+        height: 100%;
+        overflow-y: auto;
+        border: #e5e5e5 1px solid;
+        .filter-input {
+          padding: 5px;
+        }
+        /deep/ .el-tree {
+          height: calc(90% - 46px) !important;
         }
       }
     }

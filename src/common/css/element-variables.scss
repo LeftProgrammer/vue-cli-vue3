@@ -16,6 +16,22 @@
         color: #fff;
         background-color: var(--el-color-primary-light-7);
     }
+    &.is-loading,
+    &.is-loading.is-disabled {
+        color: #fff;
+        background-color: var(--el-color-primary);
+        border-color: transparent;
+        opacity: 0.92;
+    }
+    &.is-loading:hover,
+    &.is-loading:focus,
+    &.is-loading.is-disabled:hover,
+    &.is-loading.is-disabled:focus {
+        color: #fff;
+        background-color: var(--el-color-primary);
+        border-color: transparent;
+        opacity: 0.92;
+    }
     &.is-plain {
         background: var(--el-color-primary-light-9);
         color: var(--el-color-primary);

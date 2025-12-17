@@ -155,8 +155,8 @@
                 <template slot-scope="{ row }">
                   {{
                     row.qualityStartDate
-                      ? timeFormat(row.qualityStartDate, 'YYYY-MM-DD')
-                      : ''
+                      ? timeFormat(row.qualityStartDate, "YYYY-MM-DD")
+                      : ""
                   }}
                 </template>
               </el-table-column>
@@ -166,7 +166,7 @@
                     :underline="false"
                     :type="getQbsStatusColor(row.qbsStatus)"
                   >{{
-                    row.qbsStatus ? getQbsStatusName(row.qbsStatus) : ''
+                    row.qbsStatus ? getQbsStatusName(row.qbsStatus) : ""
                   }}</el-link>
                 </template>
               </el-table-column>
@@ -179,7 +179,7 @@
                   {{
                     row.qualityGrade
                       ? getQualityGradeName(row.qualityGrade)
-                      : ''
+                      : ""
                   }}
                 </template>
               </el-table-column>
@@ -223,21 +223,21 @@
 </template>
 
 <script>
-import { page, remove, getArchiveFileCatalogueManagerTree } from './api'
-import { getDictItemList } from '@/api/dict'
-import { dateFormat } from '@/utils'
-import { FlowListMixin } from '@/mixins/FlowListMixin'
-import bimShow from '@/components/Bim/Show'
+import { page, remove, getArchiveFileCatalogueManagerTree } from "./api";
+import { getDictItemList } from "@/api/dict";
+import { dateFormat } from "@/utils";
+import { FlowListMixin } from "@/mixins/FlowListMixin";
+import bimShow from "@/components/Bim/Show";
 // import DragLine from "@/views/archives/shared_component/DragLine";
-import TreeTableLayout from '@/components/ContentLayout/TreeTable'
+import TreeTableLayout from "@/components/ContentLayout/TreeTable";
 
-import { getSectionByCorpId } from '@/api/measure'
+import { getSectionByCorpId } from "@/api/measure";
 export default {
-  name: 'EvaluationLedger',
+  name: "EvaluationLedger",
   components: {
     // DragLine,
     bimShow,
-    TreeTableLayout
+    TreeTableLayout,
   },
   mixins: [FlowListMixin],
   data() {
@@ -246,16 +246,16 @@ export default {
       isRootNode: false,
       treeNode: {}, //点击树节点传递给子组件使用
       sectionId: null,
-      type: '',
-      title: '验评台账',
+      type: "",
+      title: "验评台账",
       defaultProps: {
-        children: 'children',
-        label: 'label'
+        children: "children",
+        label: "label",
       },
       pageParams: {
         size: 20,
         current: 1,
-        total: 0
+        total: 0,
       },
       tableLoading: true,
       treeLoading: true,
@@ -263,7 +263,7 @@ export default {
         searchDate: [],
         sectionId: null,
         name: null,
-        code: null
+        code: null,
       },
       selectionNode: {},
       options: [],
@@ -273,216 +273,216 @@ export default {
       typeDictMap: [],
       typeOptions: [],
       treeWidth: 267,
-      currentNodeKey: '',
+      currentNodeKey: "",
       sectionList: [],
-      unitProjectTypeList: []
-    }
+      unitProjectTypeList: [],
+    };
   },
   computed: {},
   created() {
-    this.getCurrent()
-    this.getTypeDictMap()
+    this.getCurrent();
+    this.getTypeDictMap();
   },
   methods: {
     /* 获取当前登录人信息*/
     async getCurrent() {
-      this.current = this.$getStorage('userInfo')
-      await this.getSectionList(this.current.corpId)
+      this.current = this.$getStorage("userInfo");
+      await this.getSectionList(this.current.corpId);
       if (this.sectionList.length === 0) {
-        this.$message.error('查询标段失败')
-        return
+        this.$message.error("查询标段失败");
+        return;
       }
-      this.query.sectionId = this.sectionList[0].id
-      const sectionIds = this.sectionList[0].id
-      await this.getTree(sectionIds)
+      this.query.sectionId = this.sectionList[0].id;
+      const sectionIds = this.sectionList[0].id;
+      await this.getTree(sectionIds);
     },
     async getSectionList(corporateId) {
       try {
         const { data, success, message } = await getSectionByCorpId({
-          corpId: corporateId
-        })
+          corpId: corporateId,
+        });
         if (!success) {
-          this.$message.error('查询标段失败：' + message)
-          return false
+          this.$message.error("查询标段失败：" + message);
+          return false;
         }
-        this.query.sectionId = data[0].id
-        this.sectionList = data
-        return data
+        this.query.sectionId = data[0].id;
+        this.sectionList = data;
+        return data;
       } catch (err) {
-        this.$message.error('查询标段失败')
-        return false
+        this.$message.error("查询标段失败");
+        return false;
       }
     },
     sectionChange() {
-      let sectionIds = this.query.sectionId
-      this.getTree(sectionIds)
+      let sectionIds = this.query.sectionId;
+      this.getTree(sectionIds);
     },
     addHandle() {
       // 新增先校验目录节点是否选中
       if (this.query.catalogue == null) {
-        this.$message.warning('请选择左侧具体的目录节点')
-        return
+        this.$message.warning("请选择左侧具体的目录节点");
+        return;
       }
       if (this.query.sectionId == null) {
-        this.$message.warning('请选择标段')
-        return
+        this.$message.warning("请选择标段");
+        return;
       }
-      this.$setStorage('acceptance_evaluation', {
+      this.$setStorage("acceptance_evaluation", {
         sectionId: this.query.sectionId,
-        treeNode: this.treeNode
-      })
-      this.handelShowDialog(null, 'mine')
+        treeNode: this.treeNode,
+      });
+      this.handelShowDialog(null, "mine");
     },
     closedDialog() {
-      this.oprateRow.dialogShow = false
+      this.oprateRow.dialogShow = false;
     },
     getExpanded() {
       // 返回3层id
-      const idArr = []
+      const idArr = [];
       this.treeData.forEach((element) => {
-        idArr.push(element.id)
+        idArr.push(element.id);
         if (
           element.children &&
-          typeof element.children === 'object' &&
+          typeof element.children === "object" &&
           Array.isArray(element.children)
         ) {
           element.children.forEach((e) => {
-            idArr.push(e.id)
-          })
+            idArr.push(e.id);
+          });
         }
-      })
-      return idArr
+      });
+      return idArr;
     },
     getQbsStatusColor(val) {
       //1:未验评、2:验评中、3:已验评
-      const qbsColor = new Map()
-      qbsColor.set('1', 'default')
-      qbsColor.set('2', 'warning')
-      qbsColor.set('3', 'primary')
-      return qbsColor.get(val) ? qbsColor.get(val) : 'default'
+      const qbsColor = new Map();
+      qbsColor.set("1", "default");
+      qbsColor.set("2", "warning");
+      qbsColor.set("3", "primary");
+      return qbsColor.get(val) ? qbsColor.get(val) : "default";
     },
     getQbsStatusName(val) {
       //1:未验评、2:验评中、3:已验评
-      const qbsStatus = new Map()
-      qbsStatus.set('1', '未验评')
-      qbsStatus.set('2', '验评中')
-      qbsStatus.set('3', '已验评')
-      return qbsStatus.get(val) ? qbsStatus.get(val) : '---'
+      const qbsStatus = new Map();
+      qbsStatus.set("1", "未验评");
+      qbsStatus.set("2", "验评中");
+      qbsStatus.set("3", "已验评");
+      return qbsStatus.get(val) ? qbsStatus.get(val) : "---";
     },
     getQualityGradeName(val) {
       //0:不合格、1:合格、2:优良
-      const qualityGrade = new Map()
-      qualityGrade.set('0', '不合格')
-      qualityGrade.set('1', '合格')
-      qualityGrade.set('2', '优良')
-      return qualityGrade.get(val) ? qualityGrade.get(val) : '---'
+      const qualityGrade = new Map();
+      qualityGrade.set("0", "不合格");
+      qualityGrade.set("1", "合格");
+      qualityGrade.set("2", "优良");
+      return qualityGrade.get(val) ? qualityGrade.get(val) : "---";
     },
     getPbsTypeName(val) {
       //1:单位、2:子单位工程、3:分部工程、4:子分部工程、5:分项工程、6:单元工程
-      const pbsType = new Map()
-      pbsType.set('1', '单位')
-      pbsType.set('2', '子单位工程')
-      pbsType.set('3', '分部工程')
-      pbsType.set('4', '子分部工程')
-      pbsType.set('5', '分项工程')
-      pbsType.set('6', '单元工程')
-      return pbsType.get(val) ? pbsType.get(val) : '---'
+      const pbsType = new Map();
+      pbsType.set("1", "单位");
+      pbsType.set("2", "子单位工程");
+      pbsType.set("3", "分部工程");
+      pbsType.set("4", "子分部工程");
+      pbsType.set("5", "分项工程");
+      pbsType.set("6", "单元工程");
+      return pbsType.get(val) ? pbsType.get(val) : "---";
     },
 
     /**获取字典 */
     async getTypeDictMap() {
-      const { data } = await getDictItemList('UNIT_PROJECT_TYPE')
-      this.typeDictMap = data
+      const { data } = await getDictItemList("UNIT_PROJECT_TYPE");
+      this.typeDictMap = data;
       //   this.typeOptions = buildTree(data, "-");
     },
     getTypeDictName(id) {
       //a101:水工、a201:公路、a301:房建
-      const unitProjectYype = new Map()
-      unitProjectYype.set('a101', '水工')
-      unitProjectYype.set('a201', '公路')
-      unitProjectYype.set('a301', '房建')
-      return unitProjectYype.get(id)
+      const unitProjectYype = new Map();
+      unitProjectYype.set("a101", "水工");
+      unitProjectYype.set("a201", "公路");
+      unitProjectYype.set("a301", "房建");
+      return unitProjectYype.get(id);
     },
     reset() {
       //不要清空 query.catalogue
-      console.log('this.query', this.query)
-      this.query.name = null
-      this.query.code = null
-      this.query.searchDate = []
-      this.getTableData()
+      console.log("this.query", this.query);
+      this.query.name = null;
+      this.query.code = null;
+      this.query.searchDate = [];
+      this.getTableData();
     },
     // 查询表格数据
     getTableData() {
       if (!this.treeLoaded || !this.query.catalogue) {
-        return
+        return;
       }
-      this.tableData = []
-      this.tableLoading = true
+      this.tableData = [];
+      this.tableLoading = true;
       if (!this.query.sectionId && this.sectionList.length > 0) {
         // 默认选择标段
-        this.$set(this.query, 'sectionId', this.sectionList[0].id)
+        this.$set(this.query, "sectionId", this.sectionList[0].id);
       }
       let params = {
-        ...this.pageParams
-      }
-      params.entity = { ...this.query }
+        ...this.pageParams,
+      };
+      params.entity = { ...this.query };
       if (params.entity.searchDate?.length === 2) {
-        params.entity.startDate = params.entity.searchDate[0]
-        params.entity.endDate = params.entity.searchDate[1]
-        delete params.entity.searchDate
+        params.entity.startDate = params.entity.searchDate[0];
+        params.entity.endDate = params.entity.searchDate[1];
+        delete params.entity.searchDate;
       }
 
       params.orderProperties = [
         {
-          property: 'createDate'
-        }
-      ]
+          property: "createDate",
+        },
+      ];
       page(params).then((data) => {
-        this.$set(this, 'tableData', data?.data?.records || [])
-        this.pageParams.total = data?.data?.total || 0
-        this.tableLoading = false
-      })
+        this.$set(this, "tableData", data?.data?.records || []);
+        this.pageParams.total = data?.data?.total || 0;
+        this.tableLoading = false;
+      });
     },
     /**初始化 */
     async getTree(sectionIds) {
-      this.treeLoaded = false
-      let params = {}
-      params.sectionIds = sectionIds
+      this.treeLoaded = false;
+      let params = {};
+      params.sectionIds = sectionIds;
       const { data, success, message } =
-        await getArchiveFileCatalogueManagerTree(params)
+        await getArchiveFileCatalogueManagerTree(params);
       if (!success) {
-        this.$message.error('获取目录树失败：' + message)
-        return false
+        this.$message.error("获取目录树失败：" + message);
+        return false;
       }
-      this.treeData = data
+      this.treeData = data;
       if (data?.length > 0) {
-        const defaultNode = data[0]
-        this.selectionNode = defaultNode
-        this.isRootNode = true
-        this.treeLoaded = true
+        const defaultNode = data[0];
+        this.selectionNode = defaultNode;
+        this.isRootNode = true;
+        this.treeLoaded = true;
         this.$nextTick(() => {
-          const node = this.$refs.tree.getNode(defaultNode.id)
-          this.$refs.tree.setCurrentNode(node.data)
-          this.query.catalogue = defaultNode.code
-          this.treeNode = defaultNode
-          console.log('treeLoaded', this.query.catalogue)
-          this.getTableData()
-        })
+          const node = this.$refs.tree.getNode(defaultNode.id);
+          this.$refs.tree.setCurrentNode(node.data);
+          this.query.catalogue = defaultNode.code;
+          this.treeNode = defaultNode;
+          console.log("treeLoaded", this.query.catalogue);
+          this.getTableData();
+        });
       } else {
-        this.query.parentId = null
-        this.selectionNode = null
-        this.treeData = []
-        this.tableData = []
-        this.tableLoading = true
-        this.treeLoading = false
+        this.query.parentId = null;
+        this.selectionNode = null;
+        this.treeData = [];
+        this.tableData = [];
+        this.tableLoading = true;
+        this.treeLoading = false;
       }
-      this.treeLoading = false
+      this.treeLoading = false;
       if (success) {
-        this.treeData = data
-        this.selectionNode = data[0] || {}
-        this.tableLoading = true
-        this.treeLoading = false
-        this.getTableData()
+        this.treeData = data;
+        this.selectionNode = data[0] || {};
+        this.tableLoading = true;
+        this.treeLoading = false;
+        this.getTableData();
       }
     },
 
@@ -492,64 +492,68 @@ export default {
         this.treeData.length > 0 &&
         data.id === this.treeData[0].id
       ) {
-        this.isRootNode = true
+        this.isRootNode = true;
       } else {
-        this.isRootNode = false
+        this.isRootNode = false;
       }
-      console.log(data, node, ve)
-      this.selectionNode = { ...data }
-      this.query.catalogue = data.code
-      this.treeNode = data
-      this.pageParams.pageSize = 20
-      this.pageParams.current = 1
-      this.getTableData()
-      this.scrollTop()
+      console.log(data, node, ve);
+      this.selectionNode = { ...data };
+      this.query.catalogue = data.code;
+      this.treeNode = data;
+      this.pageParams.pageSize = 20;
+      this.pageParams.current = 1;
+      this.getTableData();
+      this.scrollTop();
     },
 
     scrollTop() {
       this.$nextTick(() => {
-        let test = document.getElementsByClassName('el-table__body-wrapper')[0]
-        test.scroll(0, 0)
-      })
+        let test = document.getElementsByClassName("el-table__body-wrapper")[0];
+        test.scroll(0, 0);
+      });
     },
     edit(row, status, task) {
-      this.handelShowDialog(row, status, task)
+      this.$setStorage("acceptance_evaluation", {
+        sectionId: this.query.sectionId,
+        treeNode: this.treeNode,
+      });
+      this.handelShowDialog(row, status, task);
     },
 
     timeFormat(time, type) {
-      return dateFormat(time, type || 'YYYY-MM-DD HH:mm:ss')
+      return dateFormat(time, type || "YYYY-MM-DD HH:mm:ss");
     },
 
     handleSizeChange(val) {
-      this.pageParams.pageSize = val.pageSize
-      this.getTableData()
-      this.scrollTop()
+      this.pageParams.pageSize = val.pageSize;
+      this.getTableData();
+      this.scrollTop();
     },
     handleCurrentChange(val) {
-      this.pageParams = val
-      this.getTableData()
-      this.scrollTop()
+      this.pageParams = val;
+      this.getTableData();
+      this.scrollTop();
     },
     handelMoveEnd(moveX) {
-      this.treeWidth = this.treeWidth + moveX
+      this.treeWidth = this.treeWidth + moveX;
     },
     deletedata(row) {
-      console.log(row)
+      console.log(row);
       if (!row.id) {
-        return
+        return;
       }
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (res.success) {
-          this.getTableData()
+          this.getTableData();
         } else {
-          this.$message.error('数据删除异常，' + res.message)
+          this.$message.error("数据删除异常，" + res.message);
         }
-      })
-    }
-  }
-}
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

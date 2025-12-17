@@ -401,7 +401,7 @@ export default defineComponent({
       this.loading = true;
       try {
         const params = {
-          pageNum: this.searchData.current,
+          current: this.searchData.current,
           pageSize: this.searchData.pageSize,
           entity: {
             projectCode: this.searchData.projectCode,
