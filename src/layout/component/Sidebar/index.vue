@@ -1,20 +1,22 @@
 <template>
   <aside class="app-sidebar">
-    <el-menu
-      class="sideBar-menu"
-      :default-active="activeMenu"
-      :background-color="variables.menuBg"
-      :text-color="variables.menuText"
-      :active-text-color="variables.menuActiveText"
-      unique-opened
-      mode="vertical"
-    >
-      <SidebarItem
-        v-for="route in menuRoutes"
-        :key="route.permCode || route.id || route.value || route.name"
-        :item="route"
-      />
-    </el-menu>
+    <el-scrollbar class="sidebar-scrollbar">
+      <el-menu
+        class="sideBar-menu"
+        :default-active="activeMenu"
+        :background-color="variables.menuBg"
+        :text-color="variables.menuText"
+        :active-text-color="variables.menuActiveText"
+        unique-opened
+        mode="vertical"
+      >
+        <SidebarItem
+          v-for="route in menuRoutes"
+          :key="route.permCode || route.id || route.value || route.name"
+          :item="route"
+        />
+      </el-menu>
+    </el-scrollbar>
   </aside>
 </template>
 
@@ -43,7 +45,7 @@ export default {
   },
   created() {
     // 调试：查看侧边栏菜单树结构
-    const summary = (this.menuRoutes || []).map((item) => ({
+    const summary = (this.menuRoutes || []).map(item => ({
       code: item.permCode,
       title: item.permName || item.title || item.name,
       childrenCount: item.children ? item.children.length : 0,
@@ -57,17 +59,21 @@ export default {
 <style scoped lang="scss">
 .app-sidebar {
   height: 100%;
-  background: #014acb;
-  color: #ffffff;
+  background: #fff;
+  color: #626262;
+}
+
+.sidebar-scrollbar {
+  height: 100%;
 }
 
 .sideBar-menu {
   border-right: none;
-  height: 100%;
-  padding-top: 18px;
+  padding-top: 1px;
 }
 
 .el-menu {
-  font-size: 16px;
+  font-size: 18px;
+  font-family: MicrosoftYaHei;
 }
 </style>
