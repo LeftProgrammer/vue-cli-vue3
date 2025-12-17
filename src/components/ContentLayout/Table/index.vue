@@ -531,9 +531,9 @@ $height: 32px;
         }
 
         .reset-btn {
-          border: 1px solid #014acb;
+          border: 1px solid var(--el-color-primary);
           background: #fff;
-          color: #014acb;
+          color: var(--el-color-primary);
         }
       }
     }
@@ -624,8 +624,8 @@ $height: 32px;
 
         &.el-tag--primary {
           background: #fff;
-          color: #014acb;
-          border-color: #014acb;
+          color: var(--el-color-primary);
+          border-color: var(--el-color-primary);
         }
 
         &.el-tag--warning {
@@ -728,7 +728,7 @@ $height: 32px;
       padding-bottom: 1px;
 
       .el-pager li.active {
-        background-color: #014acb;
+        background-color: var(--el-color-primary);
       }
     }
   }

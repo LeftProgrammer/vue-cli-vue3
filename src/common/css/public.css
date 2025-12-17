@@ -285,7 +285,7 @@
 }
 
 .text-041ACB{
-	color: #014ACB;
+	color: var(--el-color-primary);
 }
 .text-F53F3F{
 	color: #F53F3F;

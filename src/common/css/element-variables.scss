@@ -1,65 +1,65 @@
 // 全局按钮
 .el-button.el-button--primary:not(.el-button--text) {
-    background: #014acb;
+    background: var(--el-color-primary);
     border-color: transparent;
     color: #fff;
     // border: none;
     &:hover {
         color: #fff;
-        background-color: #498de6;
+        background-color: var(--el-color-primary-light-3);
     }
     &:focus {
         color: #fff;
-        background-color: #002680;
+        background-color: var(--el-color-primary-dark-2);
     }
     &.is-disabled {
         color: #fff;
-        background-color: #a3d1ff;
+        background-color: var(--el-color-primary-light-7);
     }
     &.is-plain {
-        background: #deeaff;
-        color: #014acb;
+        background: var(--el-color-primary-light-9);
+        color: var(--el-color-primary);
     }
 }
 
 .el-button:not(.el-button--text) {
     background: #ffffff;
-    border: 1px solid #014acb;
-    color: #014acb;
+    border: 1px solid var(--el-color-primary);
+    color: var(--el-color-primary);
     &:hover {
         background: #ffffff;
-        border-color: #498de6;
-        color: #014acb;
+        border-color: var(--el-color-primary-light-3);
+        color: var(--el-color-primary);
     }
     &:focus {
         background: #ffffff;
-        color: #014acb;
-        border-color: #002680;
+        color: var(--el-color-primary);
+        border-color: var(--el-color-primary-dark-2);
     }
     &.is-disabled {
         background: #ffffff;
-        color: #a3d1ff;
-        border-color: #a3d1ff;
+        color: var(--el-color-primary-light-7);
+        border-color: var(--el-color-primary-light-7);
         &:hover {
             background: #ffffff;
-            border-color: #a3d1ff;
-            color: #a3d1ff;
+            border-color: var(--el-color-primary-light-7);
+            color: var(--el-color-primary-light-7);
         }
     }
 }
 
 .el-button--text {
-    color: #014acb;
+    color: var(--el-color-primary);
     &:hover {
-        color: #014acb;
+        color: var(--el-color-primary);
     }
     &:focus {
-        color: #014acb;
+        color: var(--el-color-primary);
     }
     &.is-disabled {
-        color: #a3d1ff;
+        color: var(--el-color-primary-light-7);
         &:hover {
-            color: #a3d1ff;
+            color: var(--el-color-primary-light-7);
         }
     }
 }
@@ -71,9 +71,9 @@
 // link 超链接
 .el-link {
     &.el-link--primary {
-        color: #014acb;
+        color: var(--el-color-primary);
         &:hover {
-            color: #498de6;
+            color: var(--el-color-primary-light-3);
         }
     }
     &.el-link--success {
@@ -93,28 +93,28 @@
 // 下拉框
 .el-select-dropdown {
     .el-select-dropdown__item.selected {
-        color: #014acb;
+        color: var(--el-color-primary);
     }
     .el-select-dropdown__item.hover {
-        color: #014acb;
+        color: var(--el-color-primary);
     }
 }
 
 // 日期
 .el-picker-panel {
     .el-date-table td.today span {
-        color: #014acb;
+        color: var(--el-color-primary);
     }
     .el-date-table td.today.current span {
         color: #fff;
     }
     .el-date-table td.available:hover {
-        color: #014acb;
+        color: var(--el-color-primary);
     }
     .el-date-table td.current:not(.disabled) span,
     .el-date-table td.end-date span,
     .el-date-table td.start-date span {
-        background-color: #014acb;
+        background-color: var(--el-color-primary);
     }
 }
 

@@ -154,7 +154,7 @@ export default {
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   display: flex;
   justify-content: space-between;
-  background: #014acb;
+  background: var(--el-color-primary);
   height: 5.56%;
   min-height: 54px;
 }

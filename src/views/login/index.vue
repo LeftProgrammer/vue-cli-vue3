@@ -368,7 +368,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, #014acb 0%, #02142f 60%, #014acb 100%);
+  background: linear-gradient(135deg, var(--el-color-primary) 0%, #02142f 60%, var(--el-color-primary) 100%);
 }
 
 .login-bgImg {
@@ -440,7 +440,7 @@ export default {
 .form-left {
   width: 40%;
   padding: 16px;
-  background: linear-gradient(180deg, #014acb 0%, rgba(1, 109, 203, 0.06) 100%);
+  background: linear-gradient(180deg, var(--el-color-primary) 0%, rgba(1, 109, 203, 0.06) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -542,7 +542,7 @@ export default {
   width: 100%;
   height: 56px;
   line-height: 56px;
-  background: #014acb;
+  background: var(--el-color-primary);
   box-shadow: 0 4px 10px rgba(8, 56, 99, 0.15);
   border-radius: 2px;
   text-align: center;

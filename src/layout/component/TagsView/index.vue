@@ -310,9 +310,9 @@ export default {
       }
 
       &.active {
-        color: #014acb;
+        color: var(--el-color-primary);
         font-weight: 600;
-        border-bottom: 2px solid #014acb;
+        border-bottom: 2px solid var(--el-color-primary);
       }
     }
   }
