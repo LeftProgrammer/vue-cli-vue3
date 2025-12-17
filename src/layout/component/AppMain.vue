@@ -25,7 +25,7 @@ export default {
   computed: {
     ...mapGetters(["cachedViews"]),
     key() {
-      return this.$route.path;
+      return this.$route.fullPath;
     },
     // 目前始终进入系统，保留接口便于后续根据权限控制
     intoSyster() {
@@ -45,6 +45,7 @@ export default {
 
   .tagsBg {
     // 标签栏背景占位，可按需增加装饰样式
+    position: relative;
   }
 
   .content {

@@ -40,7 +40,7 @@ export default {
 
   .app-content {
     height: 94.44%;
-    max-height: calc(100% - 65px);
+    max-height: calc(100% - 54px);
     width: 100%;
     display: flex;
 

@@ -18,34 +18,44 @@
         @contextmenu.prevent="openMenu(tag, $event)"
       >
         <span class="tag-title">{{ tag.title }}</span>
-        <span
+        <el-icon
           v-if="!isAffix(tag)"
           class="el-icon-close"
           @click.prevent.stop="closeSelectedTag(tag)"
-        />
+        >
+          <Close />
+        </el-icon>
       </router-link>
     </ScrollPane>
     <!-- 左右切换按钮 -->
-    <i
-      v-if="showControls"
-      class="el-icon-arrow-left mx-10"
-      @click="scrollNav(-1)"
-    />
-    <i
-      v-if="showControls"
-      class="el-icon-arrow-right mr-20"
-      @click="scrollNav(1)"
-    />
+    <el-icon v-if="showControls" class="el-icon-arrow-left mx-10" @click="scrollNav(-1)">
+      <ArrowLeft />
+    </el-icon>
+    <el-icon v-if="showControls" class="el-icon-arrow-right mr-20" @click="scrollNav(1)">
+      <ArrowRight />
+    </el-icon>
+
+    <ul
+      v-show="visible"
+      class="contextmenu"
+      :style="{ left: left + 'px', top: top + 'px' }"
+    >
+      <li @click="refreshSelectedTag(selectedTag)">刷新</li>
+      <li v-if="!isAffix(selectedTag)" @click="closeSelectedTag(selectedTag)">关闭</li>
+      <li @click="closeOthersTags">关闭其它</li>
+      <li @click="closeAllTags(selectedTag)">关闭所有</li>
+    </ul>
   </div>
 </template>
 
 <script>
 import { mapGetters } from "vuex";
 import ScrollPane from "./ScrollPane.vue";
+import { ArrowLeft, ArrowRight, Close } from "@element-plus/icons-vue";
 
 export default {
   name: "TagsView",
-  components: { ScrollPane },
+  components: { ScrollPane, ArrowLeft, ArrowRight, Close },
   data() {
     return {
       visible: false,
@@ -59,20 +69,6 @@ export default {
   computed: {
     ...mapGetters(["menuRoutes"]),
     visitedViews() {
-      // 计算标签总宽度，决定是否显示左右切换按钮
-      this.$nextTick(() => {
-        const parent = document.getElementById("tags-view-container");
-        if (!parent) return;
-        const parentWidth = parent.offsetWidth;
-        const childs = document.getElementsByClassName("tags-view-item");
-        let childWidth = 0;
-        for (let index = 0; index < childs.length; index += 1) {
-          const element = childs[index];
-          childWidth += element.offsetWidth + 16;
-        }
-        childWidth += 30;
-        this.showControls = parentWidth <= childWidth;
-      });
       const views = this.$store.state.tagsView.visitedViews || [];
       return views;
     },
@@ -84,6 +80,14 @@ export default {
     $route() {
       this.addTags();
       this.moveToCurrentTag();
+    },
+    visitedViews: {
+      handler() {
+        this.$nextTick(() => {
+          this.updateControls();
+        });
+      },
+      deep: true,
     },
     visible(value) {
       if (value) {
@@ -98,31 +102,37 @@ export default {
     this.addTags();
     this.initTags();
     this.$nextTick(() => {
-      this.mustWheel();
+      this.updateControls();
     });
+    window.addEventListener("resize", this.updateControls);
+  },
+  beforeUnmount() {
+    window.removeEventListener("resize", this.updateControls);
   },
   methods: {
-    mustWheel() {
-      const wraps = document.getElementsByClassName("el-scrollbar__wrap");
-      const scrollContainer = wraps && wraps[0];
-      if (!scrollContainer) return;
-      scrollContainer.addEventListener("wheel", (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-      });
+    updateControls() {
+      const parent = document.getElementById("tags-view-container");
+      if (!parent) return;
+      const parentWidth = parent.offsetWidth;
+      const childs = document.getElementsByClassName("tags-view-item");
+      let childWidth = 0;
+      for (let index = 0; index < childs.length; index += 1) {
+        const element = childs[index];
+        childWidth += element.offsetWidth + 16;
+      }
+      childWidth += 30;
+      this.showControls = parentWidth <= childWidth;
     },
     scrollNav(direction) {
-      const allTags = this.$refs.tag || [];
-      const currentIndex = allTags.findIndex(
-        (item) => item.to.fullPath === this.$route.fullPath,
-      );
-      const target = allTags[currentIndex + direction];
-      this.$nextTick(() => {
-        if (target) {
-          this.$router.push(target.to);
-          this.moveToCurrentTag();
-        }
+      const views = this.visitedViews || [];
+      const currentIndex = views.findIndex((v) => {
+        if (v.path === "/customTable") return v.fullPath === this.$route.fullPath;
+        return v.path === this.$route.path;
       });
+      const target = views[currentIndex + direction];
+      if (target) {
+        this.$router.push(target.fullPath);
+      }
     },
     isActive(route) {
       if (route.path === "/customTable") {
@@ -131,7 +141,7 @@ export default {
       return route.path === this.$route.path;
     },
     isAffix(tag) {
-      return !!tag.ishome; // 或 tag.meta && tag.meta.affix
+      return !!(tag?.meta?.affix || tag?.meta?.ishome || tag?.ishome);
     },
     filterAffixTags(routes, basePath = "/") {
       let tags = [];
@@ -189,38 +199,42 @@ export default {
       return false;
     },
     moveToCurrentTag() {
+      const views = this.visitedViews || [];
       const tags = this.$refs.tag || [];
       this.$nextTick(() => {
-        for (const tag of tags) {
-          if (tag.to.path === this.$route.path) {
-            this.$refs.scrollPane && this.$refs.scrollPane.moveToTarget(tag);
-            if (tag.to.path !== this.$route.path) {
-              this.$store.dispatch(
-                "tagsView/updateVisitedView",
-                this.$route,
-              );
-            }
-            break;
-          }
+        const currentView = views.find((v) => {
+          if (v.path === "/customTable") return v.fullPath === this.$route.fullPath;
+          return v.path === this.$route.path;
+        });
+        const currentTag = tags.find((t) => t && t.to && this.isActive(t.to));
+        if (currentTag) {
+          this.$refs.scrollPane && this.$refs.scrollPane.moveToTarget(currentTag);
+        }
+        if (currentView && currentView.fullPath !== this.$route.fullPath) {
+          this.$store.dispatch("tagsView/updateVisitedView", this.$route);
         }
       });
     },
     refreshSelectedTag(view) {
       this.$store.dispatch("tagsView/delCachedView", view).then(() => {
-        const { fullPath } = view;
+        const query = { ...(this.$route.query || {}), _t: Date.now() };
         this.$nextTick(() => {
           this.$router.replace({
-            path: "/redirect" + fullPath,
+            path: this.$route.path,
+            query,
           });
         });
       });
+      this.closeMenu();
     },
     closeSelectedTag(view) {
+      if (this.isAffix(view)) return;
       this.$store.dispatch("tagsView/delView", view).then(({ visitedViews }) => {
         if (this.isActive(view)) {
           this.toLastView(visitedViews, view);
         }
       });
+      this.closeMenu();
     },
     closeOthersTags() {
       this.$router.push(this.selectedTag);
@@ -229,34 +243,44 @@ export default {
         .then(() => {
           this.moveToCurrentTag();
         });
+      this.closeMenu();
     },
     closeAllTags(view) {
       this.$store.dispatch("tagsView/delAllViews", view).then(({ visitedViews }) => {
-        if (this.affixTags.some((tag) => tag.path === view.path)) {
+        if (this.isAffix(view)) {
           return;
         }
         this.toLastView(visitedViews, view);
       });
+      this.closeMenu();
     },
     toLastView(visitedViews, view) {
       const latestView = visitedViews.slice(-1)[0];
       if (latestView) {
         this.$router.push(latestView.fullPath);
-      } else if (view.name === "Dashboard") {
-        this.$router.replace({ path: "/redirect" + view.fullPath });
       } else {
         this.$router.push("/");
       }
     },
     openMenu(tag, e) {
       const menuMinWidth = 105;
-      const offsetLeft = this.$el.getBoundingClientRect().left;
+      const containerRect = this.$el.getBoundingClientRect();
+      const targetRect = e.currentTarget
+        ? e.currentTarget.getBoundingClientRect()
+        : null;
+
       const offsetWidth = this.$el.offsetWidth;
       const maxLeft = offsetWidth - menuMinWidth;
-      const left = e.clientX - offsetLeft + 15;
 
+      // 默认跟随鼠标；如果能拿到当前标签的 rect，则对齐到标签下方（水平居中）
+      const rawLeft = targetRect
+        ? targetRect.left - containerRect.left + targetRect.width / 2 - menuMinWidth / 2
+        : e.clientX - containerRect.left;
+      const rawTop = targetRect ? targetRect.bottom - containerRect.top : e.clientY - containerRect.top;
+
+      const left = rawLeft < 0 ? 0 : rawLeft;
       this.left = left > maxLeft ? maxLeft : left;
-      this.top = e.clientY;
+      this.top = rawTop + 6;
       this.visible = true;
       this.selectedTag = tag;
     },
@@ -279,6 +303,7 @@ export default {
 }
 
 .tags-view-container {
+  position: relative;
   width: 100%;
   background: #fff;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
@@ -291,7 +316,8 @@ export default {
     }
 
     .tags-view-item {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       position: relative;
       cursor: pointer;
       text-decoration: none; // 去掉 router-link 默认下划线
@@ -304,6 +330,11 @@ export default {
       font-size: 16px;
       border-top-right-radius: 5px;
       border-top-left-radius: 5px;
+
+      .tag-title {
+        display: inline-flex;
+        align-items: center;
+      }
 
       &:last-of-type {
         margin-right: 15px !important;
@@ -348,7 +379,11 @@ export default {
 .tags-view-wrapper {
   .tags-view-item {
     .el-icon-close {
-      margin-left: 8px;
+      margin-left: 6px;
+      margin-top: 3px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       width: 16px;
       height: 16px;
       line-height: 16px;
@@ -356,6 +391,11 @@ export default {
       text-align: center;
       transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
       transform-origin: 100% 50%;
+
+      ::v-deep svg {
+        width: 14px;
+        height: 14px;
+      }
     }
   }
 }
@@ -385,7 +425,7 @@ export default {
   padding: 12px 0;
   border-radius: 3px;
   width: 30px;
-  color: #0096ff;
+  color: var(--el-color-primary);
   text-align: center;
   cursor: pointer;
 
