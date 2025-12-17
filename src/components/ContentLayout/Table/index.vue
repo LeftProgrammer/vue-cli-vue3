@@ -434,10 +434,15 @@ $height: 32px;
 
 .table-content {
   height: 100%;
+  width: 100%;
   background: #fff;
 
   > .el-row {
+    width: 100%;
     height: 100%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
 
     .search-form {
       height: auto;
@@ -543,6 +548,8 @@ $height: 32px;
   }
 
   .table {
+    flex: 1;
+    min-height: 0;
     height: calc(100% - 40px - #{$height});
 
     .table-header {

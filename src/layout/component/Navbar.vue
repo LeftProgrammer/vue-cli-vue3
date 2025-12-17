@@ -15,6 +15,8 @@
 
         <NoticeBar />
 
+        <TodoBar />
+
         <el-dropdown class="user-dropdown" placement="bottom-start" @command="handleCommand">
           <div class="font-topBar">
             <span class="text">{{ displayName }}</span>
@@ -48,6 +50,7 @@
 <script>
 import LogoBox from "./Logo.vue";
 import NoticeBar from "@/components/NoticeBar/index.vue";
+import TodoBar from "@/components/TodoBar/index.vue";
 import { mapGetters } from "vuex";
 import { getToken } from "@/utils/auth";
 import { refreshDictItemList } from "@/api/dict";
@@ -59,6 +62,7 @@ export default {
   components: {
     LogoBox,
     NoticeBar,
+    TodoBar,
     PasswordPage,
   },
   data() {

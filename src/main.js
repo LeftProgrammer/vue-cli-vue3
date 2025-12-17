@@ -3,6 +3,8 @@ import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 import ElementPlus from "element-plus";
+import { ElMessage, ElMessageBox } from "element-plus";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 import "element-plus/dist/index.css";
 import "normalize.css/normalize.css";
 import "@/styles/index.scss";
@@ -24,7 +26,7 @@ const bus = {
   emit(eventname, ...arg) {
     const cbs = this.callbacks[eventname];
     if (cbs && cbs.length) {
-      cbs.forEach((cb) => cb(...arg));
+      cbs.forEach(cb => cb(...arg));
     }
   },
   off(eventname, callback) {
@@ -35,7 +37,7 @@ const bus = {
     const cbs = this.callbacks[eventname];
     if (!cbs) return;
     if (callback) {
-      this.callbacks[eventname] = cbs.filter((cb) => cb !== callback);
+      this.callbacks[eventname] = cbs.filter(cb => cb !== callback);
     } else {
       delete this.callbacks[eventname];
     }
@@ -44,8 +46,12 @@ const bus = {
 
 app.config.globalProperties.$bus = bus;
 
+// 兼容旧项目 this.$message / this.$confirm
+app.config.globalProperties.$message = ElMessage;
+app.config.globalProperties.$confirm = ElMessageBox.confirm;
+
 // 兼容旧项目的本地存储工具
-app.config.globalProperties.$getStorage = (key) => {
+app.config.globalProperties.$getStorage = key => {
   if (!key) return null;
   try {
     const raw = window.localStorage.getItem(key);
@@ -56,7 +62,9 @@ app.config.globalProperties.$getStorage = (key) => {
         return raw;
       }
     }
-  } catch (e) {}
+  } catch (e) {
+    void e;
+  }
 
   if (key === "userInfo") {
     return store.getters && store.getters.loginInfo;
@@ -69,7 +77,9 @@ app.config.globalProperties.$setStorage = (key, value) => {
   try {
     const raw = typeof value === "string" ? value : JSON.stringify(value || {});
     window.localStorage.setItem(key, raw);
-  } catch (e) {}
+  } catch (e) {
+    void e;
+  }
 };
 
 // 兼容旧项目的导出工具
@@ -113,6 +123,7 @@ app.directive("thousands", {
 
 app.use(ElementPlus, {
   size: "medium",
+  locale: zhCn,
 });
 
 app.use(store).use(router).mount("#app");

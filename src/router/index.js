@@ -37,7 +37,19 @@ const routes = [
         component: () => import("@/views/common/message/index.vue"),
         meta: { title: "我的消息" },
       },
+      {
+        path: "flow",
+        name: "common-flow",
+        component: () => import("@/views/common/flow/index.vue"),
+        meta: { title: "待办事项" },
+      },
     ],
+  },
+  {
+    path: "/common/view",
+    name: "common-view",
+    component: () => import("@/views/common/view/index.vue"),
+    meta: { hidden: true },
   },
   {
     path: "/password",

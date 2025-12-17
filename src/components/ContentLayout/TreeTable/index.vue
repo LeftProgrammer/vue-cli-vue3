@@ -15,11 +15,11 @@
         :showPage="showPage"
         :showSearchBtns="showSearchBtns"
         :showExportBtn="false"
-        @pageSizeChange="(val) => $emit('pageSizeChange', val)"
-        @pageCurrentChange="(val) => $emit('pageCurrentChange', val)"
-        @reset="(q) => $emit('reset', q)"
-        @query="(q) => $emit('query', q)"
-        @initExportParams="(params) => $emit('initExportParams', params)"
+        @pageSizeChange="onPageSizeChange"
+        @pageCurrentChange="onPageCurrentChange"
+        @reset="onReset"
+        @query="onQuery"
+        @initExportParams="onInitExportParams"
       >
         <template #form>
           <slot name="form" />
@@ -107,7 +107,35 @@ export default {
       default: 5,
     },
   },
+  emits: [
+    "pageSizeChange",
+    "page-size-change",
+    "pageCurrentChange",
+    "page-current-change",
+    "reset",
+    "query",
+    "initExportParams",
+    "init-export-params",
+  ],
   methods: {
+    onPageSizeChange(val) {
+      this.$emit("pageSizeChange", val);
+      this.$emit("page-size-change", val);
+    },
+    onPageCurrentChange(val) {
+      this.$emit("pageCurrentChange", val);
+      this.$emit("page-current-change", val);
+    },
+    onReset(q) {
+      this.$emit("reset", q);
+    },
+    onQuery(q) {
+      this.$emit("query", q);
+    },
+    onInitExportParams(params) {
+      this.$emit("initExportParams", params);
+      this.$emit("init-export-params", params);
+    },
     // 导出列表：直接调用内部 TableLayout 的导出逻辑
     handleExport() {
       const table = this.$refs.tableLayoutRef;
