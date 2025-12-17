@@ -1,7 +1,7 @@
 <template>
   <div class="navbar">
     <div class="logo">
-      <LogoBox />
+      <LogoBox :collapse="true" />
       <el-divider direction="vertical" />
       <span class="title">雄安调蓄库工程智慧管理平台</span>
     </div>
@@ -13,12 +13,17 @@
           <div class="text">综合展示</div>
         </div>
 
-        <NoticeBar />
+        <div class="font-topBar">
+          <NoticeBar />
+        </div>
 
-        <TodoBar />
+        <div class="font-topBar">
+          <TodoBar />
+        </div>
 
         <el-dropdown class="user-dropdown" placement="bottom-start" @command="handleCommand">
-          <div class="font-topBar">
+          <div class="font-topBar user-trigger">
+            <img class="icon-topBar" :src="avatarDefault" />
             <span class="text">{{ displayName }}</span>
           </div>
           <template #dropdown>
@@ -56,6 +61,7 @@ import { getToken } from "@/utils/auth";
 import { refreshDictItemList } from "@/api/dict";
 import { ElMessage, ElMessageBox } from "element-plus";
 import PasswordPage from "@/views/password/index.vue";
+import avatarDefault from "@/assets/avatar-default.png";
 
 export default {
   name: "LayoutNavbar",
@@ -68,6 +74,7 @@ export default {
   data() {
     return {
       changePassVisible: false,
+      avatarDefault,
     };
   },
   computed: {
@@ -147,11 +154,9 @@ export default {
   box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
   display: flex;
   justify-content: space-between;
-  align-items: center;
   background: #014acb;
-  height: 56px;
+  height: 5.56%;
   min-height: 54px;
-  padding: 0 24px;
 }
 
 .logo {
@@ -171,6 +176,7 @@ export default {
 
 .right-menu {
   height: 100%;
+  line-height: 60px;
 }
 
 .avatar-wrapper {
@@ -180,23 +186,30 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-right: 8px;
+  gap: 20px;
+  margin-right: 20px;
 }
 
 .font-topBar {
   height: 100%;
   font-weight: 500;
-  font-size: 16px;
-  margin: 0 12px;
+  font-size: 18px;
+  margin: 0;
   cursor: pointer;
   color: #ffffff;
   display: flex;
+  gap: 10px;
   justify-items: center;
   align-items: center;
 }
 
 .font-topBar .text {
-  text-indent: 4px;
+  text-indent: 0;
+  font-size: 16px;
+}
+
+.font-topBar.user-trigger {
+  margin: 0;
 }
 
 .font-topBar .icon-topBar {
@@ -209,6 +222,22 @@ export default {
   background-position: center;
   background-size: 100%;
   background-repeat: no-repeat;
+}
+
+.avatar-wrapper :deep(.notice-bar),
+.avatar-wrapper :deep(.todo-bar) {
+  gap: 10px;
+}
+
+.avatar-wrapper :deep(.notice-bar .icon-topBar),
+.avatar-wrapper :deep(.todo-bar .icon-topBar) {
+  right: 0;
+}
+
+.avatar-wrapper :deep(.notice-bar .font-topBar),
+.avatar-wrapper :deep(.todo-bar .font-topBar) {
+  margin: 0;
+  line-height: inherit;
 }
 
 .user-dropdown {

@@ -202,6 +202,7 @@ export default {
   position: relative;
   right: 8px;
   width: 22px;
+  height: 22px;
 }
 
 .font-topBar {
