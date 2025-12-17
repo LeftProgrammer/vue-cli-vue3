@@ -24,6 +24,7 @@ export function getInfo(token) {
     url: "/api/current",
     method: "get",
     params: { token },
+    showLoading: false,
   });
 }
 
