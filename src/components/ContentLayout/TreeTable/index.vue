@@ -53,7 +53,7 @@
 import TableLayout from "@/components/ContentLayout/Table/index.vue";
 
 export default {
-  name: "ContentLayoutTreeTable",
+  name: "TreeTableLayout",
   components: {
     TableLayout,
   },

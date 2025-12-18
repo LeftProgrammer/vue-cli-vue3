@@ -687,14 +687,27 @@ $height: 32px;
 
         .el-table__body-wrapper {
           height: calc(100% - 56px) !important;
-          overflow-y: auto;
-          border-right: 1px solid #ebeef5;
+          overflow: hidden;
+          box-sizing: border-box;
+
+          .el-scrollbar__wrap {
+            overflow-x: hidden;
+            box-sizing: border-box;
+          }
+
+          .el-scrollbar__view {
+            overflow-x: hidden;
+          }
 
           .el-table__body {
             .el-table__row {
               .el-table__cell {
                 height: 48px;
               }
+            }
+
+            tr.hover-row td {
+              background: transparent;
             }
 
             tr:hover td {
@@ -704,7 +717,8 @@ $height: 32px;
         }
 
         .el-table__fixed-body-wrapper {
-          border-right: 1px solid #ebeef5;
+          overflow-x: hidden;
+          box-sizing: border-box;
 
           .el-table__row {
             .el-table__cell {
@@ -714,8 +728,8 @@ $height: 32px;
         }
       }
 
-      overflow: hidden;
       overflow-y: auto;
+      overflow-x: hidden;
     }
   }
 
