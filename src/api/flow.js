@@ -60,6 +60,30 @@ export function cc(data) {
   });
 }
 
+export function getBusinessPage(listurl, data) {
+  return request({
+    url: listurl,
+    method: "post",
+    data: {
+      current: 1,
+      pageSize: 10,
+      entity: {
+        ...(data || {}),
+      },
+    },
+    showLoading: false,
+  });
+}
+
+export function getBusinessList(listurl, data) {
+  return request({
+    url: listurl,
+    method: "post",
+    data,
+    showLoading: false,
+  });
+}
+
 // 获取待办属性
 export function todoread(data) {
   return request({

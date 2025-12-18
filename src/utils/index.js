@@ -62,3 +62,12 @@ export function computeTimeDuration(startTime, endTime) {
     seconds,
   };
 }
+
+export function windowOpen(url, target = "_blank") {
+  if (!url) return;
+  try {
+    window.open(url, target);
+  } catch (e) {
+    void e;
+  }
+}
