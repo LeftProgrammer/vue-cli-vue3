@@ -28,26 +28,25 @@
           <el-button
             v-if="showSearchBtn"
             type="primary"
-            size="small"
             @click="query"
           >
             查询
           </el-button>
           <div v-if="!showSearchBtn" style="width: 90px"></div>
-          <el-button icon="el-icon-refresh-left" size="small" @click="reset">
+          <el-button :icon="RefreshLeft" @click="reset">
             重置
           </el-button>
           <slot name="searchBtnsAppend"></slot>
           <template v-if="showSearchOpenBtn">
             <el-button
               v-if="searchOpen"
-              icon="el-icon-arrow-down"
+              :icon="ArrowDown"
               class="search-btn"
               @click="searchOpenHandle()"
             />
             <el-button
               v-else
-              icon="el-icon-arrow-up"
+              :icon="ArrowUp"
               class="search-btn"
               @click="searchOpenHandle()"
             />
@@ -133,6 +132,8 @@
 </template>
 
 <script>
+import { ArrowDown, ArrowUp, RefreshLeft } from "@element-plus/icons-vue";
+
 export default {
   name: "ContentLayoutTable",
   props: {
@@ -201,6 +202,9 @@ export default {
   },
   data() {
     return {
+      ArrowDown,
+      ArrowUp,
+      RefreshLeft,
       pageParams: {
         pageSize: 20,
         size: 20,
@@ -662,8 +666,8 @@ $height: 32px;
       ::v-deep .el-table--border::after,
       ::v-deep .el-table--group::after,
       ::v-deep .el-table::before {
-        background: transparent !important;
-        z-index: -10;
+        background: #ebeef5 !important;
+        z-index: 1;
       }
 
       ::v-deep .el-table {
@@ -735,11 +739,13 @@ $height: 32px;
 
   .pagination-container {
     height: $height;
-    text-align: right;
+    display: flex;
+    justify-content: flex-end;
 
     ::v-deep .el-pagination {
       padding-top: 1px;
       padding-bottom: 1px;
+      text-align: right;
 
       .el-pager li.active {
         background-color: var(--el-color-primary);

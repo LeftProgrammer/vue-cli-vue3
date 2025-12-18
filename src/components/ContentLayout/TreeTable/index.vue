@@ -25,7 +25,7 @@
           <slot name="form" />
         </template>
 
-        <template #tree>
+        <template v-if="$slots.tree" #tree>
           <slot name="tree" />
         </template>
 

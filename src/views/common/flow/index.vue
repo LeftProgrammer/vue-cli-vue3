@@ -46,7 +46,13 @@
                 @node-click="handelNodeClick"
               />
             </div>
-            <DragLine :minMoveX="0" @move-end="handelMoveEnd" />
+            <DragLine
+              :minMoveX="0"
+              :useTransform="false"
+              @move-start="handleMoveStart"
+              @moving="handleMoving"
+              @move-end="handelMoveEnd"
+            />
           </div>
 
           <div class="table-wrapper">
@@ -256,6 +262,7 @@ export default {
         status: "",
       },
       treeWidth: 267,
+      dragStartTreeWidth: null,
       treeData: [
         { label: "待发事项", id: "wait" },
         { label: "待办事项", id: "todo" },
@@ -481,7 +488,18 @@ export default {
       });
     },
     handelMoveEnd(moveX) {
-      this.treeWidth = this.treeWidth + moveX;
+      const base = this.dragStartTreeWidth !== null ? this.dragStartTreeWidth : this.treeWidth;
+      this.treeWidth = base + moveX;
+      this.dragStartTreeWidth = null;
+    },
+    handleMoveStart() {
+      this.dragStartTreeWidth = this.treeWidth;
+    },
+    handleMoving(moveX) {
+      if (this.dragStartTreeWidth === null) {
+        this.dragStartTreeWidth = this.treeWidth;
+      }
+      this.treeWidth = this.dragStartTreeWidth + moveX;
     },
     async loadAfter(records) {
       const tableData = [...(records || [])];
@@ -558,9 +576,8 @@ export default {
       position: relative;
 
       &:hover {
-        .drag-line {
-          width: 5px;
-          background-color: #e4e1e1;
+        .tree-wrapper {
+          border-right-color: rgba(18, 152, 250, 0.8);
         }
       }
     }
@@ -570,11 +587,18 @@ export default {
       height: 100%;
       overflow-y: auto;
       border: #e5e5e5 1px solid;
+      padding: 8px;
+      box-sizing: border-box;
     }
 
     .table-wrapper {
       flex: 1;
       width: 0;
+
+      padding: 8px;
+      box-sizing: border-box;
+      border: #e5e5e5 1px solid;
+      border-left: none;
     }
   }
 }
