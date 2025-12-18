@@ -43,7 +43,7 @@
     <el-dialog
       v-model="changePassVisible"
       title="修改密码"
-      width="630px"
+      width="680px"
       :close-on-press-escape="true"
       :close-on-click-modal="false"
     >

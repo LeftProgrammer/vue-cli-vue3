@@ -93,7 +93,7 @@ export default {
     line-height: 14px;
     width: 22px;
     top: 2px;
-    right: 20px;
+    right: 12px;
   }
 }
 

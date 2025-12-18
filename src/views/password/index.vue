@@ -1,55 +1,48 @@
 <template>
   <div class="password-page">
     <div class="main">
-      <el-card class="password-card" header="修改密码">
-        <el-row :gutter="20">
-          <el-col :span="14">
-            <el-form
-              ref="formRef"
-              :model="form"
-              :rules="rules"
-              label-width="80px"
-            >
-              <el-form-item label="账号">
-                <el-input :value="loginInfo && loginInfo.username" disabled />
-              </el-form-item>
-              <el-form-item label="旧密码" prop="oldPassword">
-                <el-input
-                  v-model="form.oldPassword"
-                  type="password"
-                  placeholder="请输入旧密码"
-                  autocomplete="off"
-                />
-              </el-form-item>
-              <el-form-item label="新密码" prop="newPassword">
-                <el-input
-                  v-model="form.newPassword"
-                  type="password"
-                  placeholder="8-50 位，需包含数字、大小写字母和特殊字符"
-                  autocomplete="off"
-                />
-              </el-form-item>
-              <el-form-item label="重复密码" prop="confirmPassword">
-                <el-input
-                  v-model="form.confirmPassword"
-                  type="password"
-                  placeholder="请再次输入新密码"
-                  autocomplete="off"
-                />
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="handleSubmit">提交</el-button>
-              </el-form-item>
-            </el-form>
-          </el-col>
-          <el-col :span="10" class="password-rule">
-            <div>1. 密码必须包含数字</div>
-            <div>2. 密码必须包含字母（同时包含大、小写字母）</div>
-            <div>3. 密码必须包含特殊字符</div>
-            <div>4. 密码长度范围为 8 位到 50 位</div>
-          </el-col>
-        </el-row>
-      </el-card>
+      <el-row :gutter="20">
+        <el-col :span="12">
+          <el-form ref="formRef" :model="form" :rules="rules" label-width="80px">
+            <el-form-item label="账号">
+              <el-input :value="loginInfo && loginInfo.username" disabled />
+            </el-form-item>
+            <el-form-item label="旧密码" prop="oldPassword">
+              <el-input
+                v-model="form.oldPassword"
+                type="password"
+                placeholder="请输入旧密码"
+                autocomplete="off"
+              />
+            </el-form-item>
+            <el-form-item label="新密码" prop="newPassword">
+              <el-input
+                v-model="form.newPassword"
+                type="password"
+                placeholder="请输入新密码"
+                autocomplete="off"
+              />
+            </el-form-item>
+            <el-form-item label="重复密码" prop="confirmPassword">
+              <el-input
+                v-model="form.confirmPassword"
+                type="password"
+                placeholder="请再次输入新密码"
+                autocomplete="off"
+              />
+            </el-form-item>
+            <div class="footer">
+              <el-button type="primary" style="float: right" @click="handleSubmit">提交</el-button>
+            </div>
+          </el-form>
+        </el-col>
+        <el-col :span="12" class="password-rule">
+          <div>1. 密码必须包含数字</div>
+          <div>2. 密码必须包含字母（同时包含大、小写字母）</div>
+          <div>3. 密码必须包含特殊字符</div>
+          <div>4. 密码长度范围为 8 位到 50 位</div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
@@ -70,9 +63,7 @@ export default {
         confirmPassword: "",
       },
       rules: {
-        oldPassword: [
-          { required: true, message: "旧密码不能为空", trigger: "blur" },
-        ],
+        oldPassword: [{ required: true, message: "旧密码不能为空", trigger: "blur" }],
         newPassword: [
           { required: true, message: "新密码不能为空", trigger: "blur" },
           {
@@ -150,7 +141,7 @@ export default {
       callback();
     },
     handleSubmit() {
-      this.$refs.formRef.validate(async (valid) => {
+      this.$refs.formRef.validate(async valid => {
         if (!valid) return;
         try {
           const payload = {
@@ -159,9 +150,7 @@ export default {
           };
           const res = await resetUserPassword(payload);
           if (!res || !res.success) {
-            ElMessage.error(
-              (res && res.message) || "修改密码失败，请稍后重试",
-            );
+            ElMessage.error((res && res.message) || "修改密码失败，请稍后重试");
             return;
           }
           ElMessage.success("修改密码成功，请重新登录");
@@ -180,17 +169,8 @@ export default {
 .password-page {
   display: flex;
   justify-content: center;
-  padding: 40px 0;
-
-  .main {
-    width: 700px;
-  }
-
-  .password-card {
-    .password-rule {
-      line-height: 24px;
-      padding-top: 16px;
-    }
+  .password-rule {
+    line-height: 24px;
   }
 }
 </style>

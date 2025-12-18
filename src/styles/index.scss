@@ -119,6 +119,7 @@ html {
   height: 100%;
 
   & > .flow-form-page {
+    display: block;
     // width: 100%;
     // height: 100%;
     // padding: 15px;
@@ -337,10 +338,7 @@ div:focus {
 }
 
 .el-form {
-  .el-input.is-disabled .el-input__inner {
-    // color: $main;
-  }
-
+  display: block;
   .file-list {
     display: flex;
     flex-wrap: wrap;
@@ -433,6 +431,7 @@ div:focus {
 
 .widget-render .widget-design {
   .el-textarea.is-disabled .el-textarea__inner {
+    color: #333 !important;
     // color: #1A74F0;
   }
 }

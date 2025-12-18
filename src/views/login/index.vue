@@ -416,8 +416,6 @@ export default {
   height: 479px;
   overflow: hidden;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   position: absolute;
   top: 50%;
   left: 50%;
@@ -451,17 +449,23 @@ export default {
 }
 
 .form-left-name {
-  font-size: 20px;
+  margin-top: 18px;
+  width: 410px;
+  height: 50px;
+  font-family: MiSans, MiSans;
+  font-weight: 600;
+  font-size: 29px;
   color: #ffffff;
+  line-height: 50px;
+  letter-spacing: 2px;
   text-align: center;
-  margin-top: 12px;
+  font-style: normal;
+  text-transform: none;
 }
 
 .form-version {
-  margin-top: 8px;
-  font-size: 12px;
-  color: #c0d5ff;
-  text-align: center;
+  font-size: 14px;
+  color: #ffffff;
 }
 
 .login-form {
@@ -470,7 +474,8 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(4px);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .login-title {

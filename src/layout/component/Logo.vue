@@ -31,7 +31,6 @@ export default {
   color: #ffffff;
   height: 40px;
   width: 134px;
-  // 使用系统 Logo 作为背景图片，保持与旧项目一致
   background-image: url("@/assets/img/system/logo.png");
   background-position: center;
   background-size: 100%;
