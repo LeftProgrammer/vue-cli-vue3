@@ -3,7 +3,6 @@
     v-model="dialogShow"
     title="信息"
     width="40%"
-    class="wbench-el-dialog"
     :destroy-on-close="true"
     :close-on-press-escape="false"
     :close-on-click-modal="false"
@@ -48,6 +47,8 @@
                 format="YYYY-MM-DD HH:mm:ss"
                 value-format="x"
                 placeholder="选择日期"
+                style="width: 100%"
+                :disabled="readonly"
               />
             </el-form-item>
           </el-col>
@@ -97,39 +98,39 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.page-leave {
-  width: 100%;
-  height: 100%;
-  padding: 15px;
-}
+// .page-leave {
+//   width: 100%;
+//   height: 100%;
+//   padding: 15px;
+// }
 
-.page-leave .table :deep(.el-table__row .cell button) {
-  padding: 0 !important;
-}
+// .page-leave .table :deep(.el-table__row .cell button) {
+//   padding: 0 !important;
+// }
 
-.page-leave .pagination {
-  padding: 0 20px;
-}
+// .page-leave .pagination {
+//   padding: 0 20px;
+// }
 
-.subTabeHeader {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+// .subTabeHeader {
+//   display: flex;
+//   justify-content: space-between;
+//   align-items: center;
+// }
 
-.el-col .el-input {
-  width: 60%;
-}
+// .el-col .el-input {
+//   // width: 60%;
+// }
 
-.lengthening .el-select {
-  width: 93%;
-}
+// .lengthening .el-select {
+//   width: 93%;
+// }
 
-.lengthening .el-select .el-input {
-  width: 100%;
-}
+// .lengthening .el-select .el-input {
+//   width: 100%;
+// }
 
-:deep(.el-col .el-input) {
-  width: 100%;
-}
+// :deep(.el-col .el-input) {
+//   width: 100%;
+// }
 </style>

@@ -12,39 +12,23 @@
       </template>
 
       <template #table>
-        <el-table ref="multipleTable" :data="tableData" height="100%" border>
-          <el-table-column label="消息标题" prop="noticeTitle" align="left" width="640"/>
-          <el-table-column
-            label="发起人"
-            prop="sendUserRealName"
-            align="center"
-            width="200"
-          />
-          <el-table-column
-            label="发布时间"
-            prop="noticeDate"
-            align="center"
-            width="200"
-          >
+        <el-table
+          ref="multipleTable"
+          v-loading="tableLoading"
+          :data="tableData"
+          height="100%"
+          border
+        >
+          <el-table-column label="消息标题" prop="noticeTitle" align="left" />
+          <el-table-column label="发起人" prop="sendUserRealName" align="center" width="240" />
+          <el-table-column label="发布时间" prop="noticeDate" align="center" width="240">
             <template #default="{ row }">
-              {{
-                row.noticeDate
-                  ? dateFormat(row.noticeDate, "YYYY-MM-DD HH:mm:ss")
-                  : ""
-              }}
+              {{ row.noticeDate ? dateFormat(row.noticeDate, "YYYY-MM-DD HH:mm:ss") : "" }}
             </template>
           </el-table-column>
-          <el-table-column
-            label="已读"
-            prop="readStatus"
-            align="center"
-            width="120"
-          >
+          <el-table-column label="已读" prop="readStatus" align="center" width="120">
             <template #default="{ row }">
-              <span
-                class="iconfont"
-                :class="row.readStatus ? 'icon-checked' : ''"
-              ></span>
+              <span class="iconfont" :class="row.readStatus ? 'icon-checked' : ''"></span>
             </template>
           </el-table-column>
           <el-table-column label="操作" prop="name" width="200" align="center">
@@ -91,6 +75,7 @@ export default {
   mixins: [ListMixin],
   data() {
     return {
+      tableLoading: false,
       pageParams: {
         pageSize: 10,
         size: 10,
@@ -108,6 +93,26 @@ export default {
   },
   methods: {
     dateFormat,
+    handleSizeChange(val) {
+      if (typeof val === "number") {
+        this.pageParams.pageSize = val;
+        this.pageParams.size = val;
+      } else if (val && typeof val === "object") {
+        this.pageParams.pageSize = val.size;
+        this.pageParams.size = val.size;
+      }
+      this.getTableData && this.getTableData({ clear: false, showLoading: true });
+    },
+
+    handleCurrentChange(val) {
+      if (typeof val === "number") {
+        this.pageParams.current = val;
+      } else if (val && typeof val === "object") {
+        this.pageParams.current = val.current;
+      }
+      this.getTableData && this.getTableData({ clear: false, showLoading: true });
+    },
+
     // 查看：由 ListButton 触发，填充 oprateRow 并展示弹窗
     viewHandle(row) {
       if (this.oprateRow) {
@@ -119,7 +124,7 @@ export default {
     // 删除单条
     removeHandle(row) {
       if (!row || !row.noticeId) return;
-      remove(row.noticeId).then((res) => {
+      remove(row.noticeId).then(res => {
         if (res && res.success) {
           if (typeof row.$index === "number") {
             this.tableData.splice(row.$index, 1);
@@ -134,14 +139,14 @@ export default {
     },
     // 一键清空
     clearAll() {
-      const data = this.tableData.map((i) => i.noticeId).filter(Boolean);
+      const data = this.tableData.map(i => i.noticeId).filter(Boolean);
       if (!data.length) return;
       const msg = "清空通知列表失败";
       this.$confirm("确认清空通知列表？", "提示")
         .then(() => removeNoticeAll({ data }))
-        .then((res) => {
+        .then(res => {
           if (res && res.success) {
-            this.getTableData();
+            this.getTableData({ clear: false, showLoading: true });
             this.$bus && this.$bus.emit && this.$bus.emit("noticeNotReadCount");
           } else if (res) {
             this.$message.error(msg);
@@ -150,13 +155,11 @@ export default {
     },
     // 一键已读
     noticesAll() {
-      const ids = this.tableData
-        .filter((x) => x.readStatus === 0)
-        .map((x) => x.noticeId);
+      const ids = this.tableData.filter(x => x.readStatus === 0).map(x => x.noticeId);
       if (!ids.length) return;
-      noticesmulti(ids).then((res) => {
+      noticesmulti(ids).then(res => {
         if (res && res.success) {
-          this.getTableData();
+          this.getTableData({ clear: false, showLoading: true });
           this.$bus && this.$bus.emit && this.$bus.emit("noticeNotReadCount");
         }
       });
@@ -166,21 +169,16 @@ export default {
       if (this.oprateRow) {
         this.oprateRow.dialogShow = false;
       }
-      if (
-        row &&
-        row.noticeId &&
-        row.readStatus === 0 &&
-        typeof row.$index === "number"
-      ) {
-        notices(row.noticeId).then((res) => {
-          if (res && res.success) {
-            row.readStatus = 1;
-            this.$set(this.tableData, row.$index, { ...row });
-            this.$bus && this.$bus.emit && this.$bus.emit("noticeNotReadCount");
-          }
-        });
-      }
-      this.getTableData();
+
+      const shouldMarkRead = row && row.noticeId && row.readStatus === 0;
+      if (!shouldMarkRead) return;
+
+      notices(row.noticeId).then(res => {
+        if (res && res.success) {
+          this.$bus && this.$bus.emit && this.$bus.emit("noticeNotReadCount");
+          this.getTableData({ clear: false, showLoading: true });
+        }
+      });
     },
   },
 };

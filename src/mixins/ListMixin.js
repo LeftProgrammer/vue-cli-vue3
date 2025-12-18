@@ -65,12 +65,19 @@ export const ListMixin = {
       this.getTableData && this.getTableData();
     },
 
-    async getTableData() {
+    async getTableData(options = {}) {
       if (!this.url || !this.url.list) {
         console.error("请求路径为空！");
         return;
       }
-      this.tableData = [];
+
+      const { clear = true, showLoading = false } = options || {};
+      if (showLoading && Object.prototype.hasOwnProperty.call(this, "tableLoading")) {
+        this.tableLoading = true;
+      }
+      if (clear) {
+        this.tableData = [];
+      }
       const query = { ...this.pageParams };
       try {
         const res = await page(this.url.list, query);
@@ -90,6 +97,10 @@ export const ListMixin = {
         }
       } catch (e) {
         console.error("加载表格数据异常：", e);
+      } finally {
+        if (showLoading && Object.prototype.hasOwnProperty.call(this, "tableLoading")) {
+          this.tableLoading = false;
+        }
       }
     },
 
