@@ -10,8 +10,11 @@ import "normalize.css/normalize.css";
 import "@/styles/index.scss";
 import "./permission";
 import { download as handleExportDownload } from "@/utils/request";
+import setupSvgIcon from "@/icons";
 
 const app = createApp(App);
+
+setupSvgIcon(app);
 
 const bus = {
   arr: [],

@@ -41,6 +41,21 @@ module.exports = defineConfig({
   chainWebpack: (config) => {
     config.resolve.alias.set("@", resolve("src"));
 
+    const svgRule = config.module.rule("svg");
+    svgRule.exclude.add(resolve("src/icons")).end();
+
+    const iconsRule = config.module.rule("icons");
+    iconsRule.uses.clear();
+    iconsRule.test(/\.svg$/);
+    iconsRule.include.add(resolve("src/icons")).end();
+    iconsRule
+      .use("svg-sprite-loader")
+      .loader("svg-sprite-loader")
+      .options({
+        symbolId: "icon-[name]",
+      })
+      .end();
+
     config.optimization.minimizer("terser").tap((args) => {
       if (!args[0].terserOptions) {
         args[0].terserOptions = {};
