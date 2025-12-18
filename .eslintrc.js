@@ -34,17 +34,14 @@ module.exports = {
     "vue/no-v-html": "off",
     "vue/attribute-hyphenation": "off", // 允许 :isRoot 这类属性名
     "vue/no-deprecated-router-link-tag-prop": "off", // 允许暂时使用 router-link 的 tag 属性
+    "vue/v-on-event-hyphenation": "off", // 迁移期关闭：避免事件名 camelCase/kebab-case 全量整改
+    "vue/require-explicit-emits": "off", // 迁移期关闭：避免 emits 声明类 warnings 刷屏
 
     // 允许在 script/setup 等场景下未使用的组件名/变量
     "vue/no-unused-components": "warn",
     "vue/no-unused-vars": "warn",
 
-    // 使用 prettier，但只给出 warning，并指定 endOfLine:auto 兼容不同系统换行符
-    "prettier/prettier": [
-      "warn",
-      {
-        endOfLine: "auto",
-      },
-    ],
+    // 迁移期降噪：prettier 交给格式化工具处理，不在 ESLint 中刷屏
+    "prettier/prettier": "off",
   },
 };

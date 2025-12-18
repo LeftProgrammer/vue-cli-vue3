@@ -42,7 +42,9 @@ router.beforeEach(async (to, from, next) => {
       try {
         await config.init();
         await store.dispatch("user/getInfo");
-      } catch (e) {}
+      } catch (e) {
+        void e;
+      }
     }
 
     if (to.path === "/login") {

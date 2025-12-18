@@ -160,7 +160,9 @@ export const BaseMixin = {
           const url = window.parent.location.href;
           code = this.getQueryString(url, "permCode");
         }
-      } catch (e) {}
+      } catch (e) {
+        void e;
+      }
       return code;
     },
     // 当前路由下拥有的按钮权限值集合

@@ -1,30 +1,35 @@
 <template>
   <div id="tags-view-container" class="tags-view-container">
     <ScrollPane
+      id="must-tags-view-wrapper"
       ref="scrollPane"
       class="tags-view-wrapper"
-      id="must-tags-view-wrapper"
       @scroll="handleScroll"
     >
       <router-link
         v-for="tag in visitedViews"
-        ref="tag"
         :key="tag.fullPath"
-        :class="isActive(tag) ? 'active' : 'activeAfter'"
+        v-slot="{ navigate }"
+        custom
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
-        class="tags-view-item"
-        @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
-        @contextmenu.prevent="openMenu(tag, $event)"
       >
-        <span class="tag-title">{{ tag.title }}</span>
-        <el-icon
-          v-if="!isAffix(tag)"
-          class="el-icon-close"
-          @click.prevent.stop="closeSelectedTag(tag)"
+        <span
+          ref="tag"
+          :class="isActive(tag) ? 'active' : 'activeAfter'"
+          class="tags-view-item"
+          @click.left="navigate"
+          @click.middle="!isAffix(tag) ? closeSelectedTag(tag) : ''"
+          @contextmenu.prevent="openMenu(tag, $event)"
         >
-          <Close />
-        </el-icon>
+          <span class="tag-title">{{ tag.title }}</span>
+          <el-icon
+            v-if="!isAffix(tag)"
+            class="el-icon-close"
+            @click.prevent.stop="closeSelectedTag(tag)"
+          >
+            <Close />
+          </el-icon>
+        </span>
       </router-link>
     </ScrollPane>
     <!-- 左右切换按钮 -->

@@ -134,7 +134,7 @@
 
 <script>
 export default {
-  name: "ContentLayout-Table",
+  name: "ContentLayoutTable",
   props: {
     userSlot: {
       type: Boolean,
@@ -307,16 +307,16 @@ export default {
     // 导出列表
     handleExport() {
       let columns = [];
-      if (Array.isArray(this.$slots.table) && this.$slots.table.length > 0) {
-        const firstVNode = this.$slots.table[0];
-        const children =
-          (firstVNode.componentOptions &&
-            firstVNode.componentOptions.children) || [];
+      const tableSlot = this.$slots && this.$slots.table;
+      const slotVNodes = typeof tableSlot === "function" ? tableSlot({ getIndex: this.indexMethod }) : [];
+      if (Array.isArray(slotVNodes) && slotVNodes.length > 0) {
+        const firstVNode = slotVNodes[0];
+        const defaultSlot = firstVNode && firstVNode.children && firstVNode.children.default;
+        const children = typeof defaultSlot === "function" ? defaultSlot() : [];
         columns = children
-          .filter((x) => x.componentOptions && x.componentOptions.propsData?.prop)
+          .filter((x) => x && x.props && x.props.prop)
           .map((x) => ({
-            ...x.componentOptions.propsData,
-            ...(x.data && x.data.attrs),
+            ...(x.props || {}),
           }));
       }
 
