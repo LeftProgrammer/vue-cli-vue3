@@ -27,7 +27,8 @@
       </template>
 
       <template #opratebtns>
-        <el-button v-if="showSelect" type="primary" size="small" @click="batchUrge">
+        <el-button v-if="showSelect" type="primary" @click="batchUrge">
+          <el-icon style="margin-right: 4px"><Bell /></el-icon>
           批量催办
         </el-button>
       </template>
@@ -234,6 +235,7 @@
 
 <script>
 import { ElMessage, ElMessageBox } from "element-plus";
+import { Bell } from "@element-plus/icons-vue";
 import TreeTableLayout from "@/components/ContentLayout/TreeTable/index.vue";
 import DragLine from "@/views/archives/shared_component/DragLine/index.vue";
 import FlowDialog from "@/components/FlowHandle/Dialog/index.vue";
@@ -243,7 +245,7 @@ import { page } from "@/api/common";
 
 export default {
   name: "CommonFlow",
-  components: { TreeTableLayout, DragLine, FlowDialog },
+  components: { TreeTableLayout, DragLine, FlowDialog, Bell },
   data() {
     return {
       pageParams: {
@@ -346,13 +348,15 @@ export default {
       this.getTableData();
     },
     handelCurrentChange(page) {
-      this.pageParams.current = page.current;
+      const nextCurrent = page && page.current;
+      if (!nextCurrent || nextCurrent === this.pageParams.current) return;
+      this.pageParams.current = nextCurrent;
       this.getTableData();
     },
     handelNodeClick(data) {
-      this.type = data.id;
-      this.pageParams.current = 1;
-      this.getTableData();
+      const nextType = data && data.id;
+      if (!nextType || nextType === this.type) return;
+      this.type = nextType;
     },
     handleSelectionChange(val) {
       const newData = [];
@@ -457,7 +461,7 @@ export default {
       };
       this.getTableData();
     },
-    getTableData(pageInfo, businessId) {
+    async getTableData(pageInfo, businessId) {
       const pageParams = Object.assign({}, this.pageParams, pageInfo || {});
 
       if (pageParams.startTimeAndEndTime && pageParams.startTimeAndEndTime.length > 0) {
@@ -474,18 +478,24 @@ export default {
 
       if (businessId) pageParams.businessId = businessId;
       else delete pageParams.businessId;
-
-      page(this.url.list, pageParams).then(async res => {
+      try {
+        const res = await page(this.url.list, pageParams);
         if (res && res.success) {
-          this.tableData = await this.loadAfter(res.data && res.data.records ? res.data.records : []);
+          const records = (res.data && res.data.records) || [];
+          this.tableData = await this.loadAfter(records);
           this.pageParams.total = (res.data && res.data.total) || 0;
-          if (businessId && res.data && res.data.records && res.data.records[0]) {
-            this.todoHandle(res.data.records[0], "edit");
+          if (businessId && records && records[0]) {
+            this.todoHandle(records[0], "edit");
           }
         } else {
           ElMessage.error((res && res.message) || "查询失败");
         }
-      });
+      } catch (e) {
+        // request.js 内部对“节流/过于频繁”的请求会 reject(errorCode=10000) 且全局不提示，这里也不再误报
+        if (e && e.errorCode === 10000) return;
+        ElMessage.error("查询失败");
+        console.error(e);
+      }
     },
     handelMoveEnd(moveX) {
       const base = this.dragStartTreeWidth !== null ? this.dragStartTreeWidth : this.treeWidth;

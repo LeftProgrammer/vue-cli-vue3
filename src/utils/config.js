@@ -1,4 +1,4 @@
-import mode from "@/config/index";
+import mode, { ensureMode } from "@/config/index";
 import store from "@/store";
 import { INDEX_HOMEPAGE_PATH } from "@/store/mutation-types";
 import heatbeat from "@/utils/heatbeat";
@@ -6,12 +6,13 @@ import heatbeat from "@/utils/heatbeat";
 export default {
   async init(callback) {
     try {
+      const currentMode = await ensureMode();
       const items = await store.dispatch("dict/get", "qdxtpz");
       if (!items || !items.length) {
         // 字典未配置时直接返回
         return;
       }
-      const item = items.find((x) => x.dictCode === mode) || items[0];
+      const item = items.find((x) => x.dictCode === currentMode || x.dictCode === mode) || items[0];
       if (!item || !item.dictRemark) {
         return;
       }

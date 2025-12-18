@@ -5,7 +5,24 @@ const modeType = {
   pro: "pro",
 };
 
-// 默认使用 dev 配置；如需按环境切换，可后续增加 environment.json 动态配置
-const mode = modeType.dev;
+// 默认使用 dev 配置
+let mode = modeType.dev;
 
-export default mode;
+const modeReady = (async () => {
+  try {
+    const res = await fetch(`/static/environment.json?t=${Date.now()}`);
+    const res2 = await res.json();
+    if (res2 && res2.environment) {
+      mode = res2.environment;
+    }
+  } catch (e) {
+    void e;
+  }
+  return mode;
+})();
+
+export function ensureMode() {
+  return modeReady;
+}
+
+export { mode as default };
