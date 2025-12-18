@@ -4,7 +4,7 @@
     class="table-content"
     :class="{
       'no-form': !$slots.form,
-      'no-header': !$slots.opratebtns,
+      'no-header': !showTableHeader,
       'no-page': !showPage,
       'search-open': !searchOpen,
       'design-app': pageType === 'DesignApplication',
@@ -27,7 +27,9 @@
         >
           <el-button
             v-if="showSearchBtn"
+            :icon="Search"
             type="primary"
+            class="search-btn"
             @click="query"
           >
             查询
@@ -41,13 +43,11 @@
             <el-button
               v-if="searchOpen"
               :icon="ArrowDown"
-              class="search-btn"
               @click="searchOpenHandle()"
             />
             <el-button
               v-else
               :icon="ArrowUp"
-              class="search-btn"
               @click="searchOpenHandle()"
             />
           </template>
@@ -98,7 +98,7 @@
           </div>
         </span>
 
-        <div v-if="$slots.opratebtns" class="table-header">
+        <div v-if="showTableHeader" class="table-header">
           <div class="add-btns">
             <slot v-if="!isMdgAdmin" name="opratebtns"></slot>
 
@@ -132,7 +132,8 @@
 </template>
 
 <script>
-import { ArrowDown, ArrowUp, RefreshLeft } from "@element-plus/icons-vue";
+import { Comment, Fragment, Text } from "vue";
+import { ArrowDown, ArrowUp, Search, RefreshLeft } from "@element-plus/icons-vue";
 
 export default {
   name: "ContentLayoutTable",
@@ -204,6 +205,7 @@ export default {
     return {
       ArrowDown,
       ArrowUp,
+      Search,
       RefreshLeft,
       pageParams: {
         pageSize: 20,
@@ -230,6 +232,44 @@ export default {
     // 超级管理账号，只有查看权限；无其他权限
     isMdgAdmin() {
       return this.userInfo && this.userInfo.username === "mdgglj";
+    },
+    hasOprateBtnsSlotContent() {
+      if (this.isMdgAdmin) {
+        return false;
+      }
+      const slot = this.$slots && this.$slots.opratebtns;
+      if (typeof slot !== "function") {
+        return false;
+      }
+      const vnodes = slot();
+      if (!Array.isArray(vnodes) || vnodes.length === 0) {
+        return false;
+      }
+
+      const hasRenderableVNode = (v) => {
+        if (!v) return false;
+        if (v.type === Comment) return false;
+
+        if (v.type === Text) {
+          const children = v.children;
+          return typeof children === "string" ? children.trim() !== "" : !!children;
+        }
+
+        if (v.type === Fragment) {
+          const children = v.children;
+          if (Array.isArray(children)) {
+            return children.some((c) => hasRenderableVNode(c));
+          }
+          return false;
+        }
+
+        return true;
+      };
+
+      return vnodes.some((v) => hasRenderableVNode(v));
+    },
+    showTableHeader() {
+      return !!this.showExportBtn || this.hasOprateBtnsSlotContent;
     },
   },
   watch: {
@@ -417,15 +457,9 @@ export default {
           this.searchFormDom = searchFormDom;
         }
       }
-      if (this.searchOpen) {
-        if (this.tableDom) {
-          this.tableDom.style.height = "";
-        }
-      } else if (this.searchFormDom && this.tableDom) {
-        const height = window
-          .getComputedStyle(this.searchFormDom)
-          .getPropertyValue("height");
-        this.tableDom.style.height = `calc(100% - ${height} - 17px)`;
+      // 使用 flex 布局由浏览器自动分配剩余高度，避免 calc + 固定像素叠加导致分页溢出
+      if (this.tableDom) {
+        this.tableDom.style.height = "";
       }
     },
   },
@@ -529,9 +563,9 @@ $height: 32px;
             font-size: 14px;
           }
 
-          &.search-btn {
-            width: 40px;
-          }
+          // &.search-btn {
+          //   width: 40px;
+          // }
         }
 
         .reset-btn {
@@ -543,18 +577,21 @@ $height: 32px;
     }
 
     .divider {
-      border-top: 1px #bbbbbb dashed;
+      border-top: 1px dashed var(--el-border-color);
       border-left: none;
       border-bottom: none;
       border-right: none;
-      margin: 0 auto 16px;
+      width: 100%;
+      margin: 0 0 16px;
     }
   }
 
   .table {
     flex: 1;
     min-height: 0;
-    height: calc(100% - 40px - #{$height});
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 
     .table-header {
       height: $height;
@@ -613,7 +650,8 @@ $height: 32px;
     }
 
     .table-cnotent {
-      height: calc(100% - #{$height} - #{$height} - 30px);
+      flex: 1;
+      min-height: 0;
 
       ::v-deep.el-table::before {
         height: 0;
@@ -738,13 +776,16 @@ $height: 32px;
   }
 
   .pagination-container {
-    height: $height;
+    min-height: $height;
+    height: auto;
+    flex: 0 0 auto;
     display: flex;
     justify-content: flex-end;
+    align-items: center;
 
     ::v-deep .el-pagination {
-      padding-top: 1px;
-      padding-bottom: 1px;
+      padding-top: 0;
+      padding-bottom: 0;
       text-align: right;
 
       .el-pager li.active {
@@ -755,31 +796,19 @@ $height: 32px;
 
   &.no-header {
     .table {
-      height: calc(100% - 61px);
-
-      .table-cnotent {
-        height: calc(100% - #{$height});
-      }
+      height: auto;
     }
   }
 
   &.no-form {
     .table {
-      height: 100%;
-
-      .table-cnotent {
-        height: calc(100% - #{$height} - #{$height} - 20px);
-      }
+      height: auto;
     }
   }
 
   &.no-page {
     .table {
-      height: 100%;
-
-      .table-cnotent {
-        height: calc(100% - #{$height} - #{$height});
-      }
+      height: auto;
     }
   }
 
@@ -787,21 +816,13 @@ $height: 32px;
     height: 100%;
 
     .table {
-      height: 100%;
-
-      .table-cnotent {
-        height: calc(100% - #{$height});
-      }
+      height: auto;
     }
   }
 
   &.no-page.no-header {
     .table {
-      height: calc(100% - #{$height} - 40px);
-
-      .table-cnotent {
-        height: 100%;
-      }
+      height: auto;
     }
   }
 
@@ -809,11 +830,7 @@ $height: 32px;
     height: 100%;
 
     .table {
-      height: 100%;
-
-      .table-cnotent {
-        height: 100%;
-      }
+      height: auto;
     }
   }
 

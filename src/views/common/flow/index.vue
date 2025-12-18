@@ -577,7 +577,7 @@ export default {
 
       &:hover {
         .tree-wrapper {
-          border-right-color: rgba(18, 152, 250, 0.8);
+          border-right-color: rgba(var(--el-color-primary-rgb), 0.8);
         }
       }
     }
@@ -586,7 +586,7 @@ export default {
       width: 100%;
       height: 100%;
       overflow-y: auto;
-      border: #e5e5e5 1px solid;
+      border: 1px solid var(--el-border-color);
       padding: 8px;
       box-sizing: border-box;
     }
@@ -594,11 +594,7 @@ export default {
     .table-wrapper {
       flex: 1;
       width: 0;
-
-      padding: 8px;
-      box-sizing: border-box;
-      border: #e5e5e5 1px solid;
-      border-left: none;
+      border: none;
     }
   }
 }

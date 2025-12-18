@@ -116,7 +116,7 @@ export default {
     right: 0;
     width: 2px;
     height: 100%;
-    background: rgba(18, 152, 250, 0.35);
+    background: rgba(var(--el-color-primary-rgb), 0.35);
     transition: background 0.15s ease;
   }
 }
@@ -129,7 +129,7 @@ export default {
 }
 
 .drag-line--ondrag .drag-line::before {
-  background: rgba(18, 152, 250, 0.8) !important;
+  background: rgba(var(--el-color-primary-rgb), 0.8) !important;
   width: 2px !important;
 }
 </style>

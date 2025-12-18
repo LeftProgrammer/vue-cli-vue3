@@ -154,11 +154,11 @@ export default {
 
   // el-tree 选中项背景颜色（保持旧项目风格）
   ::v-deep .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
-    background-color: #e6f9ff;
+    background-color: rgba(var(--el-color-primary-rgb), 0.12);
     font-weight: bold;
 
     .el-tree-node__label {
-      color: #1298fa;
+      color: var(--el-color-primary);
     }
   }
 
@@ -172,7 +172,7 @@ export default {
       height: 32px;
 
       .el-tree-node__label {
-        color: #86909c;
+        color: var(--el-text-color-regular);
         font-size: 14px;
         width: 100%;
         display: inline-block;
@@ -183,7 +183,7 @@ export default {
 
       .el-tree-node__expand-icon {
         padding: 4px;
-        color: #545d6d;
+        color: var(--el-text-color-secondary);
         font-size: 18px;
       }
 
@@ -195,10 +195,10 @@ export default {
 
     .el-tree-node__content:hover {
       .el-tree-node__label {
-        color: #5bacf8;
+        color: var(--el-color-primary);
       }
 
-      background-color: #e8f9ff;
+      background-color: rgba(var(--el-color-primary-rgb), 0.08);
     }
   }
 
@@ -214,12 +214,12 @@ export default {
       & > .el-tree-node > .el-tree-node__content > div > .el-tree-node__label {
         font-size: 16px;
         font-weight: 500;
-        color: #4e5969;
+        color: var(--el-text-color-primary);
         line-height: 19px;
       }
 
       & > .el-tree-node.is-current > .el-tree-node__content .el-tree-node__label {
-        color: #1298fa;
+        color: var(--el-color-primary);
       }
     }
 
