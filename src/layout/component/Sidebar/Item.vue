@@ -53,27 +53,37 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.icon-pic {
-  /* 这里保留原项目的结构，具体样式可按需细化 */
-}
-
-.is_root_icon {
-}
-
-.icon-leaf {
-}
-
-.title_span {
-}
-
-.title_todo {
-}
-
 .menu-item {
   position: relative;
   font-weight: 500;
   display: flex;
   align-items: center;
   height: 100%;
+  width: 100%;
+}
+
+.title_span {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.title_todo {
+  margin-left: auto;
+  margin-top: 2px;
+  margin-right: 24px;
+  background: var(--el-color-danger);
+  width: 18px;
+  height: 18px;
+  font-size: 12px;
+  line-height: 18px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex: 0 0 auto;
 }
 </style>

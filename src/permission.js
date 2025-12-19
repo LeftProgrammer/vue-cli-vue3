@@ -56,6 +56,29 @@ router.beforeEach(async (to, from, next) => {
       try {
         await config.init();
         await store.dispatch("user/getInfo");
+        try {
+          await store.dispatch("permission/refreshTodoCount");
+        } catch (e) {
+          void e;
+        }
+      } catch (e) {
+        void e;
+      }
+    }
+
+    // 刷新任意页面时，可能因动态路由尚未注入而先被 catch-all 重定向到 /404
+    // Vue Router 4 会把原始目标路由放在 to.redirectedFrom
+    if (to.path === "/404" && to.redirectedFrom && to.redirectedFrom.fullPath) {
+      try {
+        const redirectedFrom = to.redirectedFrom;
+        next({
+          path: redirectedFrom.path,
+          query: redirectedFrom.query,
+          hash: redirectedFrom.hash,
+          replace: true,
+        });
+        NProgress.done();
+        return;
       } catch (e) {
         void e;
       }

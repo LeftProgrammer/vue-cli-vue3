@@ -65,6 +65,11 @@ export default {
         const res = await getTaskTodo({ taskStatus: 1 });
         const total = (res && res.data && res.data.total) ?? 0;
         this.todoNum = Number(total) || 0;
+        try {
+          this.$store && this.$store.dispatch && this.$store.dispatch("permission/refreshTodoCount");
+        } catch (e) {
+          void e;
+        }
       } catch (e) {
         this.todoNum = 0;
       }

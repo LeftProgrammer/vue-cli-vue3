@@ -91,22 +91,27 @@ const actions = {
           }
           const permissions = data.permissions || [];
           commit("SET_AUTH", permissions);
+
           dispatch("permission/generateRoutes", permissions, { root: true })
             .then(() => {
               try {
-                dispatch("permission/injectDynamicRoutes", null, { root: true });
+                return dispatch("permission/injectDynamicRoutes", null, { root: true });
               } catch (e) {
                 void e;
+                return null;
               }
             })
             .catch(() => {
               try {
-                dispatch("permission/injectDynamicRoutes", null, { root: true });
+                return dispatch("permission/injectDynamicRoutes", null, { root: true });
               } catch (e) {
                 void e;
+                return null;
               }
+            })
+            .finally(() => {
+              resolve(data);
             });
-          resolve(data);
         })
         .catch(error => {
           reject(error);
