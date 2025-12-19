@@ -2,12 +2,26 @@ import router from "./router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import { getToken, setToken } from "@/utils/auth";
+import { verifyPermission } from "@/utils/auth";
 import config from "@/utils/config";
 import store from "@/store";
+import { ElMessageBox } from "element-plus";
 
 NProgress.configure({ showSpinner: false });
 
 const whiteList = ["/login"];
+
+function treeFind(tree, func) {
+  const list = tree || [];
+  for (const data of list) {
+    if (func(data)) return data;
+    if (data.children && data.children.length) {
+      const res = treeFind(data.children, func);
+      if (res) return res;
+    }
+  }
+  return null;
+}
 
 router.beforeEach(async (to, from, next) => {
   NProgress.start();
@@ -45,6 +59,55 @@ router.beforeEach(async (to, from, next) => {
       } catch (e) {
         void e;
       }
+    }
+
+    // 对齐旧项目：基于 dataViewConfId 做权限反查拦截
+    // 说明：新项目菜单会被过滤为 menuRoutes；这里用 rawMenuRoutes 保留未过滤树用于权限判断
+    try {
+      if (!verifyPermission(to.path)) {
+        const permissions = store.getters && store.getters.permissions;
+        const rawMenuRoutes = store.getters && store.getters.rawMenuRoutes;
+        const redirect = decodeURIComponent(from.query.redirect || to.path);
+        const result = treeFind(rawMenuRoutes, (node) => {
+          if (!node) return false;
+          const id = node.dataViewConfId;
+          return id && typeof id === "string" && redirect.indexOf(id) > -1;
+        });
+
+        const verified =
+          result &&
+          Array.isArray(permissions) &&
+          !permissions.includes(result.permCode) &&
+          !verifyPermission(result.dataViewConfId);
+
+        if (verified) {
+          ElMessageBox.confirm(
+            `抱歉，您无权访问[${result.permName || result.title || ""}], 请联系管理员获取权限?`,
+            "页面访问受限",
+            {
+              confirmButtonText: "工作中心",
+              cancelButtonText: "重新登录",
+              showCancelButton: true,
+              showClose: false,
+              closeOnClickModal: false,
+              type: "warning",
+              distinguishCancelAndClose: true,
+            }
+          )
+            .then(() => {
+              next({ path: "/homeIndex/index" });
+            })
+            .catch(() => {
+              store.dispatch("user/logout").then(() => {
+                next({ path: "/login", query: { redirect: to.fullPath } });
+              });
+            });
+          NProgress.done();
+          return;
+        }
+      }
+    } catch (e) {
+      void e;
     }
 
     if (to.path === "/login") {

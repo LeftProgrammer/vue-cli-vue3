@@ -43,8 +43,27 @@ const routes = [
         component: () => import("@/views/common/flow/index.vue"),
         meta: { title: "待办事项" },
       },
+      {
+        path: "bim",
+        name: "common-bim",
+        component: () => import("@/views/common/bim/index.vue"),
+        meta: { title: "BIM" },
+      },
     ],
   },
+  // {
+  //   path: "/safetyManagement",
+  //   component: Layout,
+  //   redirect: "/safetyManagement/area",
+  //   children: [
+  //     {
+  //       path: "area",
+  //       name: "safety-area",
+  //       component: () => import("@/views/safetyManagement/area/index.vue"),
+  //       meta: { title: "危险区域维护" },
+  //     },
+  //   ],
+  // },
   {
     path: "/common/view",
     name: "common-view",

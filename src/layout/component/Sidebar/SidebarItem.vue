@@ -1,20 +1,21 @@
 <template>
   <div :class="getClass(item)" :data-title="item && item.businessIds">
     <template v-if="itemVisible">
-      <el-menu-item
-        :index="item.permCode"
-        :class="{ 'submenu-title-noDropdown': !isNest }"
-        @click="handleMenuClick(item)"
-      >
-        <Item
-          :isRoot="item.permPid === '1' || item.permPid === 1"
-          :title="item.title"
-          :icon="item.permIcon"
-          :todoCount="item.todoCount"
-        />
-      </el-menu-item>
+      <AppLink :to="resolvePath(item)">
+        <el-menu-item
+          :index="String(item.permCode)"
+          :class="{ 'submenu-title-noDropdown': !isNest }"
+        >
+          <Item
+            :isRoot="item.permPid === '1' || item.permPid === 1"
+            :title="item.title"
+            :icon="item.permIcon"
+            :todoCount="item.todoCount"
+          />
+        </el-menu-item>
+      </AppLink>
     </template>
-    <el-sub-menu v-else :index="item.permCode" popper-append-to-body>
+    <el-sub-menu v-else :index="String(item.permCode)" popper-append-to-body>
       <template #title>
         <Item
           :isRoot="item.permPid === '1' || item.permPid === 1"
@@ -27,7 +28,7 @@
         <div class="second-child">
           <SidebarItem
             v-for="child in childrenForDisplay"
-            :key="child.permCode || child.id || child.value || child.name"
+            :key="child.path || child.permCode || child.id || child.value || child.name"
             :is-nest="true"
             :item="child"
             :menu-level="menuLevel + 1"
@@ -41,11 +42,12 @@
 
 <script>
 import Item from "./Item.vue";
+import AppLink from "./Link.vue";
 import * as UrlUtil from "@/utils/url";
 
 export default {
   name: "SidebarItem",
-  components: { Item },
+  components: { Item, AppLink },
   props: {
     // route object
     item: {
@@ -82,15 +84,6 @@ export default {
   },
   mounted() {},
   methods: {
-    handleMenuClick(route) {
-      const url = this.resolvePath(route);
-      if (!url) return;
-      if (url.startsWith("http://") || url.startsWith("https://")) {
-        window.open(url, "_blank");
-        return;
-      }
-      this.$router.push(url);
-    },
     getClass(item) {
       let classStr = "sidebar-item menu-level_" + this.menuLevel;
       if (!item || !item.children || item.children.length === 0) {
