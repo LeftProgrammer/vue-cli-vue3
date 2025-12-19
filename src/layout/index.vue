@@ -47,7 +47,7 @@ export default {
     .sidebar-div {
       background: #fff;
       width: 9%;
-      min-width: 150px;
+      min-width: 157px;
     }
 
     .sidebar-container {

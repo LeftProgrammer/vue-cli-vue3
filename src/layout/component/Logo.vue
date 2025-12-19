@@ -33,7 +33,7 @@ export default {
   width: 134px;
   background-image: url("@/assets/img/system/logo.png");
   background-position: center;
-  background-size: 100%;
+  background-size: cover;
   background-repeat: no-repeat;
 }
 </style>
