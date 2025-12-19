@@ -2,6 +2,7 @@ const getters = {
   loginInfo: (state) => state.user && state.user.loginInfo,
   permissions: (state) => state.user && state.user.permissions,
   menuRoutes: (state) => state.permission && state.permission.menuRoutes,
+  rawMenuRoutes: (state) => state.permission && state.permission.rawMenuRoutes,
   dictOptions: (state) => state.dict || {},
   hasLarge: (state) => state.permission && state.permission.hasLarge,
   visitedViews: (state) => state.tagsView && state.tagsView.visitedViews,

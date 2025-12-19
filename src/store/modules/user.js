@@ -84,9 +84,28 @@ const actions = {
             return;
           }
           commit("SET_USERINFO", data);
+          try {
+            window.localStorage.setItem("userInfo", JSON.stringify(data || {}));
+          } catch (e) {
+            void e;
+          }
           const permissions = data.permissions || [];
           commit("SET_AUTH", permissions);
-          dispatch("permission/generateRoutes", permissions, { root: true });
+          dispatch("permission/generateRoutes", permissions, { root: true })
+            .then(() => {
+              try {
+                dispatch("permission/injectDynamicRoutes", null, { root: true });
+              } catch (e) {
+                void e;
+              }
+            })
+            .catch(() => {
+              try {
+                dispatch("permission/injectDynamicRoutes", null, { root: true });
+              } catch (e) {
+                void e;
+              }
+            });
           resolve(data);
         })
         .catch(error => {
@@ -96,13 +115,28 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state }) {
+  logout({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       logout(state.token)
         .then(() => {
           commit("SET_TOKEN", "");
           commit("SET_ROLES", []);
           removeToken();
+          try {
+            window.localStorage.removeItem("userInfo");
+          } catch (e) {
+            void e;
+          }
+          try {
+            dispatch("tagsView/delAllViews", null, { root: true });
+          } catch (e) {
+            void e;
+          }
+          try {
+            dispatch("permission/clearMenuRoutes", null, { root: true });
+          } catch (e) {
+            void e;
+          }
           resolve();
         })
         .catch(error => {
@@ -124,11 +158,26 @@ const actions = {
   },
 
   // remove token
-  resetToken({ commit }) {
+  resetToken({ commit, dispatch }) {
     return new Promise(resolve => {
       commit("SET_TOKEN", "");
       commit("SET_ROLES", []);
       removeToken();
+      try {
+        window.localStorage.removeItem("userInfo");
+      } catch (e) {
+        void e;
+      }
+      try {
+        dispatch("tagsView/delAllViews", null, { root: true });
+      } catch (e) {
+        void e;
+      }
+      try {
+        dispatch("permission/clearMenuRoutes", null, { root: true });
+      } catch (e) {
+        void e;
+      }
       try {
         heatbeat.clear();
       } catch (e) {

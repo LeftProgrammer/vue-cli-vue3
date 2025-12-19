@@ -140,3 +140,146 @@ export function getSignMapByIdList(userIdList) {
     showLoading: false,
   });
 }
+
+function getUserInfoFromStorage() {
+  try {
+    const raw = window.localStorage.getItem("userInfo");
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function isCreatePerson(item, userInfo) {
+  if (!userInfo) return false;
+  return String(userInfo.userId) === String(item && item.createUser);
+}
+
+function showEdit(item, userInfo) {
+  if (!item || !userInfo) return false;
+
+  let canEdit = false;
+  if (
+    (item.taskStatus == 1 &&
+      item?.matterTaskTodo?.userId != null &&
+      String(item.matterTaskTodo.userId) === String(userInfo.userId)) ||
+    (item.taskStatus == 4 && isCreatePerson(item, userInfo))
+  ) {
+    canEdit = true;
+  }
+
+  if (!canEdit) return false;
+
+  const documentType = item.documentType;
+  if (item.flowStatus == 2) {
+    return false;
+  }
+  if (item.flowStatus == 0) {
+    if (documentType == 1 && (item.signStatus == 3 || item.signStatus == 4)) {
+      return false;
+    }
+    return true;
+  }
+
+  if (documentType == 2) {
+    if (item.signStatusList && item.signStatusList.length > 0) {
+      if (item.signStatus == 0 && item.flowName == "文秘结束流程") {
+        return false;
+      }
+      if (
+        item.signStatus == 3 ||
+        item.signStatus == 4 ||
+        item.signStatus == 5 ||
+        item.signStatus == 0 ||
+        item.signStatus == 6
+      ) {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  if (item.signStatus == 3) {
+    return false;
+  }
+  return true;
+}
+
+function setTodoCount(menus, todoStatList) {
+  const list = menus || [];
+  let todoCount = 0;
+  for (let i = 0; i < list.length; i++) {
+    const menu = list[i];
+    if (!menu) continue;
+
+    if (menu.children && menu.children.length) {
+      menu.todoCount = setTodoCount(menu.children, todoStatList);
+    } else {
+      const path = menu.dataViewConfId;
+      const todoItem = (todoStatList || []).find((item) => {
+        const remark = item && item.DICT_REMARK;
+        if (!remark || !path) return false;
+        return String(remark).indexOf(`"path":"${path}"`) > -1;
+      });
+      menu.todoCount = todoItem ? Number(todoItem.TODO_COUNT) : 0;
+      menu.businessIds = todoItem ? todoItem.BUSINESS_IDS : "";
+    }
+    todoCount += Number(menu.todoCount) || 0;
+  }
+  return todoCount;
+}
+
+/**
+ * 更新每个菜单的待办数量（原地修改 menuRoutes 节点）
+ * @param {Array} menuRoutes permission 模块生成的菜单树（filterAsyncRoutes 输出）
+ */
+export async function todoStat(menuRoutes) {
+  const routes = menuRoutes || [];
+  if (!routes.length) return;
+
+  const res = await request({
+    url: "/api/plt/flow/getTodoStat",
+    method: "post",
+    data: {
+      entity: {
+        documentType: "",
+        unitType: "",
+      },
+    },
+    showLoading: false,
+  });
+
+  if (!res || !res.success) return;
+
+  const list = res.data || [];
+  const userInfo = getUserInfoFromStorage();
+
+  // 处理收发文数据：旧项目是基于 showEdit 重新计算 TODO_COUNT
+  list.forEach((element) => {
+    const remark = element && element["DICT_REMARK"];
+    if (!remark || !element || !Array.isArray(element.data)) return;
+
+    const isOfficeMatch =
+      String(remark).includes("/office/designSendDoc") ||
+      String(remark).includes("/office/designReceiveDoc") ||
+      String(remark).includes("/office/supervisionSendDoc") ||
+      String(remark).includes("/office/supervisionReceiveDoc") ||
+      String(remark).includes("/office/constructionSendDoc") ||
+      String(remark).includes("/office/constructionReceiveDoc") ||
+      String(remark).includes("/office/thirdPartySendDoc") ||
+      String(remark).includes("/office/thirdPartyReceiveDoc");
+
+    if (!isOfficeMatch) return;
+
+    let index = 0;
+    element.data.forEach((item) => {
+      if (showEdit(item, userInfo)) {
+        index += 1;
+      }
+    });
+    element["TODO_COUNT"] = index;
+  });
+
+  setTodoCount(routes, list);
+}

@@ -248,4 +248,18 @@ export function download(url, params, filename, config = {}) {
     });
 }
 
+export function bimService({ url, params }) {
+  return service
+    .get(url, {
+      params,
+      headers: {
+        Token: sessionStorage.getItem("BIM_SECRETKEY"),
+      },
+      showLoading: false,
+    })
+    .then((res) => {
+      return res;
+    });
+}
+
 export default service;
