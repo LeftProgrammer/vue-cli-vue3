@@ -8,15 +8,15 @@
     >
       <template #append>
         <div @click="choose">
-          <i class="el-icon-arrow-right" />
+          <el-icon><ArrowRight /></el-icon>
         </div>
       </template>
     </el-input>
     <!--BIM显示弹窗-->
     <el-dialog
+      v-model="dialogShow"
       title="三维模型视图"
       custom-class="bim-select-dialog wbench-el-dialog"
-      v-model="dialogShow"
       :destroy-on-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -24,7 +24,7 @@
       fullscreen
       @closed="closedHandle"
     >
-      <div class="actionBox" v-if="api">
+      <div v-if="api" class="actionBox">
         <el-switch
           v-model="terrain"
           active-text="开启Gis场景"
@@ -59,12 +59,14 @@
 
 <script>
 import BimEngine from "@/components/BimEngine/index.vue";
+import { ArrowRight } from "@element-plus/icons-vue";
 import { bimconfig } from '@/config/bimconfig'
 import { findByModelCode } from '@/components/BimEngine/api/index'
 export default {
   name: 'BimSelectComp',
   components: {
-    BimEngine
+    BimEngine,
+    ArrowRight
   },
   props: {
     modelValue: {
@@ -295,6 +297,9 @@ export default {
       height: 100%;
       padding: 0 20px;
       text-align: center;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
   }
 }

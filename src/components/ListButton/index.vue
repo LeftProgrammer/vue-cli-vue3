@@ -5,6 +5,7 @@
       :key="btn.method"
       :type="btn.method === 'delete' ? 'danger' : btn.type || 'primary'"
       :underline="false"
+      :disabled="isBtnDisabled(btn)"
       @click="onClick(btn)"
     >
       {{ btn.title }}
@@ -33,6 +34,17 @@ export default {
     },
   },
   computed: {
+    userId() {
+      const fromGetter = this.$store && this.$store.getters && this.$store.getters.loginInfo && this.$store.getters.loginInfo.userId;
+      if (fromGetter) return fromGetter;
+      try {
+        const raw = localStorage.getItem("userInfo");
+        const info = raw ? JSON.parse(raw) : null;
+        return info && info.userId;
+      } catch (e) {
+        return undefined;
+      }
+    },
     normalizedBtns() {
       return this.btns.map((item) => {
         if (typeof item === "string") {
@@ -49,7 +61,26 @@ export default {
     },
   },
   methods: {
+    isBtnDisabled(btn) {
+      if (!btn) return false;
+      if (typeof btn.disabled === "boolean") return btn.disabled;
+
+      const row = this.data || {};
+      const disabledBtns = Array.isArray(row.disabledBtns) ? row.disabledBtns : [];
+      if (disabledBtns.includes(btn.method)) {
+        return true;
+      }
+
+      if ((btn.method === "edit" || btn.method === "delete") && row.createUser && this.userId) {
+        return row.createUser !== this.userId;
+      }
+
+      return false;
+    },
     async onClick(btn) {
+      if (this.isBtnDisabled(btn)) {
+        return;
+      }
       const payload = {
         ...(this.data || {}),
         $index: this.index,

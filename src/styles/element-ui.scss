@@ -102,11 +102,15 @@ button[type="button"].el-carousel__arrow {
   .el-dialog__footer {
     background: white;
     border-radius: 0 0 15px 15px;
-    padding: 16px;
+    padding: 16px 16px 0 16px;
+    text-align: right;
+    // border-top: 1px solid #ebebeb;
 
     .dialog-footer {
       display: flex;
       align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
     }
   }
 
