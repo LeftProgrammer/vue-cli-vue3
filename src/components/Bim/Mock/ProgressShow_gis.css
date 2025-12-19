@@ -1,0 +1,98 @@
+.square {
+    display: inline-block;
+    width: 30px;
+    height: 20px;
+    border: solid 1px #c43506;
+    background: #f26d15;
+}
+
+.round {
+    display: inline-block;
+    width: 30px;
+    height: 20px;
+    border-radius: 100%;
+    border: solid 1px #c43506;
+    background: #f26d15;
+}
+
+.line-div-right {
+    float: left;
+    font-weight: bold;
+}
+
+.line-div-tool {
+    float: right;
+}
+
+.icon-edit {
+    color: #4476A7;
+    margin-right: 10px;
+    font-size: 14px;
+    border-radius: 2px;
+    background: #f2f2f2;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+.icon-delete {
+    color: #4476A7;
+    font-size: 14px;
+    border-radius: 2px;
+    background: #f2f2f2;
+    padding: 2px 5px;
+    cursor: pointer;
+}
+
+.right-detection-list-title p {
+    margin: 15px;
+    border-bottom: 1px solid #f2f2f2;
+}
+
+.today {
+    border: solid 2px #bb1717;
+}
+
+.bom {
+    position: absolute;
+    left: 0px;
+    bottom: 0;
+    _position: absolute;
+    padding-bottom: 0px;
+    padding-top: 13px;
+    padding-right: 7px;
+    background: #28292f;
+    vertical-align: middle;
+    line-height: 50px;
+    height: 50px;
+    display: none;
+}
+
+#progress {
+    margin-left: 10px;
+    padding-top: 5px;
+    vertical-align: middle;
+    display: inline-block;
+    background-repeat: no-repeat;
+    z-index: 999;
+    width: 30px;
+    height: 40px;
+    line-height: 40px;
+    cursor: pointer;
+}
+
+.play {
+    background: url('./img/play.png');
+}
+
+.pauseon {
+    background: url('./img/pauseon.png');
+}
+
+.range {
+    width: 100%;
+    padding-left: 53px;
+    height: 40px;
+    display: inline-block;
+    line-height: 40px;
+    vertical-align: middle;
+}
