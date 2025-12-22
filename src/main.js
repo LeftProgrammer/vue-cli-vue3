@@ -12,6 +12,7 @@ import "./permission";
 import { download as handleExportDownload } from "@/utils/request";
 import setupSvgIcon from "@/icons";
 import draggable from "@/utils/dialogdrag";
+import { fromApp } from "@/utils";
 
 const app = createApp(App);
 
@@ -88,6 +89,79 @@ app.config.globalProperties.$setStorage = (key, value) => {
 
 // 兼容旧项目的导出工具
 app.config.globalProperties.$handleExport = handleExportDownload;
+
+app.config.globalProperties.$DictionaryParsing = (dictionary, key) => {
+  let text = "";
+  if (Array.isArray(dictionary)) {
+    const a = dictionary.find(item => item && (item.dictCode == key || item.dictId == key));
+    if (a) {
+      text = a.dictName;
+    }
+  }
+  return text;
+};
+
+app.config.globalProperties.$visibleChange = (visible, className) => {
+  try {
+    if (!visible || !fromApp()) {
+      return;
+    }
+
+    const ev = (window.event && window.event.target) || null;
+    if (!ev || !ev.getBoundingClientRect) {
+      return;
+    }
+    const rect = ev.getBoundingClientRect();
+
+    const bodyElement = document.getElementsByTagName("body")[0];
+    if (!bodyElement) {
+      return;
+    }
+    const transformStyle =
+      bodyElement.style.transform ||
+      window.getComputedStyle(bodyElement).getPropertyValue("transform");
+    const styleArr = transformStyle && transformStyle.match(/scale\(([^)]+)\)/);
+    if (!styleArr) {
+      return;
+    }
+    const scaleValue = Number(styleArr[1]);
+    if (!scaleValue) {
+      return;
+    }
+
+    setTimeout(() => {
+      const dom = document.getElementsByClassName(className);
+      for (let i = 0; i < dom.length; i++) {
+        if (className === "el-tooltip__popper") {
+          dom[i].style.display = "none";
+        }
+        if (dom[i].style.display === "none") {
+          continue;
+        }
+        const left = dom[i].style.left;
+        const top = dom[i].style.top;
+        if (parseInt(left) >= 0) {
+          dom[i].style.left = parseInt(left) * (1 / scaleValue) + "px";
+          dom[i].style.top = parseInt(top) * (1 / scaleValue) + "px";
+        } else {
+          dom[i].style.left = parseInt(rect.left) * (1 / scaleValue) + "px";
+          dom[i].style.top = parseInt(top) * (1 / scaleValue) + "px";
+          const options = dom[i].getElementsByClassName("el-select-dropdown__item");
+          for (let j = 0; j < options.length; j++) {
+            options[j].style.height = "auto";
+            const span = options[j].getElementsByTagName("span")[0];
+            if (span) {
+              span.style.whiteSpace = "normal";
+              span.style.wordWrap = "break-word";
+            }
+          }
+        }
+      }
+    });
+  } catch (e) {
+    void e;
+  }
+};
 
 app.directive("thousands", {
   mounted(el) {

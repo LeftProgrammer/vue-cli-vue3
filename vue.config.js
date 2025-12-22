@@ -1,5 +1,6 @@
 "use strict";
 const path = require("path");
+const webpack = require("webpack");
 const { defineConfig } = require("@vue/cli-service");
 const proxy = require("./config/proxy.config");
 
@@ -37,6 +38,14 @@ module.exports = defineConfig({
         "@": resolve("src"),
       },
     },
+    plugins: [
+      new webpack.ProvidePlugin({
+        $: "jquery",
+        jQuery: "jquery",
+        "window.$": "jquery",
+        "window.jQuery": "jquery",
+      }),
+    ],
   },
   chainWebpack: (config) => {
     config.resolve.alias.set("@", resolve("src"));
