@@ -6,7 +6,6 @@
     title="强制下线通知"
     :show-close="false"
     width="600px"
-    custom-class="wbench-el-dialog"
     :close-on-click-modal="false"
   >
     <p style="font-size: 20px">{{ message }}</p>

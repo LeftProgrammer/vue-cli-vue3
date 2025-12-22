@@ -46,7 +46,7 @@ export function getCombineList (parameter) {
 /**查询文档列表 */
 export function getDocumentList (id) {
  return request({
-    url: api.combine/GetDocument,
+    url: `${api.combine}/GetDocument`,
     method: 'get',
     params: {id:id}
   }).then(data => {

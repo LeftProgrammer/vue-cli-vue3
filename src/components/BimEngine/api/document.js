@@ -1,9 +1,5 @@
 import qs from "qs";
 import request from "@/utils/request";
-import {
-  transformAbpListQuery,
-  buildPagingQueryResult,
-} from "@/utils/bimengine/abpParamsTransform";
 import requestModel from "@/utils/bimengine/requestModel";
 import store from "@/store";
 
@@ -48,7 +44,7 @@ export function addDoc(parameter) {
 /**添加文件 */
 export function addFile(parameter) {
   return request({
-    url: url,
+    url: api.addFile,
     method: "post",
     data: parameter,
   });
@@ -420,10 +416,6 @@ export function uploadOsgbSplitFile(
   formData.append("file", fileData, filename); //将 部分文件 塞入FormData
   formData.append("chunk", chunk);
   formData.append("chunks", chunkCont);
-
-  var index1 = filename.lastIndexOf(".");
-  var index2 = filename.length;
-  var postf = filename.substring(index1 + 1, index2).toLowerCase(); //后缀名
 
   //模型文件上传接口传递的参数
   var params = {

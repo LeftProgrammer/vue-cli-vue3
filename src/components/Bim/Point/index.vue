@@ -16,7 +16,7 @@
     <el-dialog
       v-model="dialogShow"
       title="三维模型视图"
-      custom-class="bim-select-dialog wbench-el-dialog"
+      modal-class="bim-select-dialog"
       :destroy-on-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -311,13 +311,21 @@ export default {
 <style lang="scss">
 .bim-select-dialog {
   .el-dialog__body {
-    height: calc(100% - 55px - 67px);
-
+    position: relative;
     .actionBox {
       position: absolute;
-      top: 100px;
-      right: 120px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      top: 38px;
+      right: 118px;
       z-index: 100;
+
+      padding: 0 8px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.16);
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.16);
+      backdrop-filter: blur(1px);
     }
   }
 }
