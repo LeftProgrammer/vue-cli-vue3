@@ -11,6 +11,7 @@ import "@/styles/index.scss";
 import "./permission";
 import { download as handleExportDownload } from "@/utils/request";
 import setupSvgIcon from "@/icons";
+import draggable from "@/utils/dialogdrag";
 
 const app = createApp(App);
 
@@ -123,6 +124,8 @@ app.directive("thousands", {
     };
   },
 });
+
+app.directive("draggable", draggable);
 
 app.use(ElementPlus, {
   size: "medium",
