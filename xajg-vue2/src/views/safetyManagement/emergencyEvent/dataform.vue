@@ -11,15 +11,15 @@
           <el-col :span="12">
             <el-form-item label="类型" prop="type">
               <el-select
-                @visible-change="$visibleChange($event, 'el-popper')"
                 v-model="formData.type"
                 :disabled="readonly"
                 placeholder="请选择"
-                @change="changeType"
                 clearable
+                @visible-change="$visibleChange($event, 'el-popper')"
+                @change="changeType"
               >
-                <el-option label="快报" value="kb"></el-option>
-                <el-option label="后续报告" value="hxbg"></el-option>
+                <el-option label="快报" value="kb" />
+                <el-option label="后续报告" value="hxbg" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -31,7 +31,7 @@
                 v-model="formData.code"
                 :disabled="isEdit"
                 show-word-limit
-                maxlength="50"
+                maxlength="500"
               />
             </el-form-item>
           </el-col>
@@ -41,7 +41,7 @@
                 v-model="formData.name"
                 :disabled="isEdit"
                 show-word-limit
-                maxlength="50"
+                maxlength="500"
               />
             </el-form-item>
           </el-col>
@@ -51,6 +51,7 @@
                 v-model="formData.contactPerson"
                 :disabled="isEdit"
                 show-word-limit
+                maxlength="500"
               />
             </el-form-item>
           </el-col>
@@ -60,6 +61,7 @@
                 v-model="formData.contactPhone"
                 :disabled="isEdit"
                 show-word-limit
+                maxlength="500"
               />
             </el-form-item>
           </el-col>
@@ -121,7 +123,7 @@
                 :disabled="isEdit"
                 :autosize="{ minRows: 4, maxRows: 6 }"
                 show-word-limit
-                maxlength="100"
+                maxlength="500"
               />
             </el-form-item>
           </el-col>
@@ -155,6 +157,7 @@
                 v-model="formData.siteCustodian"
                 :disabled="isEdit"
                 show-word-limit
+                maxlength="500"
               />
             </el-form-item>
           </el-col>
@@ -164,6 +167,7 @@
                 v-model="formData.siteCustodianPhone"
                 :disabled="isEdit"
                 show-word-limit
+                maxlength="50"
               />
             </el-form-item>
           </el-col>
@@ -185,6 +189,7 @@
                 v-model="formData.unitCustodian"
                 :disabled="isEdit"
                 show-word-limit
+                maxlength="500"
               />
             </el-form-item>
           </el-col>
@@ -194,6 +199,7 @@
                 v-model="formData.unitCustodianPhone"
                 :disabled="isEdit"
                 show-word-limit
+                maxlength="50"
               />
             </el-form-item>
           </el-col>

@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog
+      v-draggable
       :title="title"
       :visible.sync="dialogShow"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
       append-to-body
       width="40%"
-      v-draggable
       @closed="closedHandle"
     >
       <el-form
@@ -25,16 +25,16 @@
                 placeholder="请输入"
                 width="100%"
                 maxlength="50"
-              ></el-input>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="危险类别:" prop="type">
               <el-select v-model="formData.type" placeholder="请选择" style="width: 100%">
-                <el-option label="低风险区域" value="1"> </el-option>
-                <el-option label="一般危险区域" value="2"> </el-option>
-                <el-option label="较大风险区域" value="3"> </el-option>
-                <el-option label="重大风险区域" value="4"> </el-option>
+                <el-option label="低风险区域" value="1" />
+                <el-option label="一般危险区域" value="2" />
+                <el-option label="较大风险区域" value="3" />
+                <el-option label="重大风险区域" value="4" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -43,7 +43,7 @@
               <bimPoint
                 v-model="formData.area"
                 type="cover"
-                :coverState="formData.type"
+                :cover-state="formData.type"
                 :readonly="readonly"
               />
             </el-form-item>
@@ -64,7 +64,7 @@
         <el-button @click="dialogShow = false">{{
           data.isView ? "关闭" : "取消"
         }}</el-button>
-        <el-button type="primary" @click="sure" v-if="!data.isView"> 确定 </el-button>
+        <el-button v-if="!data.isView" type="primary" @click="sure"> 确定 </el-button>
       </div>
     </el-dialog>
   </div>
@@ -75,10 +75,20 @@ import { save, update } from "./api";
 import { FormMixin } from "@/mixins/FormMixin";
 import bimPoint from "@/components/Bim/Point/index";
 export default {
-  name: "dataform",
-  mixins: [FormMixin],
+  name: "Dataform",
   components: {
     bimPoint
+  },
+  mixins: [FormMixin],
+  props: {
+    view: {
+      type: String,
+      default: ""
+    },
+    title: {
+      type: String,
+      default: ""
+    }
   },
   data() {
     return {
@@ -98,18 +108,21 @@ export default {
     };
   },
   computed: {},
-  created() {},
-  mounted() {},
-  props: {
-    view: {
-      type: String,
-      default: ""
-    },
-    title: {
-      type: String,
-      default: ""
+  watch: {
+    visible: {
+      handler(newValue) {
+        this.dialogShow = newValue;
+        this.$nextTick(() => {
+          this.formData = this.data.data;
+          this.formData.enable = this.formData.enable == 1;
+        });
+      },
+      immediate: true,
+      deep: true
     }
   },
+  created() {},
+  mounted() {},
   methods: {
     // 确认按钮
     sure() {
@@ -148,19 +161,6 @@ export default {
     closedHandle() {
       this.$emit("sureson");
       this.dialogShow = false;
-    }
-  },
-  watch: {
-    visible: {
-      handler(newValue) {
-        this.dialogShow = newValue;
-        this.$nextTick(() => {
-          this.formData = this.data.data;
-          this.formData.enable = this.formData.enable == 1;
-        });
-      },
-      immediate: true,
-      deep: true
     }
   }
 };

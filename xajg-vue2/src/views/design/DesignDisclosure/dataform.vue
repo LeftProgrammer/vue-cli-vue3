@@ -14,19 +14,18 @@
         <el-col :span="12">
           <el-form-item label="交底编号" prop="code">
             <el-input
-              show-word-limit
-              maxlength="20"
               v-model="formData.code"
+              show-word-limit
+              maxlength="255"
               placeholder="请输入编号"
               width="100%"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="成果编号" prop="drawingCode">
             <div :class="{ readonly: readonly }">
-              <el-input disabled placeholder="请选择" v-model="cumDrawingCode">
+              <el-input v-model="cumDrawingCode" disabled placeholder="请选择">
                 <template slot="append">
                   <div @click.stop="changeComponents('chooseFile')">
                     <i class="el-icon-arrow-right" />
@@ -39,12 +38,11 @@
         <el-col :span="12">
           <el-form-item label="成果名称" prop="drawingName">
             <el-input
-              disabled
               v-model="formData.drawingName"
+              disabled
               placeholder=""
               width="100%"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
         <!--这里不再使用计划交底日期字段-->
@@ -57,21 +55,19 @@
               format="yyyy-MM-dd HH:mm"
               placeholder="选择日期时间"
               default-time="12:00:00"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-col>
 
         <el-col :span="12">
           <el-form-item label="会议地点" prop="place">
             <el-input
-              show-word-limit
-              maxlength="15"
               v-model="formData.place"
+              show-word-limit
+              maxlength="255"
               placeholder="请输入"
               width="100%"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -93,7 +89,7 @@
           </el-form-item>
         </el-col>
         <!--        兼容历史数据，如果是参会人则显示参会人-->
-        <el-col :span="24" v-if="showMeetingType">
+        <el-col v-if="showMeetingType" :span="24">
           <el-form-item label="参会人" prop="persons" align="center">
             <el-form>
               <el-form-item label="" prop="persons" align="center">
@@ -101,7 +97,7 @@
                   v-model="formData.persons"
                   :multiple="true"
                   :readonly="readonly"
-                ></user>
+                />
               </el-form-item>
             </el-form>
           </el-form-item>
@@ -131,27 +127,26 @@
               @change="handleSendUnitChange"
             ></unit> -->
             <el-cascader
-              class="w-100pre"
               v-model="formData.units"
+              class="w-100pre"
               :disabled="readonly"
               :props="unitTreeProps"
               :show-all-levels="false"
               :options="unitTree"
-            ></el-cascader>
+            />
           </el-form-item>
         </el-col>
 
         <el-col :span="24">
           <el-form-item label="交底内容" prop="content" align="center">
             <el-input
+              v-model="formData.content"
               type="textarea"
               show-word-limit
               maxlength="500"
               :autosize="{ minRows: 2, maxRows: 4 }"
               placeholder="请输入内容"
-              v-model="formData.content"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
 
@@ -165,39 +160,37 @@
         <el-col :span="24">
           <el-form-item label="会议要求" prop="stipulate" align="center">
             <el-input
+              v-model="formData.stipulate"
               show-word-limit
-              maxlength="50"
+              maxlength="500"
               type="textarea"
               :autosize="{ minRows: 2, maxRows: 4 }"
               placeholder="请输入内容"
-              v-model="formData.stipulate"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
 
         <el-col :span="24">
           <el-form-item label="附件" prop="uploadFile">
             <uploadFile
-              :readonly="readonly"
               v-model="formData.uploadFile"
-              :showNtko="showSign"
-              :showDate="showSign"
+              :readonly="readonly"
+              :show-ntko="showSign"
+              :show-date="showSign"
               :limit="1"
               @changeNtkoFile="changeFile"
-            >
-            </uploadFile>
+            />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <el-form
+      v-if="DesignDisclosureDate"
       ref="dataFormRef"
       :model="formData"
       :rules="formDataRules"
       label-width="auto"
       :disabled="isDisabledMe"
-      v-if="DesignDisclosureDate"
     >
       <el-row :gutter="20">
         <!--        <el-col :span="12">-->
@@ -213,7 +206,7 @@
         <!--            </el-date-picker>-->
         <!--          </el-form-item>-->
         <!--        </el-col>-->
-        <el-col :span="12" v-if="false">
+        <el-col v-if="false" :span="12">
           <el-form-item label="">
             <el-radio-group
               v-model="formData.meetingMethod"
@@ -226,19 +219,18 @@
         </el-col>
       </el-row>
       <el-row>
-        <el-col :span="18" v-if="formData.meetingMethod == 0">
+        <el-col v-if="formData.meetingMethod == 0" :span="18">
           <el-form-item label="会议纪要" prop="metingMinutes">
             <uploadFile
-              :readonly="isDisabledMe"
               v-model="formData.metingMinutes"
+              :readonly="isDisabledMe"
               :limit="1"
-            >
-            </uploadFile>
+            />
           </el-form-item>
         </el-col>
-        <el-col :span="18" v-else>
+        <el-col v-else :span="18">
           <el-form-item v-if="false" label="关联会议纪要" prop="meetingCodes">
-            <el-input placeholder="请选择" v-model="formData.meetingCodes">
+            <el-input v-model="formData.meetingCodes" placeholder="请选择">
               <template slot="append">
                 <div @click.stop="changeMeetingComponents()">选择</div>
               </template>
@@ -268,16 +260,16 @@
     </el-form>
     <!-- 关联文件选择 -->
     <el-dialog
-      width="80%"
       v-draggable
+      width="80%"
       :visible.sync="dialogFormVisible"
       title="关联文件选择"
     >
       <components
-        ref="components"
         :is="component"
+        ref="components"
         :multiple="multiple"
-      ></components>
+      />
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">取 消</el-button>
         <el-button type="primary" @click="sure">确 定</el-button>
@@ -285,12 +277,12 @@
     </el-dialog>
     <!--    关联会议纪要-->
     <el-dialog
-      width="80%"
       v-draggable
+      width="80%"
       :visible.sync="dialogMeetingVisible"
       title="关联会议纪要选择"
     >
-      <meeting ref="componentMeeting"></meeting>
+      <meeting ref="componentMeeting" />
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogMeetingVisible = false">取 消</el-button>
         <el-button type="primary" @click="meetingSure">确 定</el-button>
@@ -300,7 +292,7 @@
 </template>
 
 <script>
-import { save, planList, supplyList, page, getSection } from "./api";
+import { save, getSection } from "./api";
 import { getDictItemList } from "@/api/dict";
 import { dateFormat } from "@/utils";
 import chooseFile from "./components/chooseFile.vue";
@@ -308,17 +300,17 @@ import meeting from "./components/meeting.vue";
 import { mapGetters } from "vuex";
 import { FlowFormMixin } from "@/mixins/FlowFormMixin";
 // import { getSecretary, updateFile } from "../../office/fundAllocation/api";
-import { getSecretarynew, unitList } from "../../office/SendDocument/api";
+import { unitList } from "../../office/SendDocument/api";
 import UniTable from "./components/unitTable.vue";
 
 export default {
-  name: "dataform",
-  mixins: [FlowFormMixin],
+  name: "Dataform",
   components: {
     chooseFile,
     meeting,
     UniTable,
   },
+  mixins: [FlowFormMixin],
   data() {
     return {
       unitTreeProps: {
@@ -501,26 +493,6 @@ export default {
       return bool;
     },
   },
-  async created() {
-    this.getSection();
-    this.getDictItemList(this.designClassifyCode);
-    this.getFlowPROFESSION(this.designProfessionCode);
-
-    // 来自app
-    this.$nextTick(() => {
-      // appUrlList 只要是app 就一定会传递这个参数
-      if (this.fromapp) {
-        //this.appformDisabled = true;
-        // const titleElement = document.getElementById("dynamicTitle");
-        // // 设置动态标题
-        // titleElement.textContent = "详情";
-        if (this.$route.query.businessId) {
-          this.readonly = true;
-        }
-      }
-    });
-  },
-  mounted() {},
   watch: {
     "formData.metingMinutes": {
       handler(val) {
@@ -542,6 +514,26 @@ export default {
       immediate: true,
     },
   },
+  async created() {
+    this.getSection();
+    this.getDictItemList(this.designClassifyCode);
+    this.getFlowPROFESSION(this.designProfessionCode);
+
+    // 来自app
+    this.$nextTick(() => {
+      // appUrlList 只要是app 就一定会传递这个参数
+      if (this.fromapp) {
+        //this.appformDisabled = true;
+        // const titleElement = document.getElementById("dynamicTitle");
+        // // 设置动态标题
+        // titleElement.textContent = "详情";
+        if (this.$route.query.businessId) {
+          this.readonly = true;
+        }
+      }
+    });
+  },
+  mounted() {},
   methods: {
     async getSection() {
       // 获取标段

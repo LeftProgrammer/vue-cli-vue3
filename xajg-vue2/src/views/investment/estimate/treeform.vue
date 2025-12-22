@@ -1,10 +1,10 @@
 <template>
   <el-dialog
+    v-draggable
     :visible.sync="dialogVisible"
     width="500px"
     :title="title"
     :close-on-click-modal="false"
-    v-draggable
     destroy-on-close
   >
     <el-form ref="addForm" :rules="rules" :model="addData" label-width="100px">
@@ -16,6 +16,8 @@
           v-model="addData.nodeName"
           :disabled="isShow"
           placeholder="请输入节点名称"
+          maxlength="100"
+          show-word-limit
         />
       </el-form-item>
       <el-form-item label="节点编码" prop="code">
@@ -23,14 +25,14 @@
           v-model="addData.code"
           :disabled="isShow"
           placeholder="请输入节点编码"
+          maxlength="50"
+          show-word-limit
         />
       </el-form-item>
     </el-form>
     <div slot="footer" align="center" class="dialog-footer">
       <el-button @click="closeDialog">{{ isShow ? "关闭" : "取消" }}</el-button>
-      <el-button v-if="!isShow" type="primary" @click="handelDialogConfirm"
-        >确定</el-button
-      >
+      <el-button v-if="!isShow" type="primary" @click="handelDialogConfirm">确定</el-button>
     </div>
   </el-dialog>
 </template>

@@ -22,12 +22,12 @@
         <!-- 第1行：案卷档号、案卷题名 -->
         <el-col :span="12">
           <el-form-item label="案卷档号" prop="volumeCode">
-            <el-input v-model="formData.volumeCode" placeholder="请输入" />
+            <el-input v-model="formData.volumeCode" placeholder="请输入" maxlength="100" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="案卷题名" prop="volumeTitle">
-            <el-input v-model="formData.volumeTitle" placeholder="请输入" />
+            <el-input v-model="formData.volumeTitle" placeholder="请输入" maxlength="500" show-word-limit />
           </el-form-item>
         </el-col>
         <!-- 第2行：顺序号、案卷类别 -->
@@ -135,6 +135,8 @@
             <el-input
               v-model="formData.storageLocation"
               placeholder="请输入"
+              maxlength="200"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -166,7 +168,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="立卷人" prop="filingPerson">
-            <el-input v-model="formData.filingPerson" placeholder="请输入" />
+            <el-input v-model="formData.filingPerson" placeholder="请输入" maxlength="50" show-word-limit />
           </el-form-item>
         </el-col>
         <!-- 第8行：立卷日期、检查人 -->
@@ -183,7 +185,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="检查人">
-            <el-input v-model="formData.checker" placeholder="请输入" />
+            <el-input v-model="formData.checker" placeholder="请输入" maxlength="50" show-word-limit />
           </el-form-item>
         </el-col>
         <!-- 第9行：检查日期、归档人 -->
@@ -200,7 +202,7 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="归档人">
-            <el-input v-model="formData.archivist" placeholder="请输入" />
+            <el-input v-model="formData.archivist" placeholder="请输入" maxlength="50" show-word-limit />
           </el-form-item>
         </el-col>
         <!-- 第10行：归档日期、互见号 -->
@@ -220,6 +222,8 @@
             <el-input
               v-model="formData.crossReference"
               placeholder="请输入"
+              maxlength="200"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -247,6 +251,8 @@
               type="textarea"
               :rows="3"
               placeholder="请输入备注"
+              maxlength="500"
+              show-word-limit
             />
           </el-form-item>
         </el-col>

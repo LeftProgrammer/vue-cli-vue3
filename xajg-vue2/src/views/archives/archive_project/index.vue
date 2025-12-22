@@ -204,6 +204,8 @@
               <el-input
                 v-model="formData.projectCode"
                 placeholder="请输入项目编码"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -212,6 +214,8 @@
               <el-input
                 v-model="formData.projectName"
                 placeholder="请输入项目名称"
+                maxlength="200"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -220,6 +224,8 @@
               <el-input
                 v-model="formData.fondsCode"
                 placeholder="请输入全宗号"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -277,8 +283,8 @@
                 v-model="formData.remark"
                 type="textarea"
                 :rows="3"
-                placeholder="请输入备注(限50字)"
-                maxlength="50"
+                placeholder="请输入备注(限200字)"
+                maxlength="200"
                 show-word-limit
               />
             </el-form-item>

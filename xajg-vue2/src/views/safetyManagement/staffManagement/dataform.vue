@@ -25,6 +25,8 @@
                 v-model="formData.name"
                 placeholder="请输入"
                 width="100%"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -43,6 +45,8 @@
                 v-model="formData.agentCard"
                 placeholder="请输入"
                 width="100%"
+                maxlength="20"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -52,6 +56,8 @@
                 v-model="formData.place"
                 placeholder="请输入"
                 width="100%"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -61,6 +67,8 @@
                 v-model="formData.phone"
                 placeholder="请输入"
                 width="100%"
+                maxlength="20"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -87,6 +95,8 @@
                 v-model="formData.race"
                 placeholder="请输入"
                 width="100%"
+                maxlength="20"
+                show-word-limit
               />
             </el-form-item>
           </el-col>

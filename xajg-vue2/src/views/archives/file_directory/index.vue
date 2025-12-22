@@ -2,11 +2,11 @@
   <div class="page-archival-catalogue">
     <TreeTableLayout
       :page="searchData"
+      title="节点列表"
       @pageSizeChange="handelPageSizeChange"
       @pageCurrentChange="handelCurrentChange"
       @query="handelSearchButtonClick"
       @reset="handelResetButtonClick"
-      title="节点列表"
     >
       <template slot="form">
         <el-form :model="searchData" :inline="true">
@@ -46,9 +46,9 @@
                 :props="defaultProps"
                 default-expand-all
                 :filter-node-method="filterNode"
-                @node-click="handelNodeClick"
                 node-key="id"
                 :expand-on-click-node="false"
+                @node-click="handelNodeClick"
               >
                 <span
                   slot-scope="{ data }"
@@ -115,7 +115,7 @@
                 width="180"
                 fixed="right"
               >
-                <template #default="{ row, $index }">
+                <template #default="{ row }">
                   <list-button
                     :data="row"
                     :btns="[
@@ -172,10 +172,10 @@
     </TreeTableLayout>
     <el-dialog
       v-if="showDialog"
+      v-draggable
       :visible.sync="showDialog"
       width="500px"
       :title="title"
-      v-draggable
       append-to-body
       :close-on-click-modal="false"
     >
@@ -191,13 +191,17 @@
             v-model="addData.nodeName"
             :disabled="isSHow"
             placeholder="请输入节点名称"
+            maxlength="255"
+            show-word-limit
           />
         </el-form-item>
         <el-form-item label="节点编码" prop="code">
           <el-input
             v-model="addData.code"
             :disabled="isSHow"
-            placeholder="请输入节点名称"
+            placeholder="请输入节点编码"
+            maxlength="64"
+            show-word-limit
           />
         </el-form-item>
         <el-form-item label="更新人" prop="updateUserName">
@@ -209,9 +213,7 @@
       </el-form>
       <div slot="footer" align="center" class="dialog-footer">
         <el-button @click="showDialog = false">{{ isSHow ? "关闭" : "取消" }}</el-button>
-        <el-button v-if="!isSHow" type="primary" @click="handelDialogConfirm"
-          >确定</el-button
-        >
+        <el-button v-if="!isSHow" type="primary" @click="handelDialogConfirm">确定</el-button>
       </div>
     </el-dialog>
 
@@ -227,7 +229,6 @@
 <script>
 import {
   getArchiveFileCatalogueManagerTree,
-  getFileCatalogueTreeDetailed,
   fileCatalogueTreeFindList,
   saveFileCatalogueTree,
   deleteFileCatalogueTree,
@@ -244,7 +245,7 @@ import DragLine from "../shared_component/DragLine";
 import ListButton from "@/components/ListButton";
 
 export default {
-  name: "file-directory",
+  name: "FileDirectory",
   components: {
     TreeTableLayout,
     CorSelect,
@@ -380,7 +381,7 @@ export default {
     },
     async fileCatalogueTreeFindList() {
       try {
-        const searchData = { ...this.searchData, entity: {} };
+        const searchData = { ...this.searchData, entity: {}};
         if (this.date?.length > 0) {
           searchData.entity.startDate = this.date[0];
           searchData.entity.endDate = this.date[1];

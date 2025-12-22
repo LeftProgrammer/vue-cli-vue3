@@ -37,12 +37,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="'项目名称:'" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入" />
+              <el-input v-model="formData.name" placeholder="请输入" maxlength="100" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item :label="'编码:'" prop="code">
-              <el-input v-model="formData.code" placeholder="请输入" />
+              <el-input v-model="formData.code" placeholder="请输入" maxlength="50" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">

@@ -13,6 +13,8 @@
             <el-input
               v-model="formData.name"
               :disabled="readonly"
+              :maxlength="255"
+              show-word-limit
               placeholder="请输入"
             />
           </el-form-item>
@@ -22,6 +24,8 @@
             <el-input
               v-model="formData.code"
               :disabled="readonly"
+              :maxlength="255"
+              show-word-limit
               placeholder="请输入"
             />
           </el-form-item>
@@ -86,6 +90,8 @@
               <el-input
                 v-model="formData.startStake"
                 :controls="false"
+                :maxlength="50"
+                show-word-limit
                 style="width: 50%"
                 placeholder="起桩号"
               />
@@ -93,6 +99,8 @@
               <el-input
                 v-model="formData.endStake"
                 :controls="false"
+                :maxlength="50"
+                show-word-limit
                 style="width: 50%"
                 placeholder="止桩号"
               />
@@ -105,6 +113,8 @@
               <el-input
                 v-model="formData.startElevation"
                 :controls="false"
+                :maxlength="50"
+                show-word-limit
                 style="width: 50%"
                 placeholder="起高程"
               />
@@ -112,6 +122,8 @@
               <el-input
                 v-model="formData.endElevation"
                 :controls="false"
+                :maxlength="255"
+                show-word-limit
                 style="width: 50%"
                 placeholder="止高程"
               />

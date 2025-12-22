@@ -1,13 +1,13 @@
 <template>
   <div>
     <el-dialog
+      v-draggable
       :title="title"
       :visible.sync="dialogShow"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
       append-to-body
       width="40%"
-      v-draggable
       @closed="closedHandle"
     >
       <el-form
@@ -25,6 +25,7 @@
                 placeholder="请输入"
                 width="100%"
                 maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -35,6 +36,7 @@
                 placeholder="请输入"
                 width="100%"
                 maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -70,12 +72,12 @@
           <el-col :span="12">
             <el-form-item label="任务类型" prop="taskType">
               <el-select
-                @visible-change="$visibleChange($event, 'el-popper')"
-                class="w-100pre"
                 v-model="formData.taskType"
+                class="w-100pre"
                 placeholder="请选择"
                 clearable
                 :disabled="readonly"
+                @visible-change="$visibleChange($event, 'el-popper')"
               >
                 <el-option
                   v-for="item in taskTypes"
@@ -100,7 +102,7 @@
                 :precision="3"
                 :controls-rounding="false"
                 :step="0.1"
-              ></el-input-number>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -112,7 +114,7 @@
                 :precision="3"
                 :controls-rounding="false"
                 :step="0.1"
-              ></el-input-number>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -136,9 +138,23 @@ import { FormMixin } from "@/mixins/FormMixin";
 import moment from "moment";
 import { getDictItemList } from "@/api/dict";
 export default {
-  name: "dataform",
-  mixins: [FormMixin],
+  name: "Dataform",
   components: {},
+  mixins: [FormMixin],
+  props: {
+    baseId: {
+      type: String,
+      default: ""
+    },
+    data: {
+      type: Object,
+      default: () => {}
+    },
+    type: {
+      type: String,
+      default: ""
+    }
+  },
   data() {
     return {
       dialogShow: false,
@@ -160,24 +176,23 @@ export default {
       return this.type == "add" ? "新增" : this.type == "edit" ? "编辑" : "查看";
     }
   },
+  watch: {
+    visible: {
+      handler(newValue) {
+        this.dialogShow = newValue;
+        this.$nextTick(() => {
+          if (this.type != "add") this.formData = this.data;
+          else this.pid = this.data.id || "0";
+        });
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   created() {
     this.getTaskType();
   },
   mounted() {},
-  props: {
-    baseId: {
-      type: String,
-      default: ""
-    },
-    data: {
-      type: Object,
-      default: () => {}
-    },
-    type: {
-      type: String,
-      default: ""
-    }
-  },
   methods: {
     // 确认按钮
     sure() {
@@ -229,19 +244,6 @@ export default {
       const { data } = await getDictItemList("task_type");
       this.taskTypes = data;
       console.log("taskTypes", data);
-    }
-  },
-  watch: {
-    visible: {
-      handler(newValue) {
-        this.dialogShow = newValue;
-        this.$nextTick(() => {
-          if (this.type != "add") this.formData = this.data;
-          else this.pid = this.data.id || "0";
-        });
-      },
-      immediate: true,
-      deep: true
     }
   }
 };

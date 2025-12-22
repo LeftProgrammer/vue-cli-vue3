@@ -6,7 +6,7 @@
         <el-divider></el-divider>
       </el-col>
     </el-row> -->
-    <DefaultTitle title="基本信息"/>
+    <DefaultTitle title="基本信息" />
     <el-row>
       <el-form
         ref="dataFormRef"
@@ -17,28 +17,28 @@
         <el-col :span="12">
           <el-form-item label="成果类型:" prop="resultsType">
             <el-select
-              :disabled="isDisabled"
-              @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
               v-model="formData.resultsType"
+              :disabled="isDisabled"
+              class="w-100pre"
+              @visible-change="$visibleChange($event, 'el-popper')"
               @change="changeResultsType"
             >
               <el-option
                 v-for="item in sjcgOptions"
-                :label="item.dictName"
                 :key="item.dictCode"
+                :label="item.dictName"
                 :value="item.dictCode"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="关联计划任务项" prop="planName">
             <el-input
+              v-model="planName"
               :class="isDisabled ? '' : 'customStyle'"
               disabled
               placeholder="请选择"
-              v-model="planName"
             >
               <template slot="append">
                 <div @click="chooseComponent('MonthlyPlan', '关联计划项选择')">选择</div>
@@ -46,7 +46,7 @@
             </el-input>
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="pageType(['sjbg', 'sjyq', 'kybg', 'ydbsjbg'])">
+        <el-col v-if="pageType(['sjbg', 'sjyq', 'kybg', 'ydbsjbg'])" :span="12">
           <el-form-item
             :label="
               formData.resultsType == 'sjtz2' || formData.resultsType == 'ydbsjtz'
@@ -56,15 +56,14 @@
             prop="code"
           >
             <el-input
+              v-model="formData.code"
               show-word-limit
               type="text"
-              maxlength="150"
+              maxlength="255"
               :disabled="isDisabled"
-              v-model="formData.code"
               placeholder="请输入编号"
               width="100%"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -77,37 +76,35 @@
             prop="name"
           >
             <el-input
+              v-model="formData.name"
               show-word-limit
               type="text"
-              maxlength="150"
+              maxlength="255"
               :disabled="isDisabled"
-              v-model="formData.name"
               placeholder="请输入名称"
               width="100%"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="pageType(['kcsjyb', 'sdyb', 'jszlaqyb'])">
+        <el-col v-if="pageType(['kcsjyb', 'sdyb', 'jszlaqyb'])" :span="12">
           <el-form-item label="专业" prop="profession">
             <el-select
-              :disabled="isDisabled"
-              @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
               v-model="formData.profession"
+              :disabled="isDisabled"
+              class="w-100pre"
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in professionOptions"
-                :label="item.dictName"
                 :key="item.dictCode"
+                :label="item.dictName"
                 :value="item.dictCode"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-col>
 
         <el-col
-          :span="12"
           v-if="
             pageType([
               'sjtz',
@@ -123,22 +120,21 @@
               'ydb-sjbh'
             ])
           "
+          :span="12"
         >
           <el-form-item label="供应日期" prop="actualDate">
             <el-date-picker
+              v-model="formData.actualDate"
               :disabled="isDisabled"
               style="width: 100%"
-              v-model="formData.actualDate"
               type="date"
               value-format="yyyy-MM-dd"
               placeholder="选择日期"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-col>
 
         <el-col
-          :span="12"
           v-if="
             pageType([
               'sjtz',
@@ -158,35 +154,34 @@
               'ydb-sjbh'
             ])
           "
+          :span="12"
         >
           <el-form-item label="是否变更图纸" prop="isChange">
             <el-select
-              :disabled="isDisabled"
-              @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
               v-model="formData.isChange"
+              :disabled="isDisabled"
+              class="w-100pre"
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
-              <el-option label="是" :value="'1'"></el-option>
-              <el-option label="否" :value="'2'"></el-option>
+              <el-option label="是" :value="'1'" />
+              <el-option label="否" :value="'2'" />
             </el-select>
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="formData.isChange === '1'">
+        <el-col v-if="formData.isChange === '1'" :span="12">
           <el-form-item label="关联变更流程" prop="changeProcess">
             <associatedDrawing
               :multiple="false"
-              :pageType="getPageType"
-              :formDisabled="readonly"
+              :page-type="getPageType"
+              :form-disabled="readonly"
               :ids="formData.changeProcess"
               :names="formData.changeProcessName"
               @confirm="changeProcessConfirm"
-            >
-            </associatedDrawing>
+            />
           </el-form-item>
         </el-col>
 
         <el-col
-          :span="12"
           v-if="
             pageType([
               'sjbh',
@@ -199,13 +194,13 @@
               'ydb-sjbh'
             ])
           "
+          :span="12"
         >
           <el-form-item label="工程部位" prop="pbsCode">
-            <pbsSelect v-model="formData.pbsCode" :readonly="isDisabled"></pbsSelect>
+            <pbsSelect v-model="formData.pbsCode" :readonly="isDisabled" />
           </el-form-item>
         </el-col>
         <el-col
-          :span="12"
           v-if="
             pageType([
               'sjbh',
@@ -221,19 +216,20 @@
               'ydb-sjbh'
             ])
           "
+          :span="12"
         >
           <el-form-item label="所属标段" size="mini" prop="sectionId">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
+              ref="sectionIdRef"
+              v-model="formData.sectionId"
               :size="'medium'"
               class="select sectionSelect"
               :disabled="isDisabled"
-              ref="sectionIdRef"
-              v-model="formData.sectionId"
               placeholder="请选择"
               clearable
               filterable
               name="'test'"
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -248,12 +244,12 @@
           <el-col :span="12">
             <el-form-item label="经办人手写签名" prop="handlerSignature">
               <uploadFile
-                :showDownloadButton="false"
                 v-model="formData.handlerSignature"
+                :show-download-button="false"
                 :readonly="readonly"
                 :limit="1"
-                :maxSize="1"
-              ></uploadFile>
+                :max-size="1"
+              />
             </el-form-item>
           </el-col>
         </el-col>
@@ -295,7 +291,7 @@
         <el-col
           v-if="
             formData.flowStatus == 2 ||
-            (formData.id && formData.matterTaskTodo?.procTaskName == '工程处设计专职')
+              (formData.id && formData.matterTaskTodo?.procTaskName == '工程处设计专职')
           "
           :span="12"
         >
@@ -304,12 +300,11 @@
               v-model="formData.supervisorDirector"
               :readonly="
                 flowInfo?.page != 'todo' ||
-                formData.matterTaskTodo?.procTaskName != '工程处设计专职'
+                  formData.matterTaskTodo?.procTaskName != '工程处设计专职'
               "
+              :unit-id="myUnitId"
               @change="handlerApprover"
-              :unitId="myUnitId"
-            >
-            </user>
+            />
           </el-form-item>
         </el-col>
         <!-- <el-col :span="24">
@@ -333,7 +328,6 @@
           </el-col>
         </el-col> -->
         <el-col
-          :span="24"
           v-if="
             pageType([
               'sjtz',
@@ -351,18 +345,18 @@
               'ydb-sjbh'
             ])
           "
+          :span="24"
         >
           <el-form-item label="备注" size="mini" prop="remark">
             <el-input
-              :disabled="isDisabled"
               v-model="formData.remark"
+              :disabled="isDisabled"
               type="textarea"
               show-word-limit
               maxlength="500"
               :autosize="{ minRows: 3, maxRows: 6 }"
               placeholder="请输入备注"
-            >
-            </el-input>
+            />
           </el-form-item>
         </el-col>
       </el-form>
@@ -370,11 +364,11 @@
       <!-- v-if="isNeedDistribution || formData.needDistribution" -->
       <el-form
         v-if="isNeedDistribution || formData.needDistribution"
+        ref="dataFormRef1"
         :model="formData"
         :rules="formDataRules"
         label-width="160px"
         :disabled="formData.isDditDistribution == '1'"
-        ref="dataFormRef1"
       >
         <el-col :span="12">
           <el-form-item label="是否分发" prop="needDistribution">
@@ -398,19 +392,19 @@
         <el-col :span="6">
           <el-form-item label="监理单位" prop="supervisoryUnit">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
-              :disableTable="readonly"
-              class="w-100pre"
               v-model="formData.supervisoryUnit"
-              @change="changeSupervisoryUnit"
+              :disable-table="readonly"
+              class="w-100pre"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
+              @change="changeSupervisoryUnit"
             >
               <el-option
                 v-for="item in supervisoryUnitOption"
-                :label="item.corpName"
                 :key="item.corpId"
+                :label="item.corpName"
                 :value="item.corpId"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -418,17 +412,17 @@
         <el-col :span="6">
           <el-form-item label="" prop="supervisorySecretary" label-width="20px">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
-              :disableTable="readonly"
-              class="w-100pre"
               v-model="formData.supervisorySecretary"
+              :disable-table="readonly"
+              class="w-100pre"
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in supervisorySecretaryOption(formData.supervisoryUnit)"
-                :label="item.realName"
                 :key="item.userId"
+                :label="item.realName"
                 :value="item.userId"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-col>
@@ -444,20 +438,20 @@
         label-width="160px"
       >
         <el-col :span="24">
-          <el-col :span="24" v-loading="copyUnitLoading">
+          <el-col v-loading="copyUnitLoading" :span="24">
             <!-- readonly   -->
             <el-form-item label="其它分发单位" prop="copyUnit">
               <resultsUniTable
-                :sgdwxs="formData.copyUnit"
-                :defaultUnit="DefaultCopyUnitList"
-                :tableTitle="'其它分发单位'"
-                :isNeedDistribution="isNeedDistribution"
-                :uniType="'dsfdw'"
                 ref="copyUnit"
+                :sgdwxs="formData.copyUnit"
+                :default-unit="DefaultCopyUnitList"
+                :table-title="'其它分发单位'"
+                :is-need-distribution="isNeedDistribution"
+                :uni-type="'dsfdw'"
                 :type="'copyUnit'"
-                :disableTable="formData.isEditCopyunit == '1'"
+                :disable-table="formData.isEditCopyunit == '1'"
                 @tableOK="tableInitOK"
-              ></resultsUniTable>
+              />
             </el-form-item>
           </el-col>
         </el-col>
@@ -477,37 +471,35 @@
             <user
               v-model="formData.constructionUnitApprover"
               :readonly="isDisApprover"
+              :unit-id="myUnitId"
               @change="handlerconstructionUnitApprover"
-              :unitId="myUnitId"
-            ></user>
+            />
           </el-form-item>
         </el-col>
       </el-form>
     </el-row>
     <div class="pt-20">
       <uploadFileTable
-        :readonly="isDisabled"
         v-model="formData.designSupplyFileList"
-        :maxSize="500"
-        :showNtko="showNtko"
-        @changeNtkoFile="changeNtkoFile"
+        :readonly="isDisabled"
+        :max-size="500"
+        :show-ntko="showNtko"
         :limit="500"
-        tableName="文件列表"
-      >
-      </uploadFileTable>
+        table-name="文件列表"
+        @changeNtkoFile="changeNtkoFile"
+      />
     </div>
 
     <!-- 附件 -->
     <div class="pt-20">
       <!-- :readonly="reviewIsDisabled" -->
       <uploadFileTable
-        :readonly="readonly || enclosureFileDisabled"
         v-model="formData.enclosureFile"
-        :maxSize="500"
+        :readonly="readonly || enclosureFileDisabled"
+        :max-size="500"
         :limit="500"
-        tableName="附件（费用估计文件请上传至本表）"
-      >
-      </uploadFileTable>
+        table-name="附件（费用估计文件请上传至本表）"
+      />
     </div>
     <!-- 审查意见 营地标/施工标段 :disabled="formData.isDditConstructionUnit == '1'" -->
     <!-- 5182 营地成果供应，西南咨询文秘节点，新增对审核意见进行电子签章，可以对多个审核意见进行电子签章 -->
@@ -521,16 +513,15 @@
       <el-form-item label="" label-width="0" prop="reviewCommentsFileList">
         <div class="pt-20">
           <uploadFileTable
-            :readonly="reviewIsDisabled && this.$route.query.maintenance !== '1'"
             v-model="formData.reviewCommentsFileList"
-            :maxSize="500"
+            :readonly="reviewIsDisabled && $route.query.maintenance !== '1'"
+            :max-size="500"
             :limit="500"
-            :showNtko="xnzxwmtj"
+            :show-ntko="xnzxwmtj"
+            :is-ntkotest="'1'"
+            table-name="审查意见"
             @changeNtkoFile="scyjChangeNtkoFile"
-            :isNtkotest="'1'"
-            tableName="审查意见"
-          >
-          </uploadFileTable>
+          />
         </div>
       </el-form-item>
     </el-form>
@@ -542,11 +533,11 @@
       :visible.sync="dialogPlanVisible"
     >
       <components
-        :page="'drawingSupply'"
-        ref="components"
-        :type="1"
         :is="component"
-      ></components>
+        ref="components"
+        :page="'drawingSupply'"
+        :type="1"
+      />
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogPlanVisible = false">取 消</el-button>
         <el-button type="primary" @click="sure">确 定</el-button>
@@ -754,63 +745,6 @@ export default {
       },
       isFromApp: false
     };
-  },
-  created() {
-    this.getSectionList();
-    // this.isFromApp = fromApp();
-    this.getDictItemList(this.professionCode);
-    // 只有在营地标展示默认单位
-    this.getDictItemList(this.DefaultCopyUnitCode);
-    // if (this.formData.pageType == "2") {
-    //   // this.getDictItemList(this.DefaultCopyUnitCode);
-    // }
-
-    //获取标段
-    this.getMyUnitId();
-    // 获取缓存
-    this.formType = this.$getStorage("formType");
-    this.$bus.on("unitable", (event) => {
-      if (event.type) {
-        if (event.value) {
-          console.log("form监听", event.value);
-          let json = event.value.map((item) => {
-            return {
-              corpId: item.corpId,
-              sendUser: item.sendUser,
-              departId: item.departId
-            };
-          });
-          this.$set(this.formData, event.type, JSON.stringify(json));
-          console.log(event.type, this.formData[event.type]);
-        }
-      } else {
-        this.$message.warning("单位type为传递进组件");
-      }
-    });
-    // 监理选中施工单位
-    this.$bus.on("supervisoryUnitable", (event) => {
-      if (event.type) {
-        if (event.value) {
-          console.log("form监听", event.value);
-          let json = event.value.map((item) => {
-            return {
-              corpId: item.corpId,
-              sendUser: item.sendUser,
-              departId: item.departId
-            };
-          });
-          this.$set(this.formData, event.type, JSON.stringify(json));
-          console.log(event.type, this.formData[event.type]);
-        }
-      } else {
-        this.$message.warning("单位type为传递进组件");
-      }
-    });
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.getReceivingDepartment();
-    });
   },
   computed: {
     isFflczq() {
@@ -1075,6 +1009,63 @@ export default {
       deep: true,
       immediate: true
     }
+  },
+  created() {
+    this.getSectionList();
+    // this.isFromApp = fromApp();
+    this.getDictItemList(this.professionCode);
+    // 只有在营地标展示默认单位
+    this.getDictItemList(this.DefaultCopyUnitCode);
+    // if (this.formData.pageType == "2") {
+    //   // this.getDictItemList(this.DefaultCopyUnitCode);
+    // }
+
+    //获取标段
+    this.getMyUnitId();
+    // 获取缓存
+    this.formType = this.$getStorage("formType");
+    this.$bus.on("unitable", (event) => {
+      if (event.type) {
+        if (event.value) {
+          console.log("form监听", event.value);
+          let json = event.value.map((item) => {
+            return {
+              corpId: item.corpId,
+              sendUser: item.sendUser,
+              departId: item.departId
+            };
+          });
+          this.$set(this.formData, event.type, JSON.stringify(json));
+          console.log(event.type, this.formData[event.type]);
+        }
+      } else {
+        this.$message.warning("单位type为传递进组件");
+      }
+    });
+    // 监理选中施工单位
+    this.$bus.on("supervisoryUnitable", (event) => {
+      if (event.type) {
+        if (event.value) {
+          console.log("form监听", event.value);
+          let json = event.value.map((item) => {
+            return {
+              corpId: item.corpId,
+              sendUser: item.sendUser,
+              departId: item.departId
+            };
+          });
+          this.$set(this.formData, event.type, JSON.stringify(json));
+          console.log(event.type, this.formData[event.type]);
+        }
+      } else {
+        this.$message.warning("单位type为传递进组件");
+      }
+    });
+  },
+  mounted() {
+    this.$nextTick(() => {
+      this.getReceivingDepartment();
+    });
   },
   methods: {
     // 监理文秘校验
@@ -1451,7 +1442,7 @@ export default {
       });
     },
     async save(origin, callback, event) {
-      console.log("save",origin);
+      console.log("save", origin);
       console.log("savesavesavesave", this.postMessageData?.btnKey, origin);
       let fields = { ...origin };
       console.log("fieldsfieldsfieldsfieldsfields", fields);

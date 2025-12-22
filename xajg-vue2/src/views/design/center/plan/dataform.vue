@@ -21,7 +21,7 @@
               v-model="formData.year"
               type="year"
               placeholder="选择年"
-            ></el-date-picker>
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -30,8 +30,9 @@
               v-model="formData.name"
               placeholder="请输入计划名称"
               width="100%"
-            >
-            </el-input>
+              maxlength="50"
+              show-word-limit
+            />
           </el-form-item>
         </el-col>
         <!--        <el-col :span="12">-->
@@ -59,8 +60,7 @@
               type="date"
               placeholder="选择开始日期"
               :picker-options="startDatePickerOptions"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -70,8 +70,7 @@
               type="date"
               placeholder="选择结束日期"
               :picker-options="endDatePickerOptions"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-col>
         <!-- <el-col :span="12">
@@ -92,10 +91,7 @@
         </el-col> -->
         <el-col :span="12">
           <el-form-item label="附件" prop="uploadFile">
-            <uploadFile
-              :readonly="readonly"
-              v-model="formData.uploadFile"
-            ></uploadFile>
+            <uploadFile v-model="formData.uploadFile" :readonly="readonly" />
           </el-form-item>
         </el-col>
       </el-form>
@@ -125,7 +121,7 @@
               placeholder="请输入序号"
               :disabled="true"
               readonly
-            ></el-input>
+            />
           </template>
         </el-table-column>
         <el-table-column
@@ -140,18 +136,18 @@
             <span v-show="row.isClassify === true">{{ row.taskName }}</span>
             <el-form-item :error="row.error">
               <el-input
+                v-show="row.isClassify !== true"
+                v-model="row.taskName"
                 class="custom-rule"
                 type="textarea"
                 :rows="1"
                 placeholder="请输入任务项名称"
-                v-show="row.isClassify !== true"
-                v-model="row.taskName"
                 :disabled="readonly"
                 maxlength="150"
                 show-word-limit
-                @blur="tableParValueChange(row)"
                 :autosize="{ minRows: 1, maxRows: 6 }"
-              ></el-input>
+                @blur="tableParValueChange(row)"
+              />
             </el-form-item>
           </template>
         </el-table-column>
@@ -165,13 +161,13 @@
             <span v-if="ishowselect(row)">
               <span v-show="row.isClassify === true">{{ row.profession }}</span>
               <el-select
-                @visible-change="$visibleChange($event, 'el-popper')"
-                ref="professionRef"
                 v-show="row.isClassify !== true"
+                ref="professionRef"
                 v-model="row.profession"
                 placeholder="请选择专业"
                 clearable
                 :disabled="readonly"
+                @visible-change="$visibleChange($event, 'el-popper')"
               >
                 <el-option
                   v-for="item in designProfessionOptions"
@@ -197,16 +193,15 @@
               </span>
               <el-form-item :error="row.dateError">
                 <el-date-picker
-                  class="custom-rule"
-                  placeholder="请选择"
                   v-show="row.isClassify !== true"
                   v-model="row.planTime"
+                  class="custom-rule"
+                  placeholder="请选择"
                   :disabled="readonly || isCanchooseDate"
                   style="width: 140px"
                   :picker-options="getPickerOptions(row)"
                   @blur="tableParValueChange(row)"
-                >
-                </el-date-picker>
+                />
               </el-form-item>
             </span>
           </template>
@@ -228,7 +223,7 @@
                   v-model="row.projectPbs"
                   :readonly="readonly"
                   @change="tableParValueChange(row)"
-                ></pbs-select>
+                />
               </el-form-item>
             </span>
           </template>
@@ -249,7 +244,7 @@
                 v-model="scope.row.charge"
                 :multiple="false"
                 :readonly="readonly"
-              ></user>
+              />
             </span>
           </template>
         </el-table-column>
@@ -267,9 +262,9 @@
               <el-checkbox
                 v-show="scope.row.isClassify !== true"
                 :checked="scope.row.bIsScene"
-                @change="(val) => bIsSceneChangeHandle(val, scope)"
                 :disabled="readonly"
-              ></el-checkbox>
+                @change="(val) => bIsSceneChangeHandle(val, scope)"
+              />
             </span>
           </template>
         </el-table-column>
@@ -278,16 +273,16 @@
             <span v-if="ishowselect(row)">
               <span v-show="row.isClassify === true">{{ row.remark }}</span>
               <el-input
+                v-show="row.isClassify !== true"
+                v-model="row.remark"
                 type="textarea"
                 :rows="1"
                 placeholder="请输入备注"
-                v-show="row.isClassify !== true"
-                v-model="row.remark"
                 :disabled="readonly"
                 maxlength="20"
                 show-word-limit
                 :autosize="{ minRows: 1, maxRows: 6 }"
-              ></el-input>
+              />
             </span>
           </template>
         </el-table-column>
@@ -307,30 +302,30 @@
             新增下级分类
           </el-button> -->
             <el-button
-              type="text"
               v-if="ishowClass(scope.row)"
-              @click="handelAdd(scope.$index, scope.row, tableData, 'class')"
+              type="text"
               :disabled="readonly"
+              @click="handelAdd(scope.$index, scope.row, tableData, 'class')"
             >
               新增下级分类
             </el-button>
             <el-button
               v-if="ishowTask(scope.row)"
               type="text"
-              @click="handelAdd(scope.$index, scope.row, tableData, 'task')"
               :disabled="readonly"
+              @click="handelAdd(scope.$index, scope.row, tableData, 'task')"
             >
               新增下级任务
             </el-button>
             <el-button
-              @click.native.prevent="deleteRow(scope.$index, tableData, 'task')"
               type="text"
               :class="deleteRed ? '' : 'el-delete'"
               :disabled="
                 readonly ||
-                scope.row.id === '0' ||
-                (scope.row.children && scope.row.children.length > 0)
+                  scope.row.id === '0' ||
+                  (scope.row.children && scope.row.children.length > 0)
               "
+              @click.native.prevent="deleteRow(scope.$index, tableData, 'task')"
             >
               删除
             </el-button>
@@ -358,12 +353,12 @@ import { unitList } from "../drawingSend/components/api";
 import { getSecretary } from "../../../../components/UniTable/api";
 
 export default {
-  name: "dataform",
-  mixins: [FlowFormMixin],
+  name: "Dataform",
   components: {
     UserSelect,
     PbsSelect,
   },
+  mixins: [FlowFormMixin],
   data() {
     return {
       addAble: true,
@@ -455,10 +450,6 @@ export default {
       secretaryList: [],
     };
   },
-  mounted() {
-    this.getYearList();
-    this.getSection();
-  },
   computed: {
     deleteRed() {
       let bool = false;
@@ -496,6 +487,25 @@ export default {
         },
       };
     },
+  },
+  watch: {
+    tableData: {
+      handler() {
+        if (this.tableData && this.tableData.length) {
+          this.formData.designPlanDetailList = this.tableData
+            .filter((x) => x.isClassify === false)
+            .map((x) => {
+              x.bIsScene = x.isScene ? true : false;
+              return x;
+            });
+        }
+      },
+      immediate: true,
+    },
+  },
+  mounted() {
+    this.getYearList();
+    this.getSection();
   },
   created() {
     this.getDictItemList(this.designClassifyCode);
@@ -1146,21 +1156,6 @@ export default {
         }
       });
       return res;
-    },
-  },
-  watch: {
-    tableData: {
-      handler() {
-        if (this.tableData && this.tableData.length) {
-          this.formData.designPlanDetailList = this.tableData
-            .filter((x) => x.isClassify === false)
-            .map((x) => {
-              x.bIsScene = x.isScene ? true : false;
-              return x;
-            });
-        }
-      },
-      immediate: true,
     },
   },
 };

@@ -17,6 +17,8 @@
                 v-model="formData.name"
                 :disabled="readonly"
                 style="width: 100%"
+                maxlength="100"
+                show-word-limit
               />
             </el-form-item>
           </el-col>

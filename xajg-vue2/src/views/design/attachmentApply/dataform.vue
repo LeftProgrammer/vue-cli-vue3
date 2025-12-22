@@ -11,42 +11,42 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="流程名称" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入"/>
+              <el-input v-model="formData.name" placeholder="请输入" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="流程编号" prop="code">
-              <el-input v-model="formData.code" placeholder="请输入"/>
+              <el-input v-model="formData.code" placeholder="请输入" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="批件类型" prop="type">
-              <TreeSelect v-model="formData.type" filterable :tree-options="attachmentList" style="width: 100%"/>
+              <TreeSelect v-model="formData.type" filterable :tree-options="attachmentList" style="width: 100%" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="工程部位" prop="pbsCode">
-              <pbs-select v-model="formData.pbsCode" :readonly="readonly"/>
+              <pbs-select v-model="formData.pbsCode" :readonly="readonly" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-          <el-form-item label="标段" prop="sectionId">
-            <el-select
-              v-model="formData.sectionId"
-              :disabled="readonly"
-              class="w-100pre"
-              placeholder="请选择"
-              @visible-change="$visibleChange($event, 'el-popper')"
-            >
-              <el-option
-                v-for="item in sectionList"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        </el-col>
+            <el-form-item label="标段" prop="sectionId">
+              <el-select
+                v-model="formData.sectionId"
+                :disabled="readonly"
+                class="w-100pre"
+                placeholder="请选择"
+                @visible-change="$visibleChange($event, 'el-popper')"
+              >
+                <el-option
+                  v-for="item in sectionList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="12">
             <el-form-item label="发起人" prop="initiator ">
               <user
@@ -91,49 +91,48 @@
     </el-row>
     <div class="pt-20">
       <uploadFileTable
-        :readonly="readonly"
         v-model="formData.fileList"
-        :maxSize="500"
+        :readonly="readonly"
+        :max-size="500"
         :limit="500"
-      >
-      </uploadFileTable>
+      />
     </div>
   </div>
 </template>
 
 <script>
-import {save,getSection} from "./api";
-import {FlowFormMixin} from "@/mixins/FlowFormMixin";
-import {getDictItemTree} from "@/api/dict";
-import {dateFormat} from "@/utils";
+import { save, getSection } from "./api";
+import { FlowFormMixin } from "@/mixins/FlowFormMixin";
+import { getDictItemTree } from "@/api/dict";
+import { dateFormat } from "@/utils";
 import TreeSelect from "@/components/TreeSelect/index.vue";
 
 export default {
-  name: "dataform",
+  name: "Dataform",
+  components: { TreeSelect },
   mixins: [FlowFormMixin],
-  components: {TreeSelect},
   data() {
     return {
-      sectionList:[],
+      sectionList: [],
       formData: {},
       formDataRules: {
         name: [
-          {required: true, message: '请输入流程名称', trigger: 'blur'}
+          { required: true, message: '请输入流程名称', trigger: 'blur' }
         ],
         sectionId: [
-          {required: true, message: '请选择', trigger: 'change'}
+          { required: true, message: '请选择', trigger: 'change' }
         ],
         code: [
-          {required: true, message: '请输入流程编号', trigger: 'blur'}
+          { required: true, message: '请输入流程编号', trigger: 'blur' }
         ],
         type: [
-          {required: true, message: '请选择批件类型', trigger: 'change'}
+          { required: true, message: '请选择批件类型', trigger: 'change' }
         ],
         pbsCode: [
-          {required: true, message: '请选择工程部位', trigger: 'change'}
+          { required: true, message: '请选择工程部位', trigger: 'change' }
         ],
         approver: [
-          {required: true, message: '请选择审批人', trigger: 'change'}
+          { required: true, message: '请选择审批人', trigger: 'change' }
         ],
       },
       //正在加载
@@ -155,7 +154,7 @@ export default {
     this.getDictItemList();
   },
   methods: {
-    async getSection(){
+    async getSection() {
       // 获取标段
       const { data } = await getSection({});
       this.sectionList = data;
@@ -195,7 +194,7 @@ export default {
       }
       save(fields)
         .then((res) => {
-          const {success, message} = res;
+          const { success, message } = res;
           if (!success) {
             return this.$message.error("新增失败：" + message);
           } else {

@@ -1,8 +1,8 @@
 <template>
   <el-dialog
+    v-draggable
     :title="title"
     :visible.sync="visible"
-    v-draggable
     :destroy-on-close="true"
     append-to-body
     width="61%"
@@ -17,6 +17,8 @@
               v-model="formData.licensePlate"
               placeholder="请输入车牌号"
               :disabled="type === 'view'"
+              maxlength="20"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -28,8 +30,7 @@
               style="width: 100px; height: 100px"
               :src="`data:image/jpeg;base64,${formData.picture}`"
               :preview-src-list="[`data:image/jpeg;base64,${formData.picture}`]"
-            >
-            </el-image>
+            />
           </el-form-item>
         </el-col>
       </el-row>
@@ -37,26 +38,27 @@
         <el-col :span="24">
           <el-form-item label="备注" prop="remark" :disabled="type === 'view'">
             <el-input
-              type="textarea"
               v-model="formData.remark"
+              type="textarea"
               placeholder="请输入备注"
               :disabled="type === 'view'"
               :rows="3"
+              maxlength="255"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
       </el-row>
     </el-form>
     <div slot="footer" class="dialog-footer">
-      <el-button @click="closeDialog"
-        >{{ type === "view" ? "关闭" : "取消" }}
+      <el-button @click="closeDialog">{{ type === "view" ? "关闭" : "取消" }}
       </el-button>
       <el-button
+        v-if="type !== 'view'"
         type="primary"
         :loading="loading"
         @click="submitForm"
-        v-if="type !== 'view'"
-        >确定
+      >确定
       </el-button>
     </div>
   </el-dialog>

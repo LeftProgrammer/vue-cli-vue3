@@ -17,6 +17,8 @@
               v-model="formData.code"
               placeholder="请输入测点编码"
               :disabled="type === 'view'"
+              maxlength="20"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -26,6 +28,8 @@
               v-model="formData.name"
               placeholder="请输入测点名称"
               :disabled="type === 'view'"
+              maxlength="20"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -57,6 +61,8 @@
               placeholder="请输入备注"
               :disabled="type === 'view'"
               :rows="3"
+              maxlength="1000"
+              show-word-limit
             />
           </el-form-item>
         </el-col>

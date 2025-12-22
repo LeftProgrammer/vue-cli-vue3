@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-draggable
-    :oprateRow="oprateRow"
+    :oprate-row="oprateRow"
     :title="title"
     :visible.sync="dialogShow"
     :destroy-on-close="false"
@@ -47,7 +47,7 @@
                   v-model="formData.contractCode"
                   placeholder="请输入"
                   disabled
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -57,7 +57,7 @@
                 <el-input
                   v-model="formData.code"
                   placeholder="请输入"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -84,7 +84,7 @@
                 <el-input
                   v-model="formData.pbsCode"
                   placeholder="请输入"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -155,7 +155,7 @@
                 <el-input
                   v-model="formData.partyA"
                   placeholder="请输入"
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -166,7 +166,7 @@
                   v-model="formData.partyB"
                   placeholder="请输入"
                   disabled
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -177,7 +177,7 @@
                   v-model="formData.partyC"
                   placeholder="请输入"
                   disabled
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -313,7 +313,7 @@
                   :readonly="readonly"
                   :limit="1"
                   :multiline="false"
-                  :maxSize="20"
+                  :max-size="20"
                   @change="handleFileChange"
                 />
               </el-form-item>
@@ -510,11 +510,11 @@
       </el-button>
     </div>
     <input
-      type="file"
       ref="fileInput"
+      type="file"
       style="display: none"
       @change="handleFileUpload"
-    />
+    >
   </el-dialog>
 </template>
 
@@ -525,8 +525,31 @@ import { FormMixin } from '@/mixins/FormMixin'
 import { getDictItemList } from '@/api/dict'
 import * as XLSX from 'xlsx'
 export default {
-  name: 'dataform',
+  name: 'Dataform',
   mixins: [FormMixin],
+  props: {
+    /**显示弹窗 */
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: ''
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    htxxOptions: {
+      type: Array,
+      default: []
+    },
+    oprateRow: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       /**PBS选择 */
@@ -594,37 +617,38 @@ export default {
       tableTotalMoney: 0
     }
   },
-  created() {
-    this.getDictItemList()
-  },
   computed: {
     /**当前登录用户 */
     userInfo() {
       return this.$getStorage('userInfo')
     }
   },
-  props: {
-    /**显示弹窗 */
+  watch: {
     visible: {
-      type: Boolean,
-      default: false
-    },
-    type: {
-      type: String,
-      default: ''
-    },
-    title: {
-      type: String,
-      default: ''
-    },
-    htxxOptions: {
-      type: Array,
-      default: []
-    },
-    oprateRow: {
-      type: Object,
-      default: () => ({})
+      handler(newValue) {
+        if (newValue) {
+          const newData = { ...this.oprateRow.data }
+          this.formData = newData
+          // 检查并赋值
+          if (this.formData.contractId) {
+            this.contractIdChangeHandle(this.formData.contractId)
+          }
+          if (newData.detailVos) {
+            this.tableData = newData.detailVos
+            this.tableTotalMoney = this.tableData.reduce(
+              (sum, item) => sum + Number(item.totalPrice || 0),
+              0
+            )
+          }
+        }
+        this.dialogShow = newValue
+      },
+      immediate: true,
+      deep: true
     }
+  },
+  created() {
+    this.getDictItemList()
   },
   methods: {
     closedHandle() {
@@ -919,8 +943,7 @@ export default {
         const parts = lv.split('.').map(Number)
 
         /* 1. 整体顺序检查 */
-        if (i && compare(lv, list[i - 1].orderNo) <= 0)
-          return '清单编号整体顺序错误'
+        if (i && compare(lv, list[i - 1].orderNo) <= 0) { return '清单编号整体顺序错误' }
 
         /* 2. 父级必须已出现（根节点除外） */
         const parent = parts.slice(0, -1).join('.')
@@ -949,30 +972,6 @@ export default {
         }
         return 0
       }
-    }
-  },
-  watch: {
-    visible: {
-      handler(newValue) {
-        if (newValue) {
-          const newData = { ...this.oprateRow.data }
-          this.formData = newData
-          // 检查并赋值
-          if (this.formData.contractId) {
-            this.contractIdChangeHandle(this.formData.contractId)
-          }
-          if (newData.detailVos) {
-            this.tableData = newData.detailVos
-            this.tableTotalMoney = this.tableData.reduce(
-              (sum, item) => sum + Number(item.totalPrice || 0),
-              0
-            )
-          }
-        }
-        this.dialogShow = newValue
-      },
-      immediate: true,
-      deep: true
     }
   }
 }

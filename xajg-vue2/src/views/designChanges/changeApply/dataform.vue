@@ -23,12 +23,16 @@
                   <el-input
                     v-model="code1"
                     :disabled="readonly"
+                    maxlength="30"
+                    show-word-limit
                     @input="handleInput($event, 'code1')"
                   />
                   <div class="ml-16 mr-8">【</div>
                   <el-input
                     v-model="code2"
                     :disabled="readonly"
+                    maxlength="30"
+                    show-word-limit
                     style="width: 200px"
                     @input="handleInput($event, 'code2')"
                   />
@@ -38,6 +42,8 @@
                     v-model="code3"
                     style="width: 300px"
                     :disabled="readonly"
+                    maxlength="30"
+                    show-word-limit
                     @input="handleInput($event, 'code3')"
                   />
                   <div class="ml-16">号</div>
@@ -155,7 +161,7 @@
                 type="textarea"
                 :disabled="readonly"
                 show-word-limit
-                maxlength="1000"
+                maxlength="2000"
                 :autosize="{
                   minRows: 3,
                   maxRows: 6,

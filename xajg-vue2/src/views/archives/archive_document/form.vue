@@ -39,12 +39,12 @@
         <!-- 第2行：文件题名、文件编号 -->
         <el-col :span="12">
           <el-form-item label="文件题名" prop="documentTitle">
-            <el-input v-model="formData.documentTitle" placeholder="请输入" />
+            <el-input v-model="formData.documentTitle" placeholder="请输入" maxlength="500" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="12">
           <el-form-item label="文件编号">
-            <el-input v-model="formData.documentCode" placeholder="请输入" />
+            <el-input v-model="formData.documentCode" placeholder="请输入" maxlength="100" show-word-limit />
           </el-form-item>
         </el-col>
         <!-- 第3行：密级、页号 -->
@@ -66,19 +66,19 @@
         </el-col>
         <el-col :span="12">
           <el-form-item label="页号">
-            <el-input v-model="formData.pageNo" placeholder="请输入" />
+            <el-input v-model="formData.pageNo" placeholder="请输入" maxlength="50" show-word-limit />
           </el-form-item>
         </el-col>
         <!-- 第4行：关键词 -->
         <el-col :span="24">
           <el-form-item label="关键词">
-            <el-input v-model="formData.keywords" placeholder="请输入" />
+            <el-input v-model="formData.keywords" placeholder="请输入" maxlength="200" show-word-limit />
           </el-form-item>
         </el-col>
         <!-- 第5行：责任者、日期 -->
         <el-col :span="12">
           <el-form-item label="责任者" prop="responsible">
-            <el-input v-model="formData.responsible" placeholder="请输入" />
+            <el-input v-model="formData.responsible" placeholder="请输入" maxlength="100" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -100,7 +100,7 @@
               type="textarea"
               :rows="3"
               placeholder="请输入"
-              maxlength="50"
+              maxlength="500"
               show-word-limit
             />
           </el-form-item>

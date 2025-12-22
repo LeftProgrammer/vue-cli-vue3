@@ -10,7 +10,7 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="结算编号" prop="code">
-              <el-input v-model="formData.code" :disabled="readonly" />
+              <el-input v-model="formData.code" :disabled="readonly" maxlength="50" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -194,9 +194,7 @@
                   />
                 </td>
                 <td>
-                  <span v-if="!readonly" @click="addDetailBtn(1)"
-                    >添加明细</span
-                  >
+                  <span v-if="!readonly" @click="addDetailBtn(1)">添加明细</span>
                   <span @click="view(1)">查看</span>
                 </td>
               </tr>
@@ -231,9 +229,7 @@
                   />
                 </td>
                 <td>
-                  <span v-if="!readonly" @click="addDetailBtn(2)"
-                    >添加明细</span
-                  >
+                  <span v-if="!readonly" @click="addDetailBtn(2)">添加明细</span>
                   <span @click="view(2)">查看</span>
                 </td>
               </tr>
@@ -715,7 +711,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>质量安全扣款</td>
@@ -753,7 +749,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>小计（六）</td>
@@ -878,18 +874,18 @@
                       ],
                       'lastPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'lastPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'lastPrice'
+                      )
                   }}
                 </td>
                 <td>
@@ -907,18 +903,18 @@
                       ],
                       'thisPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'thisPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'thisPrice'
+                      )
                   }}
                 </td>
                 <td>
@@ -936,18 +932,18 @@
                       ],
                       'endPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'endPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'endPrice'
+                      )
                   }}
                 </td>
                 <td />
@@ -989,7 +985,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>其中：安全生产经费</td>
@@ -1027,7 +1023,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td colspan="2">本期实际支付金额</td>
@@ -1046,18 +1042,18 @@
                       ],
                       'thisPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'thisPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'thisPrice'
+                      )
                   }}
                 </td>
                 <td colspan="3">
@@ -1185,7 +1181,7 @@
     </el-row>
     <detailTable
       v-if="oprateRow.dialogShow"
-      :oprateRow="oprateRow"
+      :oprate-row="oprateRow"
       :type="oprateRow.type"
       :title="oprateRow.title"
       :visible="oprateRow.dialogShow"

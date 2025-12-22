@@ -17,6 +17,8 @@
               v-model="formData.modelId"
               placeholder="请输入场景ID"
               :disabled="type === 'view'"
+              maxlength="255"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -26,6 +28,8 @@
               v-model="formData.modelCode"
               placeholder="请输入场景编码"
               :disabled="type === 'view'"
+              maxlength="50"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -35,6 +39,8 @@
               v-model="formData.modelName"
               placeholder="请输入场景名称"
               :disabled="type === 'view'"
+              maxlength="255"
+              show-word-limit
             />
           </el-form-item>
         </el-col>

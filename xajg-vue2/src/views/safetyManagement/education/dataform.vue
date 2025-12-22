@@ -32,6 +32,8 @@
                 v-model="formData.teamName"
                 placeholder="请输入"
                 :disabled="readonly"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -41,6 +43,8 @@
                 v-model="formData.teamLeader"
                 placeholder="请输入"
                 :disabled="readonly"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -49,6 +53,7 @@
               <el-input
                 v-model="formData.location"
                 :disabled="readonly"
+                maxlength="100"
                 show-word-limit
               />
             </el-form-item>
@@ -58,6 +63,7 @@
               <el-input
                 v-model="formData.compere"
                 :disabled="readonly"
+                maxlength="50"
                 show-word-limit
               />
             </el-form-item>
@@ -67,6 +73,7 @@
               <el-input
                 v-model="formData.weather"
                 :disabled="readonly"
+                maxlength="50"
                 show-word-limit
               />
             </el-form-item>
@@ -167,7 +174,6 @@
 <script>
 import { save, unitAllList } from "./api";
 import { FlowFormMixin } from "@/mixins/FlowFormMixin";
-import { dateFormat } from "@/utils";
 export default {
   name: "DataForm",
   mixins: [FlowFormMixin],

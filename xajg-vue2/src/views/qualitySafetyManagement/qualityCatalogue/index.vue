@@ -1,7 +1,7 @@
 <template>
   <div class="page-file-directory">
     <TreeTableLayout
-      :showSearchBtns="false"
+      :show-search-btns="false"
       :page="searchData"
       @pageSizeChange="handelPageSizeChange"
       @pageCurrentChange="handelCurrentChange"
@@ -25,9 +25,7 @@
         </el-form>
       </template>
       <template slot="opratebtns">
-        <el-button type="primary" icon="el-icon-plus" @click="addDialog"
-          >新增</el-button
-        >
+        <el-button type="primary" icon="el-icon-plus" @click="addDialog">新增</el-button>
         <el-button @click="toggleShowCode">{{
           showCode ? "隐藏编码" : "显示编码"
         }}</el-button>
@@ -44,9 +42,9 @@
                 :props="defaultProps"
                 default-expand-all
                 :filter-node-method="filterNode"
-                @node-click="handelNodeClick"
                 node-key="id"
                 :expand-on-click-node="false"
+                @node-click="handelNodeClick"
               >
                 <span
                   slot-scope="{ data }"
@@ -167,16 +165,15 @@
                 width="200px"
                 fixed="right"
               >
-                <template #default="{ row, $index }">
+                <template #default="{ row }">
                   <div>
-                    <el-link type="primary" @click="editRow(row)"
-                      >编辑
+                    <el-link type="primary" @click="editRow(row)">编辑
                     </el-link>
-                    <el-divider direction="vertical"></el-divider>
+                    <el-divider direction="vertical" />
                     <el-link
                       type="danger"
                       @click="deleteArchiveFileCatalogueTree(row)"
-                      >删除
+                    >删除
                     </el-link>
                     <!-- <el-divider direction="vertical"></el-divider>
                     <el-link type="primary" :disabled="$index === 0" @click="moveupArchiveFileCatalogueTree(row)">上移
@@ -194,11 +191,11 @@
     </TreeTableLayout>
     <el-dialog
       v-if="showDialog"
+      v-draggable
       :visible.sync="showDialog"
       :close-on-click-modal="false"
       width="800px"
       :title="title"
-      v-draggable
     >
       <el-form
         ref="addForm"
@@ -220,6 +217,8 @@
                 v-model="addData.nodeName"
                 :disabled="isSHow"
                 placeholder="请输入节点名称"
+                maxlength="64"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -228,12 +227,14 @@
               <el-input
                 v-model="addData.code"
                 :disabled="isSHow"
-                placeholder="请输入节点名称"
+                placeholder="请输入节点编码"
+                maxlength="64"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
         </el-row>
-        <el-divider class="form-row-divider"></el-divider>
+        <el-divider class="form-row-divider" />
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="分类" prop="type">
@@ -262,7 +263,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-divider class="form-row-divider"></el-divider>
+        <el-divider class="form-row-divider" />
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="工程状态" prop="constructionStatus">
@@ -346,7 +347,7 @@
             </el-form-item>
           </el-col>
         </el-row>
-        <el-divider class="form-row-divider"></el-divider>
+        <el-divider class="form-row-divider" />
         <!-- <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="更新人" prop="updateUserName">
@@ -364,9 +365,7 @@
         <el-button @click="showDialog = false">{{
           isSHow ? "关闭" : "取消"
         }}</el-button>
-        <el-button v-if="!isSHow" type="primary" @click="handelDialogConfirm"
-          >确定</el-button
-        >
+        <el-button v-if="!isSHow" type="primary" @click="handelDialogConfirm">确定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -391,16 +390,10 @@ import { getSectionByCorpId } from "@/api/measure";
 import { getAllSection } from "@/api/measure";
 import enums from "@/config/enums";
 export default {
-  name: "qualityCatalogue",
+  name: "QualityCatalogue",
   components: {
     TreeTableLayout,
     DragLine,
-  },
-  computed: {
-    /**当前登录用户 */
-    userInfo() {
-      return this.$getStorage("userInfo");
-    },
   },
   data() {
     return {
@@ -484,6 +477,12 @@ export default {
       extraWidth: 100, // 显示编码时额外增加的宽度
       treeWidth: 300, // 实际树宽度
     };
+  },
+  computed: {
+    /**当前登录用户 */
+    userInfo() {
+      return this.$getStorage("userInfo");
+    },
   },
   watch: {
     queryTree(val) {

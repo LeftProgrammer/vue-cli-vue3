@@ -82,7 +82,7 @@
                 v-model="formData.channelId"
                 placeholder="请输入"
                 show-word-limit
-                maxlength="200"
+                maxlength="255"
               />
             </el-form-item>
           </el-col>
@@ -92,7 +92,7 @@
                 v-model="formData.discernNumber"
                 placeholder="请输入"
                 show-word-limit
-                maxlength="200"
+                maxlength="256"
               />
             </el-form-item>
           </el-col>

@@ -28,6 +28,7 @@
               <el-input
                 v-model="formData.weather"
                 :disabled="isEdit"
+                maxlength="50"
                 show-word-limit
               />
             </el-form-item>
@@ -37,6 +38,7 @@
               <el-input
                 v-model="formData.rainfall"
                 :disabled="isEdit"
+                maxlength="50"
                 show-word-limit
               >
                 <template #append>mm</template>
@@ -48,6 +50,7 @@
               <el-input
                 v-model="formData.monitoringStation"
                 :disabled="isEdit"
+                maxlength="500"
                 show-word-limit
               >
                 <template #append>雨量站</template>
@@ -95,8 +98,8 @@
         <el-row>
           <div>
             填写工程沿线区域当天及未来3天天气预报降雨情况，区域无降雨时不填写
-            <br />
-            <br />
+            <br>
+            <br>
           </div>
           <el-col :span="12">
             <el-form-item label="日期范围" prop="dateThree">
@@ -122,8 +125,7 @@
                 :autosize="{ minRows: 2, maxRows: 3 }"
                 show-word-limit
                 maxlength="50"
-              >
-              </el-input>
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -261,7 +263,7 @@ export default {
       fields.endDate = fields.dateThree
         ? dateFormat(fields.dateThree[1], "yyyy-MM-DD")
         : "";
-      if(!fields.createUsername){
+      if (!fields.createUsername) {
         fields.createUsername = this.userInfo.realName;
       }
       delete fields.date;

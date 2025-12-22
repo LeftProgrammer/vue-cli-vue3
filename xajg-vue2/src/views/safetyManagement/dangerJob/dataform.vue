@@ -37,6 +37,8 @@
                 v-model="formData.operationName"
                 placeholder="请输入"
                 :disabled="readonly"
+                maxlength="50"
+                show-word-limit
               />
             </el-form-item>
           </el-col>

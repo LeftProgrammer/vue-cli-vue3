@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    v-draggable
     :title="title"
     :visible.sync="dialogShow"
     :destroy-on-close="true"
@@ -7,7 +8,6 @@
     :close-on-click-modal="false"
     append-to-body
     width="50%"
-    v-draggable
     @closed="closedHandle"
   >
     <el-row>
@@ -37,7 +37,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item :label="'职位名称:'" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入" />
+              <el-input v-model="formData.name" placeholder="请输入" maxlength="255" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -60,6 +60,7 @@
                 show-word-limit
                 type="textarea"
                 :rows="4"
+                maxlength="5000"
               />
             </el-form-item>
           </el-col>
@@ -76,6 +77,7 @@
                 show-word-limit
                 type="textarea"
                 :rows="2"
+                maxlength="5000"
               />
             </el-form-item>
           </el-col>
@@ -84,10 +86,9 @@
     </el-row>
 
     <div slot="footer" class="dialog-footer">
-      <el-button @click="visible = false"
-        >{{ type == 'view' ? '关闭' : '取消' }}
+      <el-button @click="visible = false">{{ type == 'view' ? '关闭' : '取消' }}
       </el-button>
-      <el-button type="primary" @click="childEvtHandle" v-if="type != 'view'">
+      <el-button v-if="type != 'view'" type="primary" @click="childEvtHandle">
         确定
       </el-button>
     </div>
@@ -99,24 +100,8 @@ import { save, update } from './api'
 import { FormMixin } from '@/mixins/FormMixin'
 
 export default {
-  name: 'dataform',
+  name: 'Dataform',
   mixins: [FormMixin],
-
-  data() {
-    return {
-      dialogShow: false,
-      formData: {
-        id: null
-      },
-
-      formDataRules: {
-        name: [{ required: true, message: '请输入', trigger: 'blur' }],
-        sort: [{ required: true, message: '请输入', trigger: 'blur' }],
-        userId: [{ required: true, message: '请选择', trigger: 'blur' }]
-      }
-    }
-  },
-  created() {},
   props: {
     /**显示弹窗 */
     visible: {
@@ -136,6 +121,38 @@ export default {
       default: () => []
     }
   },
+
+  data() {
+    return {
+      dialogShow: false,
+      formData: {
+        id: null
+      },
+
+      formDataRules: {
+        name: [{ required: true, message: '请输入', trigger: 'blur' }],
+        sort: [{ required: true, message: '请输入', trigger: 'blur' }],
+        userId: [{ required: true, message: '请选择', trigger: 'blur' }]
+      }
+    }
+  },
+  watch: {
+    visible: {
+      handler(newValue) {
+        console.log('visible', newValue)
+        if (newValue) {
+          const newData = { ...this.data }
+          this.formData = newData
+          // if (this.type !== 'add') {
+          // }
+        }
+        this.dialogShow = newValue
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  created() {},
   methods: {
     closedHandle() {
       this.dialogShow = false
@@ -193,22 +210,6 @@ export default {
           return false
         }
       })
-    }
-  },
-  watch: {
-    visible: {
-      handler(newValue) {
-        console.log('visible', newValue)
-        if (newValue) {
-          const newData = { ...this.data }
-          this.formData = newData
-          if (this.type !== 'add') {
-          }
-        }
-        this.dialogShow = newValue
-      },
-      immediate: true,
-      deep: true
     }
   }
 }

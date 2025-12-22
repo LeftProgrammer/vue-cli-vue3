@@ -12,6 +12,8 @@
             <el-input
               v-model="formData.name"
               :disabled="readonly"
+              maxlength="255"
+              show-word-limit
               placeholder="请输入"
             />
           </el-form-item>
@@ -36,8 +38,8 @@
           </el-form-item>
         </el-col>
         <el-col
-          :span="12"
           v-if="formData.type == 'yjdjh' || formData.type == 'njdjh'"
+          :span="12"
         >
           <el-form-item
             :label="formData.type == 'yjdjh' ? '月份' : '年份'"

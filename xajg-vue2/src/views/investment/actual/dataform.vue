@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-draggable
-    :oprateRow="oprateRow"
+    :oprate-row="oprateRow"
     :title="title"
     :visible.sync="dialogShow"
     :destroy-on-close="false"
@@ -11,7 +11,7 @@
     append-to-body
     @closed="closedHandle"
   >
-    <div class="data-form-container" ref="formContainer">
+    <div ref="formContainer" class="data-form-container">
       <div class="form-content">
         <el-form
           ref="dataFormRef"
@@ -112,6 +112,7 @@
                 v-if="!readonly"
                 v-model="row.remark"
                 style="width: 100%"
+                show-word-limit
               />
               <span v-else>{{ row.remark }}</span>
             </template>

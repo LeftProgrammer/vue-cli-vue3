@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    v-draggable
     :title="title"
     :visible.sync="dialogShow"
     :destroy-on-close="true"
@@ -7,7 +8,6 @@
     :close-on-click-modal="false"
     append-to-body
     width="50%"
-    v-draggable
     @closed="closedHandle"
   >
     <el-row>
@@ -22,22 +22,23 @@
           <el-col :span="12">
             <el-form-item label="类型:" prop="deviceType">
               <el-select
-                class="w-100pre"
                 v-model="formData.deviceType"
+                class="w-100pre"
                 placeholder="请选择"
                 @visible-change="$visibleChange($event, 'el-popper')"
               >
-                <el-option label="人员" :value="SafeLocationTypeEnum.PERSON"/>
-                <el-option label="设备" :value="SafeLocationTypeEnum.EQUIPMENT"/>
+                <el-option label="人员" :value="SafeLocationTypeEnum.PERSON" />
+                <el-option label="设备" :value="SafeLocationTypeEnum.EQUIPMENT" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item :label="formData.deviceType === SafeLocationTypeEnum.PERSON ? '人员编码:' :
-           (formData.type === SafeLocationTypeEnum.EQUIPMENT ? '设备编码:' : '人员/设备编号:')"
-                          prop="deviceType"
+            <el-form-item
+              :label="formData.deviceType === SafeLocationTypeEnum.PERSON ? '人员编码:' :
+                (formData.type === SafeLocationTypeEnum.EQUIPMENT ? '设备编码:' : '人员/设备编号:')"
+              prop="deviceType"
             >
-              <el-input v-model="formData.deviceCode" placeholder="请输入"/>
+              <el-input v-model="formData.deviceCode" placeholder="请输入" />
             </el-form-item>
           </el-col>
           <!-- 将这些代码替换到对应位置 -->
@@ -50,7 +51,7 @@
                 :step="0.000001"
                 placeholder="请输入经度"
                 style="width:100%"
-              ></el-input-number>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -62,7 +63,7 @@
                 :step="0.000001"
                 placeholder="请输入纬度"
                 style="width:100%"
-              ></el-input-number>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -74,7 +75,7 @@
                 :step="0.01"
                 placeholder="请输入高程"
                 style="width:100%"
-              ></el-input-number>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -85,8 +86,8 @@
                 placeholder="请选择"
                 @visible-change="$visibleChange($event, 'el-popper')"
               >
-                <el-option label="正常" :value="1"/>
-                <el-option label="异常" :value="0"/>
+                <el-option label="正常" :value="1" />
+                <el-option label="异常" :value="0" />
               </el-select>
             </el-form-item>
           </el-col>
@@ -107,10 +108,10 @@
 
     <div slot="footer" class="dialog-footer">
       <el-button @click="visible = false">{{
-          type == "view" ? "关闭" : "取消"
-        }}
+        type == "view" ? "关闭" : "取消"
+      }}
       </el-button>
-      <el-button type="primary" @click="childEvtHandle" v-if="type != 'view'">
+      <el-button v-if="type != 'view'" type="primary" @click="childEvtHandle">
         确定
       </el-button>
     </div>
@@ -122,8 +123,23 @@ import { save, SafeLocationTypeEnum } from "./api";
 import { FormMixin } from "@/mixins/FormMixin";
 
 export default {
-  name: "dataform",
+  name: "Dataform",
   mixins: [FormMixin],
+  props: {
+    /**显示弹窗 */
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: ""
+    },
+    title: {
+      type: String,
+      default: ""
+    }
+  },
 
   data() {
     return {
@@ -143,22 +159,23 @@ export default {
       }
     };
   },
-  created() {
-  },
-  props: {
-    /**显示弹窗 */
+  watch: {
     visible: {
-      type: Boolean,
-      default: false
-    },
-    type: {
-      type: String,
-      default: ""
-    },
-    title: {
-      type: String,
-      default: ""
+      handler(newValue) {
+        console.log("visible", newValue);
+        if (newValue) {
+          const newData = { ...this.data };
+          this.formData = newData;
+          if (this.type !== "add") {
+          }
+        }
+        this.dialogShow = newValue;
+      },
+      immediate: true,
+      deep: true
     }
+  },
+  created() {
   },
   methods: {
     closedHandle() {
@@ -214,22 +231,6 @@ export default {
       });
     },
 
-  },
-  watch: {
-    visible: {
-      handler(newValue) {
-        console.log("visible", newValue);
-        if (newValue) {
-          const newData = { ...this.data };
-          this.formData = newData;
-          if (this.type !== "add") {
-          }
-        }
-        this.dialogShow = newValue;
-      },
-      immediate: true,
-      deep: true
-    }
   }
 };
 </script>

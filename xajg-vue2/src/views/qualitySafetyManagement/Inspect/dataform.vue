@@ -13,6 +13,8 @@
               v-model="formData.name"
               placeholder="请输入"
               :disabled="readonly"
+              maxlength="50"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -117,7 +119,7 @@
               :autosize="{ minRows: 2, maxRows: 6 }"
               placeholder="请输入"
               :disabled="flowDisabled('rectifySituation')"
-              maxlength="200"
+              maxlength="100"
               show-word-limit
             />
           </el-form-item>
@@ -143,7 +145,7 @@
             <el-input v-model="formData.problemReportorDeptName" disabled />
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="flowShow('constructionQuality')">
+        <el-col v-if="flowShow('constructionQuality')" :span="12">
           <el-form-item label="施工质量负责人" prop="constructionQuality">
             <user
               v-model="formData.constructionQuality"
@@ -151,13 +153,13 @@
             />
           </el-form-item>
         </el-col>
-        <el-col :span="12" v-if="flowShow('cualitySupervision')">
+        <el-col v-if="flowShow('cualitySupervision')" :span="12">
           <el-form-item label="质量监理" prop="cualitySupervision">
             <user
               v-model="formData.cualitySupervision"
               :readonly="flowDisabled('cualitySupervision')"
-              :enableThrottle="true"
-            ></user>
+              :enable-throttle="true"
+            />
           </el-form-item>
         </el-col>
       </el-row>

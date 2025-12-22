@@ -1,5 +1,6 @@
 <template>
   <el-dialog
+    v-draggable
     :title="title"
     :visible.sync="dialogShow"
     :destroy-on-close="true"
@@ -7,7 +8,6 @@
     :close-on-click-modal="false"
     append-to-body
     width="50%"
-    v-draggable
     @closed="closedHandle"
   >
     <el-row>
@@ -30,7 +30,7 @@
                   maxlength="50"
                   show-word-limit
                   style="width: 100%"
-                ></el-input>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -43,7 +43,7 @@
                   maxlength="50"
                   show-word-limit
                   style="width: 100%"
-                ></el-input>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -54,8 +54,8 @@
                   style="width: 100%"
                   :disabled="readonly"
                 >
-                  <el-option label="特种设备" value="special"></el-option>
-                  <el-option label="非特种设备" value="general"></el-option>
+                  <el-option label="特种设备" value="special" />
+                  <el-option label="非特种设备" value="general" />
                 </el-select>
               </el-form-item>
             </el-col>
@@ -70,7 +70,7 @@
                   maxlength="50"
                   show-word-limit
                   style="width: 100%"
-                ></el-input>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -81,84 +81,78 @@
                     :key="item.corpId"
                     :label="item.corpName"
                     :value="item.corpId"
-                  ></el-option>
+                  />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item
+                v-if="readonly"
                 label="进场日期:"
                 prop="workStartDate"
-                v-if="readonly"
               >
                 <el-date-picker
                   v-model="formData.workStartDate"
                   type="datetime"
                   format="yyyy-MM-dd"
                   placeholder="选择日期"
-                >
-                </el-date-picker>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item
+                v-if="readonly"
                 label="退场时间:"
                 prop="workEndDate"
-                v-if="readonly"
               >
                 <el-date-picker
                   v-model="formData.workEndDate"
                   type="datetime"
                   format="yyyy-MM-dd"
                   placeholder="选择日期"
-                >
-                </el-date-picker>
+                />
               </el-form-item>
             </el-col>
 
             <el-col :span="12">
               <el-form-item
+                v-if="readonly"
                 label="退场时间:"
                 prop="workEndDate"
-                v-if="readonly"
               >
                 <el-date-picker
                   v-model="formData.workEndDate"
                   type="datetime"
                   format="yyyy-MM-dd"
                   placeholder="选择日期"
-                >
-                </el-date-picker>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item
+                v-if="readonly"
                 label="进退场状态:"
                 prop="outgoingStatus"
-                v-if="readonly"
               >
                 <el-select
-                  class="w-100pre"
-                  @visible-change="$visibleChange($event, 'el-popper')"
                   v-model="formData.outgoingStatus"
+                  class="w-100pre"
                   placeholder="请选择"
+                  @visible-change="$visibleChange($event, 'el-popper')"
                 >
-                  <el-option label="未进场" :value="ENTRY_EXIT_TYPES.DEFAULT">
-                  </el-option>
-                  <el-option label="已进场" :value="ENTRY_EXIT_TYPES.ENTRY">
-                  </el-option>
-                  <el-option label="已离场" :value="ENTRY_EXIT_TYPES.EXIT">
-                  </el-option>
+                  <el-option label="未进场" :value="ENTRY_EXIT_TYPES.DEFAULT" />
+                  <el-option label="已进场" :value="ENTRY_EXIT_TYPES.ENTRY" />
+                  <el-option label="已离场" :value="ENTRY_EXIT_TYPES.EXIT" />
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="完好状态:" prop="status" v-if="readonly">
+              <el-form-item v-if="readonly" label="完好状态:" prop="status">
                 <el-select
-                  class="w-100pre"
-                  @visible-change="$visibleChange($event, 'el-popper')"
                   v-model="formData.status"
+                  class="w-100pre"
                   placeholder="请选择"
+                  @visible-change="$visibleChange($event, 'el-popper')"
                 >
                   <el-option
                     v-for="item in statusList"
@@ -176,8 +170,7 @@
                   type="datetime"
                   format="yyyy-MM-dd"
                   placeholder="选择日期"
-                >
-                </el-date-picker>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -197,7 +190,7 @@
                   :multiple="false"
                   :readonly="readonly"
                   @change="selectedStaff"
-                ></staff>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -206,27 +199,27 @@
                   v-model="formData.phone"
                   placeholder="请输入"
                   disabled
+                  maxlength="20"
                 />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="附件:" prop="attachment">
                 <uploadFile
-                  :readonly="readonly"
                   v-model="formData.attachment"
+                  :readonly="readonly"
                   :limit="1"
                   :multiline="false"
+                  :max-size="20"
                   @change="handleFileChange"
-                  :maxSize="20"
-                >
-                </uploadFile>
+                />
               </el-form-item>
             </el-col>
           </el-row>
         </div>
       </el-form>
     </el-row>
-    <div slot="footer" class="dialog-footer" v-if="type != 'view'">
+    <div v-if="type != 'view'" slot="footer" class="dialog-footer">
       <el-button type="primary" @click="childEvtHandle"> 确 定 </el-button>
     </div>
   </el-dialog>
@@ -244,9 +237,28 @@ const ENTRY_EXIT_TYPES = {
   EXIT: 2, // 退场
 };
 export default {
-  name: "dataform",
-  mixins: [FormMixin],
+  name: "Dataform",
   components: { Staff },
+  mixins: [FormMixin],
+  props: {
+    /**显示弹窗 */
+    visible: {
+      type: Boolean,
+      default: false,
+    },
+    type: {
+      type: String,
+      default: "",
+    },
+    title: {
+      type: String,
+      default: "",
+    },
+    unitOptions: {
+      type: Array,
+      default: () => [],
+    },
+  },
   data() {
     return {
       ENTRY_EXIT_TYPES,
@@ -294,28 +306,26 @@ export default {
       multipleSelection: [],
     };
   },
+  watch: {
+    visible: {
+      handler(newValue) {
+        console.log("visible", newValue);
+        if (newValue) {
+          const newData = { ...this.data };
+          this.formData = newData;
+          // if (!this.formData?.type) {
+          //   this.formData.type = "special";
+          // }
+        }
+        this.dialogShow = newValue;
+      },
+      immediate: true,
+      deep: true,
+    },
+  },
   created() {
     this.getBelongTo();
     this.getDictItemList();
-  },
-  props: {
-    /**显示弹窗 */
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-    type: {
-      type: String,
-      default: "",
-    },
-    title: {
-      type: String,
-      default: "",
-    },
-    unitOptions: {
-      type: Array,
-      default: () => [],
-    },
   },
   methods: {
     closedHandle() {
@@ -427,23 +437,6 @@ export default {
       if (item?.phone) {
         this.formData.phone = item.phone;
       }
-    },
-  },
-  watch: {
-    visible: {
-      handler(newValue) {
-        console.log("visible", newValue);
-        if (newValue) {
-          const newData = { ...this.data };
-          this.formData = newData;
-          // if (!this.formData?.type) {
-          //   this.formData.type = "special";
-          // }
-        }
-        this.dialogShow = newValue;
-      },
-      immediate: true,
-      deep: true,
     },
   },
 };

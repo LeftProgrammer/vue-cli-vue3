@@ -2,11 +2,11 @@
   <div class="page-catalogue">
     <TreeTableLayout
       :page="searchData"
+      title="档案目录"
       @pageSizeChange="handelPageSizeChange"
       @pageCurrentChange="handelCurrentChange"
       @query="handelSearchButtonClick"
       @reset="handelResetButtonClick"
-      title="档案目录"
     >
       <template slot="form">
         <el-form :model="searchData" :inline="true">
@@ -23,10 +23,9 @@
           type="primary"
           icon="el-icon-plus"
           :disabled="!selectionNode.id"
-          @click="handleAdd"
           :loading="addButtonLoading"
-          >新增</el-button
-        >
+          @click="handleAdd"
+        >新增</el-button>
       </template>
       <template slot="table">
         <div class="content">
@@ -40,9 +39,9 @@
                 :props="defaultProps"
                 default-expand-all
                 :filter-node-method="filterNode"
-                @node-click="handelNodeClick"
                 node-key="id"
                 :expand-on-click-node="false"
+                @node-click="handelNodeClick"
               >
                 <template #default="{ data }">
                   <span class="custom-tree-node" :title="data.nodeName">
@@ -164,18 +163,18 @@
     </TreeTableLayout>
     <el-dialog
       v-if="showDialog"
+      v-draggable
       :visible.sync="showDialog"
       :title="title"
       width="30%"
       :close-on-click-modal="false"
       append-to-body
-      v-draggable
     >
       <el-form ref="addForm" :rules="rulesAdd" :model="addData" label-width="100px">
         <el-row>
           <el-col :span="24">
             <el-form-item label="文件编号" prop="code">
-              <el-input v-model="addData.code" :disabled="isSHow" />
+              <el-input v-model="addData.code" :disabled="isSHow" maxlength="50" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -184,34 +183,36 @@
                 v-model="addData.fileName"
                 :disabled="isSHow"
                 placeholder="请输入"
+                maxlength="255"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="所属节点" prop="nodeId">
               <el-select
-                :disabled="isSHow"
+                ref="treeSelectDropdown"
                 v-model="addData.nodeName"
+                :disabled="isSHow"
                 placeholder="请选择节点"
                 class="w-100pre"
                 popper-class="tree-select"
-                ref="treeSelectDropdown"
               >
                 <el-option value="" style="height: auto; padding: 0">
                   <el-tree
-                    :disabled="isSHow"
                     ref="treeSelect"
+                    :disabled="isSHow"
                     :data="treeData"
                     :props="defaultProps"
                     default-expand-all
                     node-key="id"
-                    @node-click.stop.native="handleTreeNodeSelect"
                     :highlight-current="true"
                     :expand-on-click-node="false"
+                    @node-click.stop.native="handleTreeNodeSelect"
                   >
                     <span
-                      class="custom-tree-node"
                       slot-scope="{ node, data }"
+                      class="custom-tree-node"
                       @click.stop="handleOptionClick(data)"
                     >
                       <span>{{ data.nodeName }}</span>
@@ -231,6 +232,8 @@
                 rows="3"
                 placeholder="请输入"
                 :disabled="isSHow"
+                maxlength="500"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -241,19 +244,20 @@
               v-model="addData.fileId"
               :readonly="isSHow"
               :limit="1"
-              :maxSize="50"
+              :max-size="50"
               @change="handleFileChange"
-            ></uploadFile>
+            />
           </el-form-item>
         </el-row>
       </el-form>
 
       <div slot="footer" align="center" class="dialog-footer">
         <el-button @click="showDialog = false">{{ isSHow ? "关闭" : "取消" }}</el-button>
-        <el-button type="primary" @click="closeDialog" v-if="!isSHow">确定</el-button>
+        <el-button v-if="!isSHow" type="primary" @click="closeDialog">确定</el-button>
       </div>
     </el-dialog>
     <el-dialog
+      v-draggable
       class="dialog-body-np"
       title="责任单位"
       :visible.sync="modalShow"
@@ -262,11 +266,11 @@
       :destroy-on-close="true"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
-      v-draggable
     >
       <CorSelect v-if="modalShow" single @childEvt="modalEvt" />
     </el-dialog>
     <el-dialog
+      v-draggable
       title="流程处理表单"
       custom-class="wbench-el-dialog flow-dialog"
       :visible.sync="flowShow"
@@ -276,39 +280,38 @@
       append-to-body
       center
       fullscreen
-      @closed="handleClosed"
       :before-close="beforeClosedDialog"
-      v-draggable
+      @closed="handleClosed"
     >
       <SzgcProcessGetor
-        ref="SzgcProcessGetor"
         v-if="flowShow"
+        ref="SzgcProcessGetor"
         :top-show="false"
         :page="detailStatus"
-        :dataAll="dataAll"
+        :data-all="dataAll"
         @childEvt="childEvtHandle"
-      ></SzgcProcessGetor>
+      />
     </el-dialog>
     <el-dialog
+      v-draggable
       title="变更节点"
       :visible.sync="treeDialog"
       :destroy-on-close="true"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
-      v-draggable
     >
       <div class="tree-dialog-wrapper">
         <el-tree
+          v-if="treeDialog"
           ref="dialogTree"
           :highlight-current="true"
           class="tree"
           :data="treeData"
           :props="defaultProps"
           default-expand-all
-          @node-click="handelTreeDialogNodeClick"
           node-key="id"
           :expand-on-click-node="false"
-          v-if="treeDialog"
+          @node-click="handelTreeDialogNodeClick"
         >
           <template #default="{ data }">
             <span class="custom-tree-node">
@@ -363,7 +366,7 @@ import { getFile, getFileById, getFilePath, getYljoaFileStream } from "@/api/use
 import ListButton from "@/components/ListButton";
 
 const Catalogue = defineComponent({
-  name: "preArchiveLibrary",
+  name: "PreArchiveLibrary",
   components: {
     CorSelect,
     TreeTableLayout,

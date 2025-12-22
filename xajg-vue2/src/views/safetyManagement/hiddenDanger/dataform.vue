@@ -14,6 +14,8 @@
                 v-model="formData.hiddenDangerName"
                 placeholder="请输入"
                 :disabled="readonly"
+                maxlength="200"
+                show-word-limit
               />
             </el-form-item>
           </el-col>
@@ -129,7 +131,7 @@
                     formData.matterTaskTodo?.procTaskName != '确认安全隐患'
                 "
                 :autosize="{ minRows: 2, maxRows: 6 }"
-                maxlength="200"
+                maxlength="2000"
                 show-word-limit
               />
             </el-form-item>
@@ -148,7 +150,7 @@
                 v-model="formData.reportApprovalPlan"
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 6 }"
-                maxlength="200"
+                maxlength="500"
                 :disabled="
                   flowInfo?.page != 'todo' ||
                     formData.matterTaskTodo?.procTaskName != '整改方案报批'
@@ -192,7 +194,7 @@
                 v-model="formData.rectifyMeasures"
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 6 }"
-                maxlength="200"
+                maxlength="2000"
                 :disabled="
                   flowInfo?.page != 'todo' ||
                     formData.matterTaskTodo?.procTaskName != '提交整改证明材料'
@@ -217,7 +219,7 @@
                 "
                 type="textarea"
                 :autosize="{ minRows: 2, maxRows: 6 }"
-                maxlength="200"
+                maxlength="100"
                 show-word-limit
               />
             </el-form-item>
@@ -292,6 +294,7 @@
               <el-input
                 v-model="formData.hiddenDangerReportorFullname"
                 disabled
+                maxlength="100"
               />
             </el-form-item>
           </el-col>
@@ -303,6 +306,7 @@
               <el-input
                 v-model="formData.hiddenDangerReportorDeptName"
                 disabled
+                maxlength="255"
               />
             </el-form-item>
           </el-col>
@@ -314,6 +318,8 @@
               <el-input
                 v-model="formData.anotherHiddenDangerReportorFullname"
                 :disabled="readonly"
+                maxlength="100"
+                show-word-limit
               />
             </el-form-item>
           </el-col>

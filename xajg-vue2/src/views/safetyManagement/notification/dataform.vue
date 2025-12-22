@@ -13,6 +13,7 @@
               <el-input
                 v-model="formData.name"
                 :disabled="isEdit"
+                maxlength="500"
                 show-word-limit
               />
             </el-form-item>

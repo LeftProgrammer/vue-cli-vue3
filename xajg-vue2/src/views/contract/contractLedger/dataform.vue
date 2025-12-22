@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-draggable
-    :oprateRow="oprateRow"
+    :oprate-row="oprateRow"
     :title="title"
     :visible.sync="dialogShow"
     :destroy-on-close="false"
@@ -26,7 +26,7 @@
                   v-model="formData.name"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="255"
                   show-word-limit
                   style="width: 100%"
                 />
@@ -38,7 +38,7 @@
                   v-model="formData.code"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                   style="width: 100%"
                 />
@@ -63,7 +63,7 @@
                   v-model="formData.taxationRate"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="18"
+                  maxlength="50"
                   show-word-limit
                 />
               </el-form-item>
@@ -74,7 +74,7 @@
                   v-model="formData.contractedUnit"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="100"
+                  maxlength="255"
                   show-word-limit
                 />
               </el-form-item>
@@ -111,11 +111,11 @@
             <el-col :span="12">
               <el-form-item label="计价方式:" prop="pricingMethod">
                 <el-select
-                  class="w-100pre"
-                  @visible-change="$visibleChange($event, 'el-popper')"
-                  :disabled="readonly"
                   v-model="formData.pricingMethod"
+                  class="w-100pre"
+                  :disabled="readonly"
                   placeholder="请选择"
+                  @visible-change="$visibleChange($event, 'el-popper')"
                 >
                   <el-option
                     v-for="item in pricingMethodList"
@@ -132,7 +132,7 @@
                   v-model="formData.deadline"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -140,11 +140,11 @@
             <el-col :span="12">
               <el-form-item label="采购方式:" prop="procurementMode">
                 <el-select
-                  class="w-100pre"
-                  @visible-change="$visibleChange($event, 'el-popper')"
                   v-model="formData.procurementMode"
+                  class="w-100pre"
                   :disabled="readonly"
                   placeholder="请选择"
+                  @visible-change="$visibleChange($event, 'el-popper')"
                 >
                   <el-option
                     v-for="item in procurementMethodList"
@@ -158,8 +158,8 @@
             <el-col :span="24">
               <el-form-item label="支付方式:" prop="paymentMethod">
                 <el-input
-                  type="textarea"
                   v-model="formData.paymentMethod"
+                  type="textarea"
                   placeholder="请输入"
                   :autosize="{ minRows: 3, maxRows: 6 }"
                   :disabled="readonly"
@@ -175,7 +175,7 @@
                   v-model="formData.parties"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -186,7 +186,7 @@
                   v-model="formData.secondParties"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -197,7 +197,7 @@
                   v-model="formData.otherParties"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -208,7 +208,7 @@
                   v-model="formData.projectManagement"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -223,13 +223,13 @@
                 />
               </el-form-item>
             </el-col>
-            <el-col :span="12" v-if="formData.isChange">
+            <el-col v-if="formData.isChange" :span="12">
               <el-form-item label="变更内容:" prop="changeDetail">
                 <el-input
                   v-model="formData.changeDetail"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="500"
                   show-word-limit
                 />
               </el-form-item>
@@ -242,7 +242,7 @@
                   v-model="formData.partyB"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -253,7 +253,7 @@
                   v-model="formData.partyBName"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -264,7 +264,7 @@
                   v-model="formData.partyBTaxationNumber"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -275,7 +275,7 @@
                   v-model="formData.partyBOpeningBank"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -286,7 +286,7 @@
                   v-model="formData.partyBCardNumber"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -300,7 +300,7 @@
                   v-model="formData.partyBCardAssociatesNumber"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -311,7 +311,7 @@
                   v-model="formData.partyC"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -322,7 +322,7 @@
                   v-model="formData.partyCName"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -333,7 +333,7 @@
                   v-model="formData.partyCTaxationNumber"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -344,7 +344,7 @@
                   v-model="formData.partyCOpeningBank"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="200"
                   show-word-limit
                 />
               </el-form-item>
@@ -355,7 +355,7 @@
                   v-model="formData.partyCCardNumber"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -369,7 +369,7 @@
                   v-model="formData.partyCCardAssociatesNumber"
                   placeholder="请输入"
                   :disabled="readonly"
-                  maxlength="50"
+                  maxlength="100"
                   show-word-limit
                 />
               </el-form-item>
@@ -482,7 +482,7 @@
                   :readonly="readonly"
                   :limit="1"
                   :multiline="false"
-                  :maxSize="500"
+                  :max-size="500"
                   @change="handleFileChange"
                 />
               </el-form-item>
@@ -597,22 +597,22 @@
           <div style="width: 50%; text-align: right; height: 100%">
             <el-button
               type="primary"
-              @click="downloadTemplate()"
               :disabled="readonly"
+              @click="downloadTemplate()"
             >
               模板下载
             </el-button>
             <el-button
               type="primary"
-              @click="triggerFileInput()"
               :disabled="readonly"
+              @click="triggerFileInput()"
             >
               导入清单
             </el-button>
             <el-button
               type="primary"
-              @click="addDetailBtn()"
               :disabled="readonly"
+              @click="addDetailBtn()"
             >
               添加
             </el-button>
@@ -735,12 +735,12 @@
             <el-table-column label="操作" width="200" align="center">
               <template slot-scope="scope">
                 <el-button
-                  @click.native.prevent="
-                    deleteDetailBtn(scope.$index, tableData)
-                  "
                   type="text"
                   size="small"
                   :disabled="readonly"
+                  @click.native.prevent="
+                    deleteDetailBtn(scope.$index, tableData)
+                  "
                 >
                   删除
                 </el-button>
@@ -774,11 +774,11 @@
       </el-button>
     </div>
     <input
-      type="file"
       ref="fileInput"
+      type="file"
       style="display: none"
       @change="handleFileUpload"
-    />
+    >
     <el-dialog
       title="结算台账清单"
       :visible.sync="dialogShowTable"
@@ -827,7 +827,7 @@
           <td>其中：农民工工资</td>
           <td>其中：安全生产经费</td>
 
-          <td></td>
+          <td />
         </tr>
         <tr v-for="(item, index) in settlementList" :key="item.id">
           <td>第{{ index + 1 }}次结算</td>
@@ -918,18 +918,18 @@
                 ],
                 item
               ) -
-              settlementItemMoney(
-                [
-                  '进度款',
-                  '其他1',
-                  '工程预付款1',
-                  '材料预付款1',
-                  '违约赔偿扣款',
-                  '其他2',
-                  '质量安全扣款'
-                ],
-                item
-              )
+                settlementItemMoney(
+                  [
+                    '进度款',
+                    '其他1',
+                    '工程预付款1',
+                    '材料预付款1',
+                    '违约赔偿扣款',
+                    '其他2',
+                    '质量安全扣款'
+                  ],
+                  item
+                )
             }}
           </td>
           <td>{{ settlementItemMoney('其中农民工工资', item) }}</td>
@@ -995,8 +995,27 @@ import store from '@/store'
 import moment from 'moment'
 import * as XLSX from 'xlsx'
 export default {
-  name: 'dataform',
+  name: 'Dataform',
   mixins: [FormMixin],
+  props: {
+    /**显示弹窗 */
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: ''
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    oprateRow: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       /**PBS选择 */
@@ -1074,10 +1093,6 @@ export default {
       dialogShowTable: false,
       settlementList: []
     }
-  },
-  created() {
-    this.getDictItemList()
-    // this.getDepartList()
   },
   computed: {
     /**当前登录用户 */
@@ -1196,25 +1211,55 @@ export default {
       }
     }
   },
-  props: {
-    /**显示弹窗 */
+  watch: {
     visible: {
-      type: Boolean,
-      default: false
-    },
-    type: {
-      type: String,
-      default: ''
-    },
-    title: {
-      type: String,
-      default: ''
-    },
-    oprateRow: {
-      type: Object,
-      default: () => ({})
+      handler(newValue) {
+        if (newValue) {
+          const newData = { ...this.oprateRow.data }
+          this.formData = newData
+          this.$set(this.formData, 'isChange', this.formData.isChange == 1)
+          // 检查并赋值
+          if (!this.formData.createUsername) {
+            this.$set(this.formData, 'createUsername', this.userInfo.realName)
+          }
+          if (!this.formData.editUser) {
+            this.$set(this.formData, 'editUser', this.userInfo.userId)
+          }
+          if (!this.formData.unitName) {
+            this.$set(this.formData, 'unitName', this.userInfo.departName)
+          }
+          if (!this.formData.initiationDate) {
+            this.$set(this.formData, 'initiationDate', new Date())
+          }
+          if (newData.detailVos) {
+            this.tableData = newData.detailVos
+            this.tableTotalMoney = this.tableData.reduce(
+              (sum, item) => sum + Number(item.totalPrice || 0),
+              0
+            )
+          }
+          if (this.formData.id) {
+            investGeneralPayPage({
+              current: 1,
+              entity: { contractId: this.formData.id, flowStatus: '2' },
+              pageSize: 10
+            }).then((res) => {
+              console.log('🚀 ~ handler ~ res:', res.data.records)
+              this.settlementList = res.data.records || []
+            })
+          }
+        }
+        this.dialogShow = newValue
+      },
+      immediate: true,
+      deep: true
     }
   },
+  created() {
+    this.getDictItemList()
+    // this.getDepartList()
+  },
+  mounted() {},
   methods: {
     moment,
     /**
@@ -1321,8 +1366,7 @@ export default {
         const parts = lv.split('.').map(Number)
 
         /* 1. 整体顺序检查 */
-        if (i && compare(lv, list[i - 1].orderNo) <= 0)
-          return '清单编号整体顺序错误'
+        if (i && compare(lv, list[i - 1].orderNo) <= 0) { return '清单编号整体顺序错误' }
 
         /* 2. 父级必须已出现（根节点除外） */
         const parent = parts.slice(0, -1).join('.')
@@ -1514,51 +1558,6 @@ export default {
     },
     viewTable() {
       this.dialogShowTable = true
-    }
-  },
-  mounted() {},
-  watch: {
-    visible: {
-      handler(newValue) {
-        if (newValue) {
-          const newData = { ...this.oprateRow.data }
-          this.formData = newData
-          this.$set(this.formData, 'isChange', this.formData.isChange == 1)
-          // 检查并赋值
-          if (!this.formData.createUsername) {
-            this.$set(this.formData, 'createUsername', this.userInfo.realName)
-          }
-          if (!this.formData.editUser) {
-            this.$set(this.formData, 'editUser', this.userInfo.userId)
-          }
-          if (!this.formData.unitName) {
-            this.$set(this.formData, 'unitName', this.userInfo.departName)
-          }
-          if (!this.formData.initiationDate) {
-            this.$set(this.formData, 'initiationDate', new Date())
-          }
-          if (newData.detailVos) {
-            this.tableData = newData.detailVos
-            this.tableTotalMoney = this.tableData.reduce(
-              (sum, item) => sum + Number(item.totalPrice || 0),
-              0
-            )
-          }
-          if (this.formData.id) {
-            investGeneralPayPage({
-              current: 1,
-              entity: { contractId: this.formData.id, flowStatus: '2' },
-              pageSize: 10
-            }).then((res) => {
-              console.log('🚀 ~ handler ~ res:', res.data.records)
-              this.settlementList = res.data.records || []
-            })
-          }
-        }
-        this.dialogShow = newValue
-      },
-      immediate: true,
-      deep: true
     }
   }
 }

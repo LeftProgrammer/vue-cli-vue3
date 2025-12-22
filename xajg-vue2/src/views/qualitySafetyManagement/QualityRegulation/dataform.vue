@@ -1,41 +1,47 @@
 <template>
   <div>
-    <el-dialog :title="title" :visible.sync="dialogShow" :close-on-press-escape="false" :close-on-click-modal="false"
-      append-to-body width="40%" v-draggable @closed="closedHandle">
+    <el-dialog
+      v-draggable :title="title" :visible.sync="dialogShow" :close-on-press-escape="false"
+      :close-on-click-modal="false" append-to-body width="40%" @closed="closedHandle"
+    >
       <el-form ref="dataFormRef" :model="formData" :rules="formDataRules" label-width="auto" :disabled="data.isView">
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="制度名称" prop="regulationName">
-              <el-input v-model="formData.regulationName" placeholder="请输入" width="100%" maxlength="50"></el-input>
+              <el-input v-model="formData.regulationName" placeholder="请输入" width="100%" maxlength="255" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="制度编号" prop="regulationCode">
-              <el-input v-model="formData.regulationCode" placeholder="请输入" width="100%" maxlength="50"></el-input>
+              <el-input v-model="formData.regulationCode" placeholder="请输入" width="100%" maxlength="255" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="签发单位" prop="issuanceUnit">
               <el-cascader
-               class="w-100pre"
-              v-model="formData.issuanceUnit"
-              :props="unitTreeProps"
-              :show-all-levels="false"
-              :options="unitTree"
-            ></el-cascader>
+                v-model="formData.issuanceUnit"
+                class="w-100pre"
+                :props="unitTreeProps"
+                :show-all-levels="false"
+                :options="unitTree"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="发文日期" prop="issuanceDate">
-              <el-date-picker v-model="formData.issuanceDate" type="date" clearable value-format="yyyy-MM-dd"
-                class="w-100pre" />
+              <el-date-picker
+                v-model="formData.issuanceDate" type="date" clearable value-format="yyyy-MM-dd"
+                class="w-100pre"
+              />
             </el-form-item>
           </el-col>
 
           <el-col :span="12">
             <el-form-item label="上传文件" prop="file">
-              <uploadFile v-model="formData.file" :readonly="readonly" :limit="5" :maxSize="50"
-                @change="handleFileChange"></uploadFile>
+              <uploadFile
+                v-model="formData.file" :readonly="readonly" :limit="5" :max-size="50"
+                @change="handleFileChange"
+              />
             </el-form-item>
           </el-col>
         </el-row>
@@ -45,7 +51,7 @@
         <el-button @click="closedHandle">
           {{ data.isView ? "关闭" : "取消" }}
         </el-button>
-        <el-button type="primary" @click="sure" v-if="!data.isView"> 确定 </el-button>
+        <el-button v-if="!data.isView" type="primary" @click="sure"> 确定 </el-button>
       </div>
     </el-dialog>
   </div>
@@ -58,11 +64,34 @@ import PbsSelect from "@/components/PbsSelect/index.vue";
 import ElQuarterPicker from "@/components/ElQuarterPicker";
 import { getSectionByCorpId } from "@/api/measure";
 export default {
-  name: "dataform",
-  mixins: [FormMixin],
+  name: "Dataform",
   components: {
     PbsSelect,
     ElQuarterPicker
+  },
+  mixins: [FormMixin],
+  props: {
+    unitTree: {
+      type: Array,
+      default: []
+    },
+    enterAble: {
+      type: Boolean,
+      default: true
+    },
+    view: {
+      type: String,
+      default: ""
+    },
+    title: {
+      type: String,
+      default: ""
+    },
+    date: {
+      type: String,
+      default: ""
+    }
+    // visible{}
   },
   data() {
     return {
@@ -95,33 +124,22 @@ export default {
     };
   },
   computed: {},
+  watch: {
+    visible: {
+      handler(newValue) {
+        this.dialogShow = newValue;
+        this.$nextTick(() => {
+          this.formData = this.data.data;
+        });
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   created() {
     this.getBelongTo();
   },
   mounted() { },
-  props: {
-    unitTree: {
-      type: Array,
-      default: []
-    },
-    enterAble: {
-      type: Boolean,
-      default: true
-    },
-    view: {
-      type: String,
-      default: ""
-    },
-    title: {
-      type: String,
-      default: ""
-    },
-    date: {
-      type: String,
-      default: ""
-    }
-    // visible{}
-  },
   methods: {
     handleFileChange(value) {
       if (value) {
@@ -232,18 +250,6 @@ export default {
         this.$message.error("查询标段失败");
         return false;
       }
-    }
-  },
-  watch: {
-    visible: {
-      handler(newValue) {
-        this.dialogShow = newValue;
-        this.$nextTick(() => {
-          this.formData = this.data.data;
-        });
-      },
-      immediate: true,
-      deep: true
     }
   }
 };

@@ -1,11 +1,11 @@
 <template>
   <el-dialog
+    v-draggable
     :visible.sync="dialogVisible"
     :title="title"
     width="60%"
     :close-on-click-modal="false"
     append-to-body
-    v-draggable
     destroy-on-close
   >
     <el-form
@@ -17,7 +17,7 @@
       <el-row>
         <el-col :span="12">
           <el-form-item label="概算编码" prop="code">
-            <el-input v-model="addData.code" :disabled="isSHow" />
+            <el-input v-model="addData.code" :disabled="isSHow" maxlength="50" show-word-limit />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -26,6 +26,8 @@
               v-model="addData.name"
               :disabled="isSHow"
               placeholder="请输入"
+              maxlength="200"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -56,6 +58,8 @@
               v-model="addData.unit"
               :disabled="isSHow"
               placeholder="请输入"
+              maxlength="20"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -150,6 +154,8 @@
               rows="3"
               placeholder="请输入"
               :disabled="isSHow"
+              maxlength="500"
+              show-word-limit
             />
           </el-form-item>
         </el-col>
@@ -160,9 +166,7 @@
       <el-button @click="handleCancel">{{
         mode === "view" ? "关闭" : "取消"
       }}</el-button>
-      <el-button type="primary" @click="handleConfirm" v-if="mode !== 'view'"
-        >确定</el-button
-      >
+      <el-button v-if="mode !== 'view'" type="primary" @click="handleConfirm">确定</el-button>
     </div>
   </el-dialog>
 </template>
@@ -182,7 +186,13 @@ import ListButton from "@/components/ListButton";
 import Decimal from "decimal.js";
 
 export default {
-  name: "investment-estimate-item",
+  name: "InvestmentEstimateItem",
+  components: {
+    CorSelect,
+    TreeTableLayout,
+    SzgcProcessGetor,
+    ListButton,
+  },
   props: {
     visible: {
       type: Boolean,
@@ -213,12 +223,6 @@ export default {
       type: Number,
       default: () => 0,
     },
-  },
-  components: {
-    CorSelect,
-    TreeTableLayout,
-    SzgcProcessGetor,
-    ListButton,
   },
   computed: {
     ...mapGetters(["loginInfo"]),

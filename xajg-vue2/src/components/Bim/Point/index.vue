@@ -1,7 +1,11 @@
 <template>
   <div>
-    <el-input v-model="position" placeholder="请选择"
-      :class="readonly ? 'disabledBtn' : 'defaultBtn'" disabled>
+    <el-input
+      v-model="position"
+      placeholder="请选择"
+      :class="readonly ? 'disabledBtn' : 'defaultBtn'"
+      disabled
+    >
       <template slot="append">
         <div @click="choose">
           <i class="el-icon-arrow-right" />
@@ -9,19 +13,38 @@
       </template>
     </el-input>
     <!--BIM显示弹窗-->
-    <el-dialog title="三维模型视图" custom-class="bim-select-dialog wbench-el-dialog"
-      :visible.sync="dialogShow" :destroy-on-close="false"
-      :close-on-press-escape="false" :close-on-click-modal="false"
-      append-to-body fullscreen @closed="closedHandle">
+    <el-dialog
+      title="三维模型视图"
+      custom-class="bim-select-dialog wbench-el-dialog"
+      :visible.sync="dialogShow"
+      :destroy-on-close="false"
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+      append-to-body
+      fullscreen
+      @closed="closedHandle"
+    >
       <div class="actionBox" v-if="api">
-        <el-switch v-model="terrain" active-text="开启Gis场景"
-          inactive-text="关闭Gis场景" @change="terrainChange" />
-        <el-switch v-model="waterSurface" active-text="开启水面效果"
-          inactive-text="关闭水面效果" @change="waterSurfaceChange" />
+        <el-switch
+          v-model="terrain"
+          active-text="开启Gis场景"
+          inactive-text="关闭Gis场景"
+          @change="terrainChange"
+        />
+        <el-switch
+          v-model="waterSurface"
+          active-text="开启水面效果"
+          inactive-text="关闭水面效果"
+          @change="waterSurfaceChange"
+        />
       </div>
-      <bim-engine ref="bimEngine" :coorType="type == 'point' ? '0' : '1'"
-        @getpos="getpos" @LoadComplete="LoadComplete"
-        @rightClick="rightClick" />
+      <bim-engine
+        ref="bimEngine"
+        :coorType="type == 'point' ? '0' : '1'"
+        @getpos="getpos"
+        @LoadComplete="LoadComplete"
+        @rightClick="rightClick"
+      />
       <span slot="footer" class="dialog-footer">
         <el-button type="primary" @click="closedHandle"> 取 消 </el-button>
         <el-button v-show="!readonly" type="primary" @click="confirmHandle">
@@ -96,19 +119,19 @@ export default {
       pos: [],
       coverPos: [],
       terrain: true,
-      waterSurface: true,
+      waterSurface: true
     }
   },
   computed: {},
   watch: {
     dialogShow: {
-      handler(newValue, oldValue) { },
+      handler(newValue, oldValue) {},
       immediate: true,
       deep: true
     }
   },
-  mounted() { },
-  beforeDestroy() { },
+  mounted() {},
+  beforeDestroy() {},
   methods: {
     //选择
     choose() {
@@ -134,7 +157,10 @@ export default {
       this.dialogShow = false
       this.isConfirm = true
       if (this.type == 'point') {
-        this.$emit('change', JSON.stringify(this.pos))
+        this.$emit(
+          'change',
+          this.pos.length > 0 ? JSON.stringify(this.pos) : ''
+        )
       } else {
         this.$emit('change', JSON.stringify(this.coverPos))
       }
@@ -149,14 +175,18 @@ export default {
       }
     },
     //模型加载后
-    bimInited() { },
+    bimInited() {},
     terrainChange() {
       this.api.Public.setGisState(this.terrain)
     },
     waterSurfaceChange() {
-      findByModelCode({ modelCode: 'bigScene' }).then(res => {
+      findByModelCode({ modelCode: 'bigScene' }).then((res) => {
         const modelId = res.data[0].modelId
-        this.api.Feature.setVisible("2039950456624#2039950454432", this.waterSurface, modelId);
+        this.api.Feature.setVisible(
+          '2039950456624#2039950454432',
+          this.waterSurface,
+          modelId
+        )
       })
     },
     /**
@@ -199,10 +229,10 @@ export default {
               this.coverState === '1'
                 ? '#014ACB'
                 : this.coverState === '2'
-                  ? '#00B42A'
-                  : this.coverState === '3'
-                    ? '#FF7D00'
-                    : '#F53F3F'
+                ? '#00B42A'
+                : this.coverState === '3'
+                ? '#FF7D00'
+                : '#F53F3F'
             ),
             classificationType: Cesium.ClassificationType.BOTH,
             drawMode: 'polygon'
@@ -213,7 +243,7 @@ export default {
     /**
      * @description 获取面
      */
-    getCover() { }
+    getCover() {}
   }
 }
 </script>
@@ -251,7 +281,7 @@ export default {
     background-color: #fff;
     padding: 0;
 
-    >div {
+    > div {
       cursor: pointer;
       height: 100%;
       padding: 0 20px;

@@ -119,12 +119,12 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="文件编号" prop="code">
-              <el-input v-model="addData.code" :disabled="dialogReadonly" />
+              <el-input v-model="addData.code" :disabled="dialogReadonly" maxlength="50" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="24">
             <el-form-item label="文件题名" prop="fileName">
-              <el-input v-model="addData.fileName" :disabled="isSHow" placeholder="请输入" />
+              <el-input v-model="addData.fileName" :disabled="isSHow" placeholder="请输入" maxlength="255" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -166,6 +166,8 @@
               <el-input
                 v-model="addData.remarks" type="textarea" rows="3" placeholder="请输入"
                 :disabled="dialogReadonly"
+                maxlength="500"
+                show-word-limit
               />
             </el-form-item>
           </el-col>

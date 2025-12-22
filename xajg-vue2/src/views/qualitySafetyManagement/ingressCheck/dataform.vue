@@ -19,11 +19,11 @@
                 <el-option
                   label="原材料/中间产品进场报验单"
                   value="material"
-                ></el-option>
+                />
                 <el-option
                   label="施工设备进场报验单"
                   value="equipment"
-                ></el-option>
+                />
               </el-select>
             </el-form-item>
           </el-col>
@@ -41,8 +41,8 @@
           <el-col :span="12">
             <el-form-item label="标段" prop="sectionId">
               <el-select
-                class="w-100pre"
                 v-model="formData.sectionId"
+                class="w-100pre"
                 clearable
                 placeholder="请选择"
                 @change="changeSection"
@@ -63,42 +63,40 @@
                 placeholder="请选择"
                 style="width: 100%"
               >
-                <el-option label="不合格" value="bhg"></el-option>
-                <el-option label="合格" value="hg"></el-option>
-                <el-option label="优良" value="yl"></el-option>
+                <el-option label="不合格" value="bhg" />
+                <el-option label="合格" value="hg" />
+                <el-option label="优良" value="yl" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="流程名称" prop="name">
-              <el-input v-model="formData.name" placeholder="请输入" />
+              <el-input v-model="formData.name" placeholder="请输入" maxlength="100" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="流程编号" prop="code">
-              <el-input v-model="formData.code" placeholder="请输入" />
+              <el-input v-model="formData.code" placeholder="请输入" maxlength="50" show-word-limit />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="正文附件:" prop="mainAttachment">
               <uploadFile
-                :readonly="readonly"
                 v-model="formData.mainAttachment"
+                :readonly="readonly"
                 :limit="1"
                 :multiline="false"
-              >
-              </uploadFile>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="其他附件:" prop="otherAttachment">
               <uploadFile
-                :readonly="readonly"
                 v-model="formData.otherAttachment"
+                :readonly="readonly"
                 :limit="1"
                 :multiline="false"
-              >
-              </uploadFile>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -114,7 +112,7 @@
               />
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="formData.type == 'equipment'">
+          <el-col v-if="formData.type == 'equipment'" :span="12">
             <el-form-item label="设备用途" prop="equipmentPurpose">
               拟用于<el-input
                 v-model="formData.equipmentPurpose"
@@ -124,11 +122,11 @@
               />的施工
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="formData.type == 'material'">
+          <el-col v-if="formData.type == 'material'" :span="12">
             <el-form-item label="拟用部位" prop="intendedSite">
               <el-cascader
-                style="width: 100%"
                 v-model="formData.intendedSite1"
+                style="width: 100%"
                 :options="intendedSiteOptions"
                 :props="intendedSiteProps"
                 :show-all-levels="false"
@@ -194,24 +192,24 @@
             <el-button
               type="primary"
               icon="el-icon-plus"
-              @click="addDetailBtn()"
               :disabled="readonly"
+              @click="addDetailBtn()"
             >
               添加
             </el-button>
             <el-button
               type="danger"
               icon="el-icon-delete"
-              @click="deleteDetailBtn()"
               :disabled="readonly"
+              @click="deleteDetailBtn()"
             >
               删除
             </el-button>
           </div>
         </el-row>
-        <el-divider></el-divider>
+        <el-divider />
 
-        <el-row class="table" v-if="formData.type == 'material'">
+        <el-row v-if="formData.type == 'material'" class="table">
           <el-table
             ref="multipleTable1"
             border
@@ -348,8 +346,7 @@
                   type="datetime"
                   format="yyyy-MM-dd"
                   placeholder="选择日期"
-                >
-                </el-date-picker>
+                />
               </template>
             </el-table-column>
             <el-table-column
@@ -364,8 +361,7 @@
                   type="datetime"
                   format="yyyy-MM-dd"
                   placeholder="选择日期"
-                >
-                </el-date-picker>
+                />
               </template>
             </el-table-column>
             <el-table-column
@@ -394,7 +390,7 @@
             </el-table-column>
           </el-table>
         </el-row>
-        <el-row class="table" v-if="formData.type == 'equipment'">
+        <el-row v-if="formData.type == 'equipment'" class="table">
           <el-table
             ref="multipleTable2"
             border
@@ -459,8 +455,7 @@
                   type="datetime"
                   format="yyyy-MM-dd"
                   placeholder="选择日期"
-                >
-                </el-date-picker>
+                />
               </template>
             </el-table-column>
             <el-table-column
@@ -525,9 +520,9 @@ import { getDictItemTree } from '@/api/dict'
 import TreeSelect from '@/components/TreeSelect/index.vue'
 
 export default {
-  name: 'dataform',
-  mixins: [FlowFormMixin],
+  name: 'Dataform',
   components: { TreeSelect },
+  mixins: [FlowFormMixin],
   data() {
     return {
       intendedSiteOptions: [],

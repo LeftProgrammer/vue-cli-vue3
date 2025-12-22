@@ -126,8 +126,8 @@ export default {
     return {
       version: pkg.version || "",
       loginForm: {
-        username: "super",
-        password: "Jh@12345",
+        username: "",
+        password: "",
         kaptcha: "",
       },
       loginRules: {
