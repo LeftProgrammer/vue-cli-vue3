@@ -14,6 +14,15 @@ importers:
       '@stomp/stompjs':
         specifier: ^7.2.1
         version: 7.2.1
+      '@vue-office/docx':
+        specifier: ^1.6.3
+        version: 1.6.3(vue-demi@0.14.10(vue@3.5.25))(vue@3.5.25)
+      '@vue-office/excel':
+        specifier: ^1.7.14
+        version: 1.7.14(vue-demi@0.14.10(vue@3.5.25))(vue@3.5.25)
+      '@vue-office/pdf':
+        specifier: ^2.0.10
+        version: 2.0.10(vue-demi@0.14.10(vue@3.5.25))(vue@3.5.25)
       axios:
         specifier: ^0.26.0
         version: 0.26.1
@@ -53,6 +62,9 @@ importers:
       vue:
         specifier: ^3.2.13
         version: 3.5.25
+      vue-demi:
+        specifier: ^0.14.6
+        version: 0.14.10(vue@3.5.25)
       vue-router:
         specifier: ^4.0.3
         version: 4.6.3(vue@3.5.25)
@@ -956,6 +968,36 @@ packages:
 
   '@types/ws@8.18.1':
     resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
+
+  '@vue-office/docx@1.6.3':
+    resolution: {integrity: sha512-Cs+3CAaRBOWOiW4XAhTwwxJ0dy8cPIf6DqfNvYcD3YACiLwO4kuawLF2IAXxyijhbuOeoFsfvoVbOc16A/4bZA==}
+    peerDependencies:
+      '@vue/composition-api': ^1.7.1
+      vue: ^2.0.0 || >=3.0.0
+      vue-demi: ^0.14.6
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@vue-office/excel@1.7.14':
+    resolution: {integrity: sha512-pVUgt+emDQUnW7q22CfnQ+jl43mM/7IFwYzOg7lwOwPEbiVB4K4qEQf+y/bc4xGXz75w1/e3Kz3G6wAafmFBFg==}
+    peerDependencies:
+      '@vue/composition-api': ^1.7.1
+      vue: ^2.0.0 || >=3.0.0
+      vue-demi: ^0.14.6
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  '@vue-office/pdf@2.0.10':
+    resolution: {integrity: sha512-yHVLrMAKpMPBkhBwofFyGEtEeJF0Zd7oGmf56Pe5aj/xObdRq3E1CIZqTqhWJNgHV8oLQqaX0vs4p5T1zq+GIA==}
+    peerDependencies:
+      '@vue/composition-api': ^1.7.1
+      vue: ^2.0.0 || >=3.0.0
+      vue-demi: ^0.14.6
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
 
   '@vue/babel-helper-vue-jsx-merge-props@1.4.0':
     resolution: {integrity: sha512-JkqXfCkUDp4PIlFdDQ0TdXoIejMtTHP67/pvxlgeY+u5k3LEdKuWZ3LK6xkxo52uDoABIVyRwqVkfLQJhk7VBA==}
@@ -5854,6 +5896,21 @@ snapshots:
   '@types/ws@8.18.1':
     dependencies:
       '@types/node': 24.10.2
+
+  '@vue-office/docx@1.6.3(vue-demi@0.14.10(vue@3.5.25))(vue@3.5.25)':
+    dependencies:
+      vue: 3.5.25
+      vue-demi: 0.14.10(vue@3.5.25)
+
+  '@vue-office/excel@1.7.14(vue-demi@0.14.10(vue@3.5.25))(vue@3.5.25)':
+    dependencies:
+      vue: 3.5.25
+      vue-demi: 0.14.10(vue@3.5.25)
+
+  '@vue-office/pdf@2.0.10(vue-demi@0.14.10(vue@3.5.25))(vue@3.5.25)':
+    dependencies:
+      vue: 3.5.25
+      vue-demi: 0.14.10(vue@3.5.25)
 
   '@vue/babel-helper-vue-jsx-merge-props@1.4.0': {}
 

@@ -161,11 +161,23 @@ export default {
   },
   created() {},
   mounted() {
-    this.$nextTick(() => {
+    this.$nextTick(async () => {
       try {
-        this.$refs.bimDom && this.$refs.bimDom.InitEngine && this.$refs.bimDom.InitEngine();
+        if (this.$refs.bimDom && this.$refs.bimDom.InitEngine) {
+          await this.$refs.bimDom.InitEngine();
+        }
       } catch (e) {
-        console.error(e);
+        console.error('BIM引擎初始化失败:', e);
+        // 首次加载失败时，延迟重试
+        setTimeout(async () => {
+          try {
+            if (this.$refs.bimDom && this.$refs.bimDom.InitEngine) {
+              await this.$refs.bimDom.InitEngine();
+            }
+          } catch (retryError) {
+            console.error('BIM引擎重试失败:', retryError);
+          }
+        }, 1000);
       }
     });
   },

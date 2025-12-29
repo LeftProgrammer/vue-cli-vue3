@@ -20,7 +20,7 @@ export default {
   mounted() {
     this.videoPlayer = this.$refs.easyPlayer;
   },
-  beforeDestroy() {
+  beforeUnmount() {
     this.videoPlayer = null;
   },
   methods: {
@@ -44,11 +44,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-/deep/ .iconfont.iconqingxiLOGO {
+:deep(.iconfont.iconqingxiLOGO) {
   display: none !important;
 }
 
-/deep/ .easy-player-loading {
+:deep(.easy-player-loading) {
   display: none !important;
 }
 </style>

@@ -408,11 +408,11 @@ export default {
 </script>
 <style lang="scss" scoped>
 .user-select {
-  /deep/ .el-dialog__header {
+  :deep(.el-dialog__header) {
     margin-bottom: 0;
   }
 
-  /deep/ .el-dialog__body {
+  :deep(.el-dialog__body) {
     padding: 0 20px;
   }
 

@@ -7,9 +7,10 @@
 *  例：<el-button v-debounce="[reset,`click`,300]">刷新</el-button>
 *  也可简写成：<el-button v-debounce="[reset]">刷新</el-button>
 */
-import Vue from "vue";
-Vue.directive('debounce', {
-  inserted: function (el, binding) {
+
+// Vue3 指令定义
+export default {
+  mounted(el, binding) {
     let [fn, event = "click", time = 300] = binding.value
     let timer
     el.addEventListener(event, () => {
@@ -17,4 +18,4 @@ Vue.directive('debounce', {
       timer = setTimeout(() => fn(), time)
     })
   }
-})
+}

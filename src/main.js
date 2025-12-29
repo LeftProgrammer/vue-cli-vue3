@@ -11,12 +11,12 @@ import "@/styles/index.scss";
 import "./permission";
 import { download as handleExportDownload } from "@/utils/request";
 import setupSvgIcon from "@/icons";
-import draggable from "@/utils/dialogdrag";
 import { fromApp } from "@/utils";
 import MyPlugin from "@/common/js/MyPlugin.js"; // 导入公用插件
 import base from "@/common/js/base.js"; // 导入公用方法
+import draggable from "@/utils/dialogdrag";
 import watermark from "@/utils/watermark"; // 水印指令
-import "@/utils/debounce.js"; // 防抖工具
+import debounce from "@/utils/debounce.js"; // 防抖指令
 
 const app = createApp(App);
 
@@ -210,6 +210,7 @@ app.directive("thousands", {
 
 app.directive("draggable", draggable);
 app.directive("watermark", watermark);
+app.directive("debounce", debounce);
 
 app.use(ElementPlus, {
   size: "medium",

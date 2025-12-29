@@ -100,8 +100,8 @@
 
             <el-button
               @click="
-                $visibleChange($event, 'el-tooltip__popper')
-                $downFileById(row)
+                $visibleChange($event, 'el-tooltip__popper');
+                $downFileById(row);
               "
               type="text"
             >
@@ -110,8 +110,8 @@
 
             <el-button
               @click="
-                $visibleChange($event, 'el-tooltip__popper')
-                handlePreview(row)
+                $visibleChange($event, 'el-tooltip__popper');
+                handlePreview(row);
               "
               type="text"
             >
@@ -634,7 +634,7 @@ export default {
   }
 }
 
-/deep/ .el-icon-delete {
+:deep(.el-icon-delete) {
   font-size: 18px !important;
 }
 
@@ -644,11 +644,11 @@ export default {
   margin: 5px 0 10px 0;
 }
 
-/deep/ .el-button.el-popover__reference {
+:deep(.el-button.el-popover__reference) {
   margin-left: 10px !important;
 }
 
-/deep/ .el-progress {
+:deep(.el-progress) {
   display: flex;
   justify-content: space-between;
 

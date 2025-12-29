@@ -135,58 +135,58 @@ export default {
 </script>
 
 <style scoped lang="scss">
-::v-deep .stream {
+:deep(.stream) {
   display: none;
 }
 
-::v-deep .one-screen-icon {
+:deep(.one-screen-icon) {
   display: none;
 }
 
-::v-deep .two-screen-icon {
+:deep(.two-screen-icon) {
   display: none;
 }
 
-::v-deep .four-screen-icon {
+:deep(.four-screen-icon) {
   display: none;
 }
 
-::v-deep .nine-screen-icon {
+:deep(.nine-screen-icon) {
   display: none;
 }
 
-::v-deep .twenty-five-screen-icon {
+:deep(.twenty-five-screen-icon) {
   display: none;
 }
 
-::v-deep .sixteen-screen-icon {
+:deep(.sixteen-screen-icon) {
   display: none;
 }
 
-::v-deep .three-screen-icon {
+:deep(.three-screen-icon) {
   display: none;
 }
 
-::v-deep .six-screen-icon {
+:deep(.six-screen-icon) {
   display: none;
 }
 
-::v-deep .eight-screen-icon {
+:deep(.eight-screen-icon) {
   display: none;
 }
 
-::v-deep .custom-screen-icon {
+:deep(.custom-screen-icon) {
   display: none;
 }
 
-::v-deep .ws-ctrl-btn-spread-2 {
+:deep(.ws-ctrl-btn-spread-2) {
   display: none;
 }
 
-::v-deep .close-all-video {
+:deep(.close-all-video) {
   display: none;
 }
-::v-deep .close-icon {
+:deep(.close-icon) {
   display: none;
 }
 .container {

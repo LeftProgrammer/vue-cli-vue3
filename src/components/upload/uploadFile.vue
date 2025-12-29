@@ -109,8 +109,8 @@
             <span
               class="ml-15 pointer"
               @click="
-                $visibleChange($event, 'el-tooltip__popper')
-                handlePreview(file)
+                $visibleChange($event, 'el-tooltip__popper');
+                handlePreview(file);
               "
             >
               <i class="el-icon-view" />
@@ -126,8 +126,8 @@
             <span
               class="ml-15 pointer"
               @click="
-                $visibleChange($event, 'el-tooltip__popper')
-                handleDownload(file)
+                $visibleChange($event, 'el-tooltip__popper');
+                handleDownload(file);
               "
             >
               <i class="el-icon-download" />
@@ -143,8 +143,8 @@
               v-if="!readonly"
               class="ml-15 pointer"
               @click="
-                $visibleChange($event, 'el-tooltip__popper')
-                handleRemoveText(index)
+                $visibleChange($event, 'el-tooltip__popper');
+                handleRemoveText(index);
               "
             >
               <i class="el-icon-delete" />
@@ -437,6 +437,7 @@ export default {
       // );
       // 计算上传进度
       if (file.percentage === 100) {
+        // 上传完成，不做处理
       } else {
         let fileIndex = this.uploadingFileList.findIndex(
           (x) => x.uid === file.uid
@@ -817,10 +818,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .el-upload-list--text.el-upload-list {
+:deep(.el-upload-list--text.el-upload-list) {
   display: none;
 }
-::v-deep.el-upload__tip {
+:deep(.el-upload__tip) {
   font-family: Alibaba PuHuiTi 2, Alibaba PuHuiTi 20;
   font-weight: normal;
   font-size: 12px;
@@ -875,7 +876,7 @@ export default {
     }
   }
 
-  /deep/ .el-progress {
+  :deep(.el-progress) {
     display: flex;
     justify-content: space-between;
 
@@ -885,18 +886,18 @@ export default {
   }
 }
 
-/deep/ .el-icon-delete {
+:deep(.el-icon-delete) {
   font-size: 18px !important;
   color: #f53f3f;
 }
 
-/deep/ .el-button.is-disabled.delete-btn {
+:deep(.el-button.is-disabled.delete-btn) {
   border: 0 !important;
   background-color: transparent !important;
 }
 
 .hideent {
-  /deep/ .upload-demo {
+  :deep(.upload-demo) {
     display: none;
   }
 }
