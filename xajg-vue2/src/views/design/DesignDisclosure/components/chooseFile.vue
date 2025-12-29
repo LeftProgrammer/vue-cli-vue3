@@ -6,7 +6,7 @@
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
+      @query="handleQuery"
     >
       <template slot="form">
         <!--查询条件 -->

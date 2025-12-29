@@ -3,7 +3,7 @@
     <table-layout
       title="防汛日报"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -108,8 +108,8 @@
             <template slot-scope="scope">
               <flow-status
                 :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -121,10 +121,10 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deleteHandle"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -132,10 +132,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 <script>
@@ -146,9 +146,9 @@ import enums from "@/config/enums";
 import { dateFormat } from "@/utils";
 import moment from "moment";
 export default {
-  name: "floodControlDaily",
-  mixins: [FlowListMixin],
+  name: "FloodControlDaily",
   components: { TableLayout },
+  mixins: [FlowListMixin],
   data() {
     return {
       pageParams: {

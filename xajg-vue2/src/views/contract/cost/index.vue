@@ -2,7 +2,7 @@
   <div class="cost" style="width: 100%; height: 100%; padding: 15px">
     <table-layout
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handelPageSizeChange"
       @pageCurrentChange="handelCurrentChange"
@@ -93,7 +93,7 @@
                 :width="$calculateWidth(120)"
               >
                 <template slot-scope="{ row }">
-                  {{ row.type === 1 ? '工程类' : '非工程类' }}
+                  {{ row.type === 1 ? "工程类" : "非工程类" }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -115,7 +115,7 @@
                 :width="$calculateWidth(120)"
               >
                 <template slot-scope="{ row }">
-                  {{ dateFormat(row.createDate, 'YYYY-MM-DD') }}
+                  {{ dateFormat(row.createDate, "YYYY-MM-DD") }}
                 </template>
               </el-table-column>
               <el-table-column
@@ -144,8 +144,8 @@
                 <template slot-scope="scope">
                   <flow-status
                     :row="scope.row"
-                    :flowName="scope.row.flowName"
-                  ></flow-status>
+                    :flow-name="scope.row.flowName"
+                  />
                 </template>
               </el-table-column>
             </el-table>
@@ -155,11 +155,11 @@
     </table-layout>
     <!-- 新增弹框 -->
     <dataform
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
-      :oprateRow="oprateRow"
+      :oprate-row="oprateRow"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
@@ -168,13 +168,13 @@
 </template>
 
 <script>
-import TableLayout from '@/components/ContentLayout/Table'
-import { page, unitAllList } from './api'
-import { FlowListMixin } from '@/mixins/FlowListMixin'
-import { dateFormat } from '@/utils'
-import dataform from './dataform.vue'
+import TableLayout from "@/components/ContentLayout/Table";
+import { page, unitAllList } from "./api";
+import { FlowListMixin } from "@/mixins/FlowListMixin";
+import { dateFormat } from "@/utils";
+import dataform from "./dataform.vue";
 export default {
-  name: 'contractCost',
+  name: "ContractCost",
   components: { TableLayout, dataform },
   mixins: [FlowListMixin],
   data() {
@@ -183,56 +183,56 @@ export default {
         total: 0,
         current: 1,
         entity: {},
-        pageSize: 20
+        pageSize: 20,
       },
       typeList: [],
       unitOptions: [],
       tableData: [],
-      title: '',
-      oprateRow: {}
-    }
+      title: "",
+      oprateRow: {},
+    };
   },
   computed: {
     userInfo() {
-      return this.$getStorage('userInfo')
-    }
+      return this.$getStorage("userInfo");
+    },
   },
   created() {
-    this.getUnitList()
+    this.getUnitList();
   },
 
   methods: {
     dateFormat,
     closedDialog() {
-      this.oprateRow.dialogShow = false
+      this.oprateRow.dialogShow = false;
     },
     view(row) {
-      this.oprateRow.data = row
-      this.oprateRow.dialogShow = true
-      this.oprateRow.isView = true
-      this.type = 'view'
-      this.title = '详情'
+      this.oprateRow.data = row;
+      this.oprateRow.dialogShow = true;
+      this.oprateRow.isView = true;
+      this.type = "view";
+      this.title = "详情";
     },
     handelPageSizeChange(page) {
-      this.pageParams.current = 1
-      this.pageParams.pageSize = page.pageSize
-      this.getTableData()
+      this.pageParams.current = 1;
+      this.pageParams.pageSize = page.pageSize;
+      this.getTableData();
     },
     handelCurrentChange(page) {
-      this.pageParams.current = page.current
-      this.getTableData()
+      this.pageParams.current = page.current;
+      this.getTableData();
     },
     /**
      * @description 获取字典
      */
     async getUnitList() {
-      const { data, success } = await unitAllList()
+      const { data, success } = await unitAllList();
       if (success) {
         this.unitOptions = data
           .filter((x) => x.corpPid)
           .sort((a, b) => {
-            return a.corpSort - b.corpSort
-          })
+            return a.corpSort - b.corpSort;
+          });
       }
     },
 
@@ -242,38 +242,42 @@ export default {
         size: 20,
         current: 1,
         entity: {},
-        total: 0
-      }
-      this.getTableData()
+        total: 0,
+      };
+      this.getTableData();
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     getTableData(pageInfo) {
-      const pageParams = Object.assign(this.pageParams, pageInfo)
+      const pageParams = Object.assign(this.pageParams, pageInfo);
       if (pageParams.entity.createDate?.length > 0) {
-        pageParams.entity.startCreateDate = pageParams.entity.createDate[0]
-        pageParams.entity.endCreateDate = pageParams.entity.createDate[1]
-        delete pageParams.createDate
+        pageParams.entity.startCreateDate = pageParams.entity.createDate[0];
+        pageParams.entity.endCreateDate = pageParams.entity.createDate[1];
+        delete pageParams.createDate;
       }
       page(this.pageParams).then((res) => {
         if (res.success) {
-          this.tableData = res.data.records
-          this.pageParams.total = res.data.total
+          this.tableData = res.data.records;
+          this.pageParams.total = res.data.total;
         }
-      })
+      });
     },
 
     handleHeaderDragEnd() {
       this.$nextTick(() => {
-        this.$refs.multipleTable.doLayout()
-      })
+        this.$refs.multipleTable.doLayout();
+      });
     },
     //表格序号
     getIndex(index) {
-      let curpage = this.pageParams.current //单前页码，具体看组件取值
-      let limitpage = this.pageParams.pageSize //每页条数，具体是组件取值
-      return index + 1 + (curpage - 1) * limitpage
-    }
-  }
-}
+      let curpage = this.pageParams.current; //单前页码，具体看组件取值
+      let limitpage = this.pageParams.pageSize; //每页条数，具体是组件取值
+      return index + 1 + (curpage - 1) * limitpage;
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

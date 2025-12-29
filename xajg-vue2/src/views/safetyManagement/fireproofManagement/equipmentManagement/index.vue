@@ -5,7 +5,7 @@
       title="设备管理列表"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="opratebtns">
@@ -264,6 +264,10 @@ export default {
         console.error(e);
       }
     },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
   },
 };
 </script>
@@ -272,7 +276,6 @@ export default {
 .page-list {
   width: 100%;
   height: 100%;
-  padding: 15px;
 }
 
 .el-col .el-input {

@@ -3,7 +3,7 @@
     <treeTableLayout
       :page="pageParams"
       title="相关批件办理"
-      @query="getTableData"
+      @query="handleQuery"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
@@ -98,9 +98,7 @@
           >
             <template slot-scope="{ row }">
               {{
-                row.createDate
-                  ? timeFormat(row.createDate, "YYYY-MM-DD")
-                  : ""
+                row.createDate ? timeFormat(row.createDate, "YYYY-MM-DD") : ""
               }}
             </template>
           </el-table-column>
@@ -188,6 +186,10 @@ export default {
     },
     edit(row, status, task, type) {
       this.handelShowDialog(row, status, task);
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     // 查询表格数据
     getTableData(pageInfo) {

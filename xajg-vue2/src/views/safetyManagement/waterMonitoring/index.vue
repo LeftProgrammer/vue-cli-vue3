@@ -2,11 +2,11 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="水情监测数据列表"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="水情监测数据列表"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
@@ -16,8 +16,7 @@
               value-format="yyyy-MM-dd"
               type="daterange"
               range-separator="-"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -102,15 +101,15 @@
             <template #default="{ row }">
               <list-button
                 :data="row"
+                :btns="['edit', 'delete']"
+                :disabled-btns="[
+                  row.createUser !== userId ? 'edit' : '',
+                  row.createUser !== userId ? 'delete' : '',
+                ]"
                 @view="view"
                 @delete="deleteHandle"
                 @edit="edit"
-                :btns="['edit', 'delete']"
-                :disabledBtns="[
-                  row.createUser !== userId ? 'edit' : '',
-                  row.createUser !== userId ? 'delete' : ''
-                ]"
-              ></list-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -118,16 +117,15 @@
     </table-layout>
 
     <dataform
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    >
-    </dataform>
+    />
   </div>
 </template>
 
@@ -141,12 +139,12 @@ import dataform from "./dataform";
 
 export default {
   name: "WaterMonitoring",
-  mixins: [ListMixin],
   components: {
     TableLayout,
     ListButton,
-    dataform
+    dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       type: "",
@@ -155,20 +153,20 @@ export default {
       pageParams: {
         pageSize: 20,
         current: 1,
-        total: 0
+        total: 0,
       },
       oprateRow: {},
       options: [],
       tableData: [],
       query: {
-        params: {}
+        params: {},
       },
       date: [],
       dictList: [],
       readonly: false,
       deptShow: false,
       url: { list: "" },
-      userId: ""
+      userId: "",
     };
   },
   computed: {},
@@ -177,6 +175,10 @@ export default {
     this.userId = this.$getStorage("userInfo").userId;
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     closedDialog() {
       this.oprateRow.dialogShow = false;
     },
@@ -237,7 +239,7 @@ export default {
     /** 删除*/
     deleteHandle(row) {
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (!res.success) {
           return this.$message.error("删除失败：" + res.message);
@@ -256,14 +258,14 @@ export default {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           closeOnClickModal: false,
-          type: "warning"
+          type: "warning",
         });
         this.deletedata(row.id);
       } catch (e) {
         console.error(e);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

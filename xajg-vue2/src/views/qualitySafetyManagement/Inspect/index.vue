@@ -3,14 +3,14 @@
     <table-layout
       title="质量检查"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
     >
       <!-- 查询表单 -->
       <template slot="form">
-        <el-form :model="pageParams.entity" :inline="true">
+        <el-form :model="pageParams.entity" :inline="true" label-width="100px">
           <el-form-item label="质量问题名称:" size="mini">
             <el-input v-model="pageParams.entity.name" placeholder="请输入" />
           </el-form-item>
@@ -22,11 +22,11 @@
           </el-form-item>
           <el-form-item label="所属标段:" size="mini" prop="sectionId">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
               v-model="pageParams.entity.sectionId"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -141,7 +141,7 @@
             </template>
           </el-table-column>
 
-          <el-table-column
+          <!-- <el-table-column
             label="逾期情况"
             prop="overdueState"
             align="center"
@@ -157,17 +157,17 @@
                     ? 'primary'
                     : 'danger'
                 "
-                >{{
-                  moment(row.rectifyDate).isSameOrAfter(
-                    moment(new Date()),
-                    "day"
-                  )
-                    ? "未逾期"
-                    : "已逾期"
-                }}
+              >{{
+                moment(row.rectifyDate).isSameOrAfter(
+                  moment(new Date()),
+                  "day"
+                )
+                  ? "未逾期"
+                  : "已逾期"
+              }}
               </el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             label="问题上报人"
             prop="problemReportorFullname"
@@ -183,10 +183,7 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="scope">
-              <flow-status
-                :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+              <flow-status :row="scope.row" :flow-name="scope.row.flowName" />
             </template>
           </el-table-column>
 
@@ -209,10 +206,10 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deletedata"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -220,10 +217,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -240,8 +237,8 @@ import { getSectionByCorpId } from "@/api/measure";
 
 export default {
   name: "Inspect",
-  mixins: [FlowListMixin],
   components: { TableLayout, bimShow },
+  mixins: [FlowListMixin],
   data() {
     return {
       pageParams: {
@@ -277,6 +274,10 @@ export default {
   methods: {
     dateFormat,
     moment,
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getCodeName(row, type) {
       let name = row[type] || row.designSupply?.[type] || "";
       return name;

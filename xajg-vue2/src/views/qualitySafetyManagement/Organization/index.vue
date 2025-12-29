@@ -2,7 +2,7 @@
   <div class="Organization">
     <el-tabs v-model="activeName">
       <el-tab-pane label="组织机构列表" name="table">
-        <table-layout :showPage="false" @query="getTableData" @reset="reset">
+        <table-layout :show-page="false" @query="handleQuery" @reset="reset">
           <template slot="opratebtns">
             <el-button type="primary" icon="el-icon-plus" @click="addHandle(1)">
               新增组织
@@ -38,8 +38,7 @@
                     type="primary"
                     :underline="false"
                     @click="view(row)"
-                    >{{ row.name }}</el-link
-                  >
+                  >{{ row.name }}</el-link>
                 </template>
               </el-table-column>
               <el-table-column
@@ -71,8 +70,7 @@
                 prop="createUsername"
                 width="120"
                 excel.sort="6"
-              >
-              </el-table-column>
+              />
               <el-table-column
                 label="更新时间"
                 align="center"
@@ -106,20 +104,19 @@
           </template>
         </table-layout>
         <dataform
+          v-if="oprateRow.dialogShow"
           :type="type"
           :title="title"
-          v-if="oprateRow.dialogShow"
           :visible="oprateRow.dialogShow"
           :data="oprateRow.data"
           :readonly="oprateRow.isView"
-          :tableData="tableData"
+          :table-data="tableData"
           @closed="closedDialog"
           @ok="getTableData"
-        >
-        </dataform>
+        />
       </el-tab-pane>
       <el-tab-pane label="组织机构图" name="image">
-        <vue2-org-tree :data="treeData" v-if="treeData" />
+        <vue2-org-tree v-if="treeData" :data="treeData" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -153,6 +150,10 @@ export default {
   mounted() {},
   methods: {
     dateFormat,
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     closedDialog() {
       this.oprateRow.dialogShow = false
     },

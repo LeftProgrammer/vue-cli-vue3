@@ -2,21 +2,21 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      :show-search-btns="false"
+      title="计划列表"
+      :show-export-btn="true"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      :showSearchBtns="false"
-      title="计划列表"
-      :showExportBtn="true"
       @initExportParams="initExportParams"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="corpId"
           default-expand-all
           highlight-current
@@ -36,7 +36,7 @@
         >
           新增
         </el-button>
-        <span v-else></span>
+        <span v-else />
       </template>
       <template slot="table">
         <el-table ref="multipleTable" :data="tableData" border>
@@ -78,24 +78,23 @@
                 @delete="deleteHandle"
                 @view="view"
                 @edit="edit"
-              ></list-button>
+              />
             </template>
           </el-table-column>
         </el-table>
       </template>
     </table-layout>
     <dataform
-      :treeNode="treeNode"
+      v-if="oprateRow.dialogShow"
+      :tree-node="treeNode"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="oprateRow.dialogShow = false"
       @ok="getTableData"
-    >
-    </dataform>
+    />
   </div>
 </template>
 
@@ -110,13 +109,13 @@ import ListButton from "@/components/ListButton";
 import dataform from "./dataform";
 
 export default {
-  name: "monitoring-point",
-  mixins: [ListMixin],
+  name: "MonitoringPoint",
   components: {
     TableLayout,
     ListButton,
     dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       belongUnit: [], //登陆人的归宿单位
@@ -181,6 +180,10 @@ export default {
     this.corpId = this.$getStorage("userInfo").corpId;
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     /**初始化导出Excel参数 */
     initExportParams(exportParams) {
       exportParams.url = "/api/synthesis/train-plan/export";

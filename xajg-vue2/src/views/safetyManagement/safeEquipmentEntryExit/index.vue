@@ -3,7 +3,7 @@
     <table-layout
       title="设备进退场"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -150,8 +150,8 @@
             <template slot-scope="scope">
               <flow-status
                 :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -163,16 +163,16 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
-                @click="handelShowDialog"
-                @delete="deletedata"
+                :flow-name="row.flowName"
                 :btns="[
                   { title: '查看', method: 'view' },
                   { title: '办理', method: 'deal' },
                   { title: '催办', method: 'press' },
                   { title: '删除', method: 'delete' },
                 ]"
-              ></flow-button>
+                @click="handelShowDialog"
+                @delete="deletedata"
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -180,10 +180,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -196,7 +196,7 @@ import { dateFormat } from "@/utils";
 import moment from "moment";
 
 export default {
-  name: "safeStaffEntryExit",
+  name: "SafeStaffEntryExit",
   components: { TableLayout },
   mixins: [FlowListMixin],
   data() {
@@ -234,6 +234,11 @@ export default {
   methods: {
     dateFormat,
     moment,
+
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
 
     handleHeaderDragEnd() {
       this.$nextTick(() => {

@@ -145,6 +145,13 @@ const route = {
             meta: { title: "门禁管理", auth: "entranceGuard" },
         },
         {
+            path: "entranceRecord",
+            component: () =>
+                import ("@/views/safetyManagement/entranceRecord/index.vue"),
+            name: "entranceRecord",
+            meta: { title: "人员通行记录", auth: "entranceRecord" },
+        },
+        {
             path: "vehicleGate",
             component: () =>
                 import ("@/views/safetyManagement/vehicleGate/index.vue"),

@@ -3,28 +3,29 @@
     <table-layout
       :page="pageParams"
       title="设计报告供应列表"
+      :show-export-btn="true"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
-      :showExportBtn="true"
+      @query="handleQuery"
       @initExportParams="initExportParams"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="文件编号:" size="mini">
-            <el-input v-model="query.code" placeholder="请输入内容"></el-input>
+            <el-input v-model="query.code" placeholder="请输入内容" />
           </el-form-item>
           <el-form-item label="文件名称:" size="mini">
-            <el-input v-model="query.name" placeholder="请输入内容"></el-input>
+            <el-input v-model="query.name" placeholder="请输入内容" />
           </el-form-item>
 
           <el-form-item label="专业:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="query.profession"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in designProfessionOptions"
@@ -35,11 +36,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="流程状态:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="query.flowStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in flowStatusOptions"
@@ -55,8 +57,7 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -92,7 +93,7 @@
                 effect="dark"
               >
                 <span class="text-ellipsis-clamp">
-                  {{row.code? row.code: ''}}
+                  {{ row.code ? row.code : "" }}
                 </span>
               </el-tooltip>
             </template>
@@ -155,7 +156,7 @@
             excel.args="pbs"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="getPbsName(scope.row.pbsCode)"></bim-show>
+              <bim-show :pbs-code="getPbsName(scope.row.pbsCode)" />
             </template>
           </el-table-column>
           <el-table-column
@@ -168,8 +169,8 @@
             <template slot-scope="{ row }">
               <flow-status
                 :row="row.allData"
-                :flowName="flowName"
-              ></flow-status>
+                :flow-name="flowName"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -185,21 +186,26 @@
                 effect="dark"
               >
                 <span class="text-ellipsis-clamp">
-                  {{row.flowName? row.flowName: ''}}
+                  {{ row.flowName ? row.flowName : "" }}
                 </span>
               </el-tooltip>
             </template>
           </el-table-column>
-          <el-table-column label="操作" width="210" align="center" fixed="right">
+          <el-table-column
+            label="操作"
+            width="210"
+            align="center"
+            fixed="right"
+          >
             <template #default="{ row }">
               <div class="flex justify-center">
                 <flow-button
-                  :promiseCode="'design-center-report2_delete'"
+                  :promise-code="'design-center-report2_delete'"
                   :row="row.allData"
-                  :flowName="flowName"
+                  :flow-name="flowName"
                   @click="handelShowDialog"
                   @delete="deletedata"
-                ></flow-button>
+                />
               </div>
             </template>
           </el-table-column>
@@ -209,10 +215,10 @@
 
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -225,9 +231,9 @@ import enums from "@/config/enums";
 import TableLayout from "@/components/ContentLayout/Table";
 import bimShow from "@/components/Bim/Show";
 export default {
-  name: "design-center-drawingSupply",
-  mixins: [FlowListMixin],
+  name: "DesignCenterDrawingSupply",
   components: { TableLayout, bimShow },
+  mixins: [FlowListMixin],
   data() {
     return {
       startTimeAndEndTime: [],
@@ -299,12 +305,6 @@ export default {
       //编辑通过当前人待办做判断。流程数据不运输删除
     };
   },
-  created() {
-    this.getDictItemList(this.designProfessionCode);
-    this.getTableData();
-    this.getFlowStatus();
-    // window.addEventListener("message", this.getMessage, false);
-  },
   computed: {
     exportParams() {
       this.query.type = 2;
@@ -318,7 +318,13 @@ export default {
         this.pageParams.entity.endTime = "";
       }
       return this.pageParams;
-    }
+    },
+  },
+  created() {
+    this.getDictItemList(this.designProfessionCode);
+    this.getTableData();
+    this.getFlowStatus();
+    // window.addEventListener("message", this.getMessage, false);
   },
   methods: {
     /**初始化导出Excel参数 */
@@ -326,7 +332,7 @@ export default {
       exportParams.url = "/api/design/supply/detail/export";
       exportParams.filename = "报告供应";
       exportParams.params = this.exportParams;
-      exportParams.params.entity.columns = exportParams.columns
+      exportParams.params.entity.columns = exportParams.columns;
     },
     /**获取流程状态字典 */
     async getFlowStatus() {
@@ -389,6 +395,10 @@ export default {
           this.$message.error("数据删除异常，" + res.message);
         }
       });
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
 
     // 查询表格数据

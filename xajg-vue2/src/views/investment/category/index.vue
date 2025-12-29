@@ -1,6 +1,6 @@
 <template>
   <div class="category">
-    <table-layout :show-page="false" @query="getTableData" @reset="reset">
+    <table-layout :show-page="false" @query="handleQuery" @reset="reset">
       <!-- 查询表单 -->
       <template slot="form">
         <el-form :model="pageParams" :inline="true">
@@ -150,6 +150,10 @@ export default {
       this.pageParams = {
         investmentYear: new Date(),
       };
+      this.getTableData();
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
       this.getTableData();
     },
     // 查询表格数据

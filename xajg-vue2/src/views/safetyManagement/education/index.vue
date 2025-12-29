@@ -3,7 +3,7 @@
     <table-layout
       title="班前教育会"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"

@@ -2,20 +2,20 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
-      :showExportBtn="true"
+      :show-export-btn="true"
+      title="报检列表"
       @initExportParams="initExportParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="报检列表"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="dictId"
           highlight-current
           @node-click="handleNodeClick"
@@ -27,7 +27,7 @@
             <el-input
               v-model="query.code"
               placeholder="请输入材料编号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="日期:" size="mini" prop="startTime">
             <el-date-picker
@@ -35,16 +35,16 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
 
           <el-form-item label="所属标段" size="mini" prop="section">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
+            <el-select
               v-model="query.section"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -59,16 +59,12 @@
             <el-input
               v-model="query.batchCode"
               placeholder="请输入材料批号"
-            ></el-input>
+            />
           </el-form-item>
         </el-form>
       </template>
       <template slot="opratebtns">
-        <el-button
-          type="primary"
-          icon="el-icon-plus"
-          @click="addHandle()"
-        >
+        <el-button type="primary" icon="el-icon-plus" @click="addHandle()">
           新增
         </el-button>
       </template>
@@ -234,7 +230,7 @@
             excel.sort="9"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
 
@@ -244,12 +240,24 @@
             prop="constructionResult"
             excel.readConverterExp="0=未检测,1=合格,2=不合格"
           >
-            <template slot-scope="{row}">
+            <template slot-scope="{ row }">
               <div v-if="row.constructionResult != '4'">
                 <el-tag
-                  :type="row.constructionResult == 1 ? 'success' : row.constructionResult == 2 ? 'danger' : 'info'"
+                  :type="
+                    row.constructionResult == 1
+                      ? 'success'
+                      : row.constructionResult == 2
+                        ? 'danger'
+                        : 'info'
+                  "
                 >
-                  {{ row.constructionResult == 1 ? '合格' : row.constructionResult == 2 ? '不合格' : '未检测' }}
+                  {{
+                    row.constructionResult == 1
+                      ? "合格"
+                      : row.constructionResult == 2
+                        ? "不合格"
+                        : "未检测"
+                  }}
                 </el-tag>
               </div>
             </template>
@@ -261,13 +269,27 @@
             prop="supervisionResult"
             excel.readConverterExp="0=未检测,1=合格,2=不合格"
           >
-            <template slot-scope="{row}">
-<!--              4就是什么  没有闭合 没有 检测-->
-             <div v-if="row.supervisionResult != '4'">
-               <el-tag :type="row.supervisionResult == 1 ? 'success' : row.supervisionResult == 2 ? 'danger' : 'info'">
-                 {{ row.supervisionResult == 1 ? '合格' : row.supervisionResult == 2 ? '不合格' : '未检测' }}
-               </el-tag>
-             </div>
+            <template slot-scope="{ row }">
+              <!--              4就是什么  没有闭合 没有 检测-->
+              <div v-if="row.supervisionResult != '4'">
+                <el-tag
+                  :type="
+                    row.supervisionResult == 1
+                      ? 'success'
+                      : row.supervisionResult == 2
+                        ? 'danger'
+                        : 'info'
+                  "
+                >
+                  {{
+                    row.supervisionResult == 1
+                      ? "合格"
+                      : row.supervisionResult == 2
+                        ? "不合格"
+                        : "未检测"
+                  }}
+                </el-tag>
+              </div>
             </template>
           </el-table-column>
           >
@@ -277,11 +299,25 @@
             prop="reagentResult"
             excel.readConverterExp="0=未检测,1=合格,2=不合格"
           >
-            <template slot-scope="{row}">
+            <template slot-scope="{ row }">
               <!--              4就是什么  没有闭合 没有 检测-->
               <div v-if="row.reagentResult != '4'">
-                <el-tag :type="row.reagentResult == 1 ? 'success' : row.reagentResult == 2 ? 'danger' : 'info'">
-                  {{ row.reagentResult == 1 ? '合格' : row.reagentResult == 2 ? '不合格' : '未检测' }}
+                <el-tag
+                  :type="
+                    row.reagentResult == 1
+                      ? 'success'
+                      : row.reagentResult == 2
+                        ? 'danger'
+                        : 'info'
+                  "
+                >
+                  {{
+                    row.reagentResult == 1
+                      ? "合格"
+                      : row.reagentResult == 2
+                        ? "不合格"
+                        : "未检测"
+                  }}
                 </el-tag>
               </div>
             </template>
@@ -291,12 +327,12 @@
             <template #default="{ row }">
               <list-button
                 :data="row"
+                :from-parent="isCreateUser(row)"
+                :custom-disabled-fun="customDisabledFun"
                 @delete="handelDeleteRow"
                 @view="view"
                 @edit="edit"
-                :fromParent="isCreateUser(row)"
-                :customDisabledFun="customDisabledFun"
-              ></list-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -304,17 +340,17 @@
     </table-layout>
 
     <dataform
-      :treeNode="treeNode"
+      v-if="oprateRow.dialogShow"
+      :tree-node="treeNode"
       :node="node"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="oprateRow.dialogShow = false"
       @ok="getTableData"
-    ></dataform>
+    />
   </div>
 </template>
 
@@ -329,14 +365,14 @@ import dataform from "./dataform";
 import bimShow from "@/components/Bim/Show";
 
 export default {
-  name: "test-detection",
-  mixins: [ListMixin],
+  name: "TestDetection",
   components: {
     TableLayout,
     ListButton,
     dataform,
-    bimShow
+    bimShow,
   },
+  mixins: [ListMixin],
   data() {
     return {
       startTimeAndEndTime: [],
@@ -346,18 +382,18 @@ export default {
       DitSpeciality: [],
       defaultProps: {
         children: "children",
-        label: "dictName"
+        label: "dictName",
       },
       pageParams: {
         size: 20,
         current: 1,
-        total: 0
+        total: 0,
       },
       options: [],
       tableData: [],
       query: {
         type: null,
-        params: {}
+        params: {},
       },
       node: {},
       dictList: [],
@@ -370,7 +406,7 @@ export default {
       url: { list: "" },
       /**施工标段 */
       sectionOptions: [],
-      sectionAllOptions: []
+      sectionAllOptions: [],
     };
   },
   computed: {
@@ -378,11 +414,11 @@ export default {
       let params = {
         ...this.pageParams,
         entity: {
-          ...this.query
-        }
+          ...this.query,
+        },
       };
       return params;
-    }
+    },
   },
   created() {
     this.getTypeDictMap();
@@ -392,6 +428,10 @@ export default {
     this.getUnit();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     // 业务自定义 禁用
     customDisabledFun(row) {
       return !row.canDelete;
@@ -495,17 +535,17 @@ export default {
         const name = this.query.name;
         this.query = {
           name: name,
-          params: {}
+          params: {},
         };
       } else if (this.query.classification) {
         const classification = this.query.classification;
         this.query = {
           classification: classification,
-          params: {}
+          params: {},
         };
       } else {
         this.query = {
-          params: {}
+          params: {},
         };
       }
       this.startTimeAndEndTime = [];
@@ -534,8 +574,8 @@ export default {
       this.pageParams.entity = this.query;
       this.pageParams.orderProperties = [
         {
-          property: "createDate"
-        }
+          property: "createDate",
+        },
       ];
       const params = JSON.parse(JSON.stringify(this.pageParams));
       // if (this.query.name) {
@@ -562,17 +602,17 @@ export default {
       );
       if (node.dictUpCode === "-") {
         this.query = {
-          params: {}
+          params: {},
         };
       } else if (node.children) {
         this.query = {
           classification: node.dictCode,
-          params: {}
+          params: {},
         };
       } else {
         this.query = {
           name: node.dictCode,
-          params: {}
+          params: {},
         };
       }
       this.pageParams.current = 1;
@@ -607,7 +647,7 @@ export default {
       }
       this.type = "add";
       // 需求要求改为固定账号：试验检测中心收发文
-      this.oprateRow.data = {testCenter:'1175575998972821504'};
+      this.oprateRow.data = { testCenter: "1175575998972821504" };
       this.oprateRow.dialogShow = true;
       this.oprateRow.isView = false;
     },
@@ -615,7 +655,7 @@ export default {
     deleteHandle(row) {
       console.log(row);
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (!res.success) {
           return this.$message.error("删除失败：" + res.message);
@@ -665,13 +705,13 @@ export default {
       if (data) {
         return data.name;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped lang="scss">
-/deep/ .table-content .table .table-cnotent .el-table .el-table__body-wrapper{
+/deep/ .table-content .table .table-cnotent .el-table .el-table__body-wrapper {
   height: calc(100% - 80px) !important;
 }
 
@@ -691,6 +731,4 @@ export default {
     width: 100%;
   }
 }
-
-
 </style>

@@ -3,25 +3,28 @@
     <table-layout
       title="危险源管理列表"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
     >
       <!-- 查询表单 -->
       <template slot="form">
-        <el-form :model="pageParams.entity" :inline="true">
+        <el-form :model="pageParams.entity" :inline="true" label-width="100px">
           <el-form-item label="工程部位:">
-            <pbs-select v-model="pageParams.entity.pbsCode" style="height: 100%" />
+            <pbs-select
+              v-model="pageParams.entity.pbsCode"
+              style="height: 100%"
+            />
           </el-form-item>
 
           <el-form-item label="所属标段:" size="mini" prop="sectionId">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
               v-model="pageParams.entity.sectionId"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -31,7 +34,7 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="事故类型:">
+          <el-form-item label="潜在事故类型:">
             <el-input
               v-model="pageParams.entity.accidentTypes"
               placeholder="请输入"
@@ -39,19 +42,19 @@
           </el-form-item>
           <el-form-item label="风险等级:">
             <el-select
-                class="w-100pre"
-                @visible-change="$visibleChange($event, 'el-popper')"
-                v-model="pageParams.entity.riskLevel"
-                :disabled="readonly"
-                placeholder="请选择"
-              >
-                <el-option
-                  v-for="item in riskLevelList"
-                  :key="item.dictCode"
-                  :label="item.dictName"
-                  :value="item.dictCode"
-                />
-              </el-select>
+              v-model="pageParams.entity.riskLevel"
+              class="w-100pre"
+              :disabled="readonly"
+              placeholder="请选择"
+              @visible-change="$visibleChange($event, 'el-popper')"
+            >
+              <el-option
+                v-for="item in riskLevelList"
+                :key="item.dictCode"
+                :label="item.dictName"
+                :value="item.dictCode"
+              />
+            </el-select>
           </el-form-item>
         </el-form>
       </template>
@@ -82,20 +85,26 @@
             width="54"
             align="center"
           />
-          <el-table-column label="工程部位" prop="pbsCode" :width="$calculateWidth(180)">
+          <el-table-column
+            label="工程部位"
+            prop="pbsCode"
+            :width="$calculateWidth(180)"
+          >
             <template slot-scope="{ row }">
               <bim-show
-                :pbsCode="row.pbsCode"
-                :isClick="true"
+                :pbs-code="row.pbsCode"
+                :is-click="true"
                 @click="
                   handelShowDialog(
                     row,
                     'fine',
-                    row.procMatterTaskDone || row.matterTaskTodo || row.procMatterRun,
+                    row.procMatterTaskDone ||
+                      row.matterTaskTodo ||
+                      row.procMatterRun,
                     'view'
                   )
                 "
-              ></bim-show>
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -121,9 +130,16 @@
               <!-- </el-tooltip> -->
             </template>
           </el-table-column>
-          <el-table-column label="风险等级" prop="riskLevel" align="center" width="120">
+          <el-table-column
+            label="风险等级"
+            prop="riskLevel"
+            align="center"
+            width="120"
+          >
             <template slot-scope="scoped">
-              <span>{{ $DictionaryParsing(riskLevelList, scoped.row.riskLevel) }}</span>
+              <span>{{
+                $DictionaryParsing(riskLevelList, scoped.row.riskLevel)
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column
@@ -173,17 +189,25 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="scope">
-              <flow-status :row="scope.row" :flowName="scope.row.flowName"></flow-status>
+              <flow-status
+                :row="scope.row"
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
-          <el-table-column fixed="right" label="操作" width="200" align="center">
+          <el-table-column
+            fixed="right"
+            label="操作"
+            width="200"
+            align="center"
+          >
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deletedata"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -191,10 +215,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -210,9 +234,9 @@ import moment from "moment";
 import { getSectionByCorpId } from "@/api/measure";
 
 export default {
-  name: "hiddenDanger",
-  mixins: [FlowListMixin],
+  name: "HiddenDanger",
   components: { TableLayout, bimShow },
+  mixins: [FlowListMixin],
   data() {
     return {
       sectionOptions: [],
@@ -221,21 +245,21 @@ export default {
         orderProperties: [
           {
             property: "createDate",
-            asc: false
-          }
+            asc: false,
+          },
         ],
         pageSize: 20,
         size: 20,
         current: 1,
         total: 0,
         entity: {
-          params: {}
-        }
+          params: {},
+        },
       },
       tableData: [],
       /**流程状态 */
       flowStatusOptions: [], //PROC_TASK_TODO_STATUS
-      riskLevelList: []
+      riskLevelList: [],
     };
   },
   created() {
@@ -248,6 +272,10 @@ export default {
   methods: {
     dateFormat,
     moment,
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getCodeName(row, type) {
       let name = row[type] || row.designSupply?.[type] || "";
       return name;
@@ -320,7 +348,7 @@ export default {
     async getUnitList() {
       const userInfo = this.$getStorage("userInfo");
       let params = {
-        userId: userInfo.userId
+        userId: userInfo.userId,
       };
       try {
         const res = await BelongTo(params);
@@ -350,16 +378,16 @@ export default {
         orderProperties: [
           {
             property: "createDate",
-            asc: false
-          }
+            asc: false,
+          },
         ],
         pageSize: 20,
         size: 20,
         current: 1,
         total: 0,
         entity: {
-          params: {}
-        }
+          params: {},
+        },
       };
       this.getTableData();
     },
@@ -386,7 +414,7 @@ export default {
         data.push({
           id: options[key].value,
           dictCode: options[key].value,
-          dictName: options[key].name
+          dictName: options[key].name,
         });
       }
       this.flowStatusOptions = data;
@@ -397,7 +425,7 @@ export default {
         return;
       }
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (res.success) {
           this.getTableData();
@@ -405,8 +433,8 @@ export default {
           this.$message.error("数据删除异常，" + res.message);
         }
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

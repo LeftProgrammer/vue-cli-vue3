@@ -2,12 +2,14 @@
   <div>
     <!-- <el-tooltip :content="pbsName" placement="top" effect="dark"> -->
     <el-link
+      v-if="isClick"
       class="text-ellipsis"
-      :type="isClick ? 'primary' : ''"
+      type="primary"
       :underline="false"
       @click="show"
       >{{ pbsName }}
     </el-link>
+    <div v-else class="text-ellipsis">{{ pbsName }}</div>
     <!-- </el-tooltip> -->
     <!--BIM显示弹窗-->
     <el-dialog

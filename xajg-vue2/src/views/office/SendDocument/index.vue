@@ -4,11 +4,11 @@
       :class="pageType.unitType == 1 ? 'height-60' : ''"
       :page="pageParams"
       :title="title"
+      :show-export-btn="true"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
-      :showExportBtn="true"
+      @query="handleQuery"
       @initExportParams="initExportParams"
     >
       <template slot="form">
@@ -18,67 +18,67 @@
               v-model="query.code"
               placeholder="请输入编号"
               clearable
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="标题:" size="mini">
             <el-input
               v-model="query.title"
               placeholder="请输入标题"
               clearable
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="文种:" prop="type">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.type"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in wzCodeOptions"
-                :label="item.dictName"
                 :key="item.dictCode"
+                :label="item.dictName"
                 :value="item.dictCode"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item
+            v-if="pageType.unitType == 1 && pageType.documentType == 2"
             label="文件类型:"
             prop="fileType"
-            v-if="pageType.unitType == 1 && pageType.documentType == 2"
           >
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.fileType"
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in fileTypeOptions"
-                :label="item.dictName"
                 :key="item.dictCode"
+                :label="item.dictName"
                 :value="item.dictCode"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="收文单位:" prop="type">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.sendUnits"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in receiveUnitList"
-                :label="item.corpName"
                 :key="item.corpId"
+                :label="item.corpName"
                 :value="item.corpId"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="流程状态:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               ref="flowStateRef"
               v-model="query.flowStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in flowStatusOptions"
@@ -90,10 +90,10 @@
           </el-form-item>
           <el-form-item label="收文状态:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.signStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in signStatusOptions"
@@ -109,21 +109,20 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
           <el-form-item label="发文单位:" prop="unit">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.unit"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sendUnitList"
-                :label="item.corpName"
                 :key="item.corpId"
+                :label="item.corpName"
                 :value="item.corpId"
-              ></el-option>
+              />
             </el-select>
           </el-form-item>
         </el-form>
@@ -139,8 +138,8 @@
       </template>
       <template slot="table">
         <el-table
-          class="table-fixed"
           ref="multipleTable"
+          class="table-fixed"
           :data="tableData"
           height="100%"
           border
@@ -215,8 +214,8 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="文件类型"
             v-if="pageType.unitType == 1 && pageType.documentType == 2"
+            label="文件类型"
             prop="fileType"
             align="center"
             excel.sort="4"
@@ -323,7 +322,7 @@
             :width="$calculateWidth(150)"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column
@@ -335,7 +334,7 @@
             excel.sort="9"
           >
             <template slot-scope="scope">
-              <flow-status :row="scope.row" :flowName="flowName"></flow-status>
+              <flow-status :row="scope.row" :flow-name="flowName" />
             </template>
           </el-table-column>
           <el-table-column
@@ -361,8 +360,7 @@
                     color:
                       row.signStatus == 3 || row.signStatus == 4 ? 'red' : '',
                   }"
-                >{{ getSignStatus(row) }}</span
-                >
+                >{{ getSignStatus(row) }}</span>
               </span>
             </template>
           </el-table-column>
@@ -390,11 +388,10 @@
               <div class="flex justify-center">
                 <flow-button
                   :row="row"
-                  :flowName="flowName"
+                  :flow-name="flowName"
                   @click="handelShowDialog"
                   @delete="deletedata"
-                >
-                </flow-button>
+                />
               </div>
             </template>
           </el-table-column>
@@ -403,10 +400,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -421,9 +418,9 @@ import { FlowListMixin } from "@/mixins/FlowListMixin";
 import bimShow from "@/components/Bim/Show";
 
 export default {
-  name: "design-center-drawingSupply",
-  mixins: [FlowListMixin],
+  name: "DesignCenterDrawingSupply",
   components: { TableLayout, bimShow },
+  mixins: [FlowListMixin],
   data() {
     return {
       OwnUnitDepart: [], //业主单位下的部门
@@ -592,6 +589,10 @@ export default {
     };
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
 
     // 清空选择
     clearSelection() {

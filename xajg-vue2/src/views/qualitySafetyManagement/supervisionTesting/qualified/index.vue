@@ -2,20 +2,20 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
-      :showExportBtn="true"
+      :show-export-btn="true"
+      title="检测记录列表"
       @initExportParams="initExportParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="检测记录列表"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="dictId"
           highlight-current
           @node-click="handleNodeClick"
@@ -27,21 +27,21 @@
             <el-input
               v-model="query.code"
               placeholder="请输入材料编号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="检测结论:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               v-model="query.testResult"
               placeholder="请选择检测结论"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in testResultOptions"
                 :key="item.value"
                 :label="item.label"
                 :value="item.value"
-              >
-              </el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="检测日期:" size="mini" prop="startTime">
@@ -50,16 +50,16 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
 
           <el-form-item label="所属标段" size="mini" prop="sectionId">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
+            <el-select
               v-model="query.section"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -73,7 +73,7 @@
             <el-input
               v-model="query.batchCode"
               placeholder="请输入材料批号"
-            ></el-input>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -95,11 +95,11 @@
             提交闭合
           </el-button>
         </span>
-        <span v-else></span>
+        <span v-else />
       </template>
       <template slot="table">
         <el-table ref="multipleTable" :data="tableData" border @selection-change="handleSelectionChange">
-          <el-table-column v-if="isMobile" type="selection" width="55" align="center" :selectable="selectableRow"/>
+          <el-table-column v-if="isMobile" type="selection" width="55" align="center" :selectable="selectableRow" />
           <el-table-column
             label="序号"
             type="index"
@@ -132,7 +132,7 @@
                 effect="dark"
               >
                 <span class="text-ellipsis">
-                  {{row.batchCode}}
+                  {{ row.batchCode }}
                 </span>
               </el-tooltip>
             </template>
@@ -183,8 +183,8 @@
                       row.testResult === 1
                         ? 'success'
                         : row.testResult === 2
-                        ? 'danger'
-                        : 'info'
+                          ? 'danger'
+                          : 'info'
                     "
                   >
                     {{
@@ -195,8 +195,7 @@
                           : row.testResult === 3
                             ? "未检测"
                             : ""
-                    }}</el-tag
-                  >
+                    }}</el-tag>
                 </span>
               </div>
             </template>
@@ -292,59 +291,57 @@
             excel.sort="9"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200" align="center">
             <template slot-scope="{ row }">
               <div class="list-button-container flex justify-center">
                 <el-link
-                  type="primary"
                   v-if="row.source === '13'"
+                  type="primary"
                   plain
                   @click="testView(row)"
                 >
                   查看
                 </el-link>
                 <el-link
-                  type="primary"
                   v-if="row.source !== '13'"
+                  type="primary"
                   plain
                   @click="view(row)"
                 >
                   查看
                 </el-link>
                 <span v-if="!isSystem && !isMdgAdmin">
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link
                     v-if="row.source !== '13'"
                     type="primary"
                     plain
                     :disabled="editDisabled(row)"
                     @click="edit(row)"
-                  >编辑</el-link
-                  >
+                  >编辑</el-link>
                   <el-link
                     v-if="row.source === '13'"
                     type="primary"
                     plain
                     :disabled="editDisabled(row)"
                     @click="test(row)"
-                  >检测信息</el-link
-                  >
+                  >检测信息</el-link>
 
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link
-                    @click="handelDeleteRow(row)"
                     type="danger"
                     plain
                     :disabled="deleteDisabled(row)"
+                    @click="handelDeleteRow(row)"
                   >
                     删除
                   </el-link>
                 </span>
                 <span v-if="isSystem">
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link type="danger" plain @click="handelDeleteRow(row)">
                     管理员删除
                   </el-link>
@@ -367,17 +364,17 @@
     </table-layout>
 
     <dataform
-      :treeNode="treeNode"
+      v-if="oprateRow.dialogShow"
+      :tree-node="treeNode"
       :node="node"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    ></dataform>
+    />
   </div>
 </template>
 
@@ -393,14 +390,14 @@ import bimShow from "@/components/Bim/Show";
 import item from "../../../../layout/component/Sidebar/Item.vue";
 
 export default {
-  name: "test-detection",
-  mixins: [ListMixin],
+  name: "TestDetection",
   components: {
     TableLayout,
     // ListButton,
     dataform,
     bimShow
   },
+  mixins: [ListMixin],
   data() {
     return {
       showClose: false,
@@ -450,7 +447,7 @@ export default {
       url: { list: "" },
       /**施工标段 */
       sectionOptions: [],
-      multipleSelection: [],//批量闭合
+      multipleSelection: [], //批量闭合
     };
   },
   computed: {
@@ -472,6 +469,10 @@ export default {
     this.getUnit();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     async getshowClose() {
       console.log('unitInfo', this.unitList)
       // 获取所有的单位

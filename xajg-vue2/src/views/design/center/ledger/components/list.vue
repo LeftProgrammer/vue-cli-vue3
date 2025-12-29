@@ -3,26 +3,27 @@
     <table-layout
       title="设计供应列表"
       :page="pageParams"
-      :pageType="pageType"
+      :page-type="pageType"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
+      @query="handleQuery"
     >
       <template slot="form">
         <el-form :model="query" :inline="true" label-width="auto">
           <el-form-item :label="type === '1' ? '图纸编号:' : '文件编号:'">
-            <el-input v-model="query.code" placeholder="请输入"></el-input>
+            <el-input v-model="query.code" placeholder="请输入" />
           </el-form-item>
           <el-form-item :label="type === '1' ? '图纸名称:' : '文件名称:'">
-            <el-input v-model="query.name" placeholder="请输入"></el-input>
+            <el-input v-model="query.name" placeholder="请输入" />
           </el-form-item>
-          <el-form-item label="专业:" v-if="pageType !== 'DesignApplication'">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+          <el-form-item v-if="pageType !== 'DesignApplication'" label="专业:">
+            <el-select
               ref="professionRef"
               v-model="query.profession"
               placeholder="请选择专业"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in designProfessionOptions"
@@ -33,8 +34,8 @@
             </el-select>
           </el-form-item>
           <el-form-item
-            label="供图日期:"
             v-if="pageType !== 'DesignApplication'"
+            label="供图日期:"
           >
             <el-date-picker
               v-model="startTimeAndEndTime"
@@ -43,12 +44,11 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               size="mini"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
-      <template slot="opratebtns" v-if="pageType !== 'DesignApplication'">
+      <template v-if="pageType !== 'DesignApplication'" slot="opratebtns">
         <el-button type="primary" icon="el-icon-upload2" @click="exportHandle">
           导出列表
         </el-button>
@@ -73,8 +73,7 @@
             prop="name"
             header-align="center"
             align="left"
-          >
-          </el-table-column>
+          />
           <el-table-column
             label="专业"
             prop="profession"
@@ -88,13 +87,12 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="type === '1'"
             label="最新版本"
             prop="version"
             align="center"
             width="120"
-            v-if="type === '1'"
-          >
-          </el-table-column>
+          />
           <el-table-column
             label="工程部位"
             prop="pbsCode"
@@ -103,15 +101,14 @@
           >
             <template slot-scope="{ row }">
               <bim-show
-                :pbsCode="getPbsCode(row.pbsCode)"
                 v-if="pageType !== 'DesignApplication'"
-              ></bim-show>
+                :pbs-code="getPbsCode(row.pbsCode)"
+              />
               <el-link
+                v-if="pageType === 'DesignApplication'"
                 style="color: #409eff"
                 @click="relevancyBim(row.pbsCode)"
-                v-if="pageType === 'DesignApplication'"
-                >{{ row.pbsName }}</el-link
-              >
+              >{{ row.pbsName }}</el-link>
             </template>
           </el-table-column>
           <el-table-column
@@ -128,11 +125,11 @@
             </template>
           </el-table-column>
           <el-table-column
+            v-if="type === '1' && pageType !== 'DesignApplication'"
             label="图纸分发状态"
             prop="drawingStatus"
             align="center"
             width="120"
-            v-if="type === '1' && pageType !== 'DesignApplication'"
           >
             <template slot-scope="{ row }">
               <span
@@ -140,19 +137,18 @@
                   row.drawingStatus == 1
                     ? 'running'
                     : row.drawingStatus == 2
-                    ? 'complete'
-                    : 'notStarted'
+                      ? 'complete'
+                      : 'notStarted'
                 "
-                >{{ getDataStatus(row.drawingStatus) }}</span
-              >
+              >{{ getDataStatus(row.drawingStatus) }}</span>
             </template>
           </el-table-column>
           <el-table-column
+            v-if="type === '1' && pageType !== 'DesignApplication'"
             label="交底状态"
             prop="explainStatus"
             align="center"
             width="100"
-            v-if="type === '1' && pageType !== 'DesignApplication'"
           >
             <template slot-scope="{ row }">
               <span
@@ -160,8 +156,8 @@
                   row.explainStatus == 1
                     ? 'running'
                     : row.explainStatus == 2
-                    ? 'complete'
-                    : 'notStarted'
+                      ? 'complete'
+                      : 'notStarted'
                 "
               >{{ getDataStatus(row.explainStatus) }}</span>
             </template>
@@ -183,7 +179,7 @@
                 :data="scope.row"
                 :index="scope.$index"
                 :btns="['view']"
-              ></list-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -194,17 +190,17 @@
       :visible="oprateRow.dialogShow && type === '1'"
       :data="oprateRow.data"
       :readonly="true"
-      :designProfessionOptions="designProfessionOptions"
+      :design-profession-options="designProfessionOptions"
       @closed="oprateRow.dialogShow = false"
-    ></design-drawing-form>
+    />
     <design-report-form
       v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow && type === '2'"
       :data="oprateRow.data"
       :readonly="true"
-      :designProfessionOptions="designProfessionOptions"
+      :design-profession-options="designProfessionOptions"
       @closed="oprateRow.dialogShow = false"
-    ></design-report-form>
+    />
   </div>
 </template>
 
@@ -217,14 +213,26 @@ import { ListMixin } from "@/mixins/ListMixin";
 import ListButton from "@/components/ListButton";
 import BimShow from "@/components/Bim/Show/index";
 export default {
-  name: "design-center-ledger-list",
-  mixins: [ListMixin],
+  name: "DesignCenterLedgerList",
   components: {
     TableLayout,
     DesignDrawingForm,
     DesignReportForm,
     ListButton,
     BimShow,
+  },
+  mixins: [ListMixin],
+  props: {
+    /**供应类型1/2/3  设计图纸/设计报告/科研报告 */
+    type: {
+      type: String,
+      default: "1",
+    },
+    /**页面类型 设计应用：DesignApplication */
+    pageType: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -288,6 +296,10 @@ export default {
       this.startTimeAndEndTime = [];
       this.getTableData();
     },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     // 查询表格数据
     getTableData(pageParams, pbsCode) {
       this.query.pbsCode = pbsCode;
@@ -346,18 +358,6 @@ export default {
       this.$emit("relevancyBim", pbsCode);
     },
   },
-  props: {
-    /**供应类型1/2/3  设计图纸/设计报告/科研报告 */
-    type: {
-      type: String,
-      default: "1",
-    },
-    /**页面类型 设计应用：DesignApplication */
-    pageType: {
-      type: String,
-      default: "",
-    },
-  },
 };
 </script>
 
@@ -366,13 +366,12 @@ export default {
   display: none;
 }
 .running {
-  color: #F53F3F;
-
+  color: #f53f3f;
 }
 .complete {
   color: #1298fa;
 }
 .notStarted {
-  color: #FF7D00;
+  color: #ff7d00;
 }
 </style>

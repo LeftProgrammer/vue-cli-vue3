@@ -3,7 +3,7 @@
     <table-layout
       title="隐患排查"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -231,6 +231,11 @@ export default {
   methods: {
     dateFormat,
     moment,
+
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
 
     handleHeaderDragEnd() {
       this.$nextTick(() => {

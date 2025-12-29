@@ -3,7 +3,7 @@
     <table-layout
       title="质量消缺"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -22,11 +22,11 @@
           </el-form-item>
           <el-form-item label="所属标段:" size="mini" prop="sectionId">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
               v-model="pageParams.entity.sectionId"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -147,14 +147,14 @@
                     ? ''
                     : 'danger'
                 "
-                >{{
-                  moment(row.resolveDate).isSameOrAfter(
-                    moment(new Date()),
-                    "day"
-                  )
-                    ? "未逾期"
-                    : "已逾期"
-                }}
+              >{{
+                moment(row.resolveDate).isSameOrAfter(
+                  moment(new Date()),
+                  "day"
+                )
+                  ? "未逾期"
+                  : "已逾期"
+              }}
               </el-tag>
             </template>
           </el-table-column>
@@ -175,8 +175,8 @@
             <template slot-scope="scope">
               <flow-status
                 :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -198,10 +198,10 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deletedata"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -209,10 +209,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -227,9 +227,9 @@ import moment from "moment";
 import { getSectionByCorpId } from "@/api/measure";
 
 export default {
-  name: "dissmission",
-  mixins: [FlowListMixin],
+  name: "Dissmission",
   components: { TableLayout, bimShow },
+  mixins: [FlowListMixin],
   data() {
     return {
       sectionOptions: [],
@@ -260,6 +260,10 @@ export default {
   methods: {
     dateFormat,
     moment,
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getCodeName(row, type) {
       let name = row[type] || row.designSupply?.[type] || "";
       return name;

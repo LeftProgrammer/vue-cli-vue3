@@ -2,20 +2,20 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
-      :showExportBtn="true"
+      :show-export-btn="true"
+      title="检测记录列表"
       @initExportParams="initExportParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="检测记录列表"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="dictId"
           highlight-current
           @node-click="handleNodeClick"
@@ -27,7 +27,7 @@
             <el-input
               v-model="query.code"
               placeholder="请输入材料编号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="闭合日期:" size="mini" prop="startTime">
             <el-date-picker
@@ -35,15 +35,15 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
           <el-form-item label="所属标段" size="mini" prop="section">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
+            <el-select
               v-model="query.section"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -57,17 +57,17 @@
             <el-input
               v-model="query.batchCode"
               placeholder="请输入材料批号"
-            ></el-input>
+            />
           </el-form-item>
         </el-form>
       </template>
       <template slot="opratebtns">
         <el-button
           type="primary"
-          :icon=" isMobile ? 'el-icon-circle-close' : 'el-icon-finished' "
+          :icon="isMobile ? 'el-icon-circle-close' : 'el-icon-finished'"
           @click="selectClose"
         >
-          {{ isMobile ? '取消' : '批量闭合' }}
+          {{ isMobile ? "取消" : "批量闭合" }}
         </el-button>
         <el-button
           v-if="isMobile"
@@ -80,7 +80,13 @@
       </template>
       <template slot="table">
         <el-table ref="multipleTable" :data="tableData" border>
-          <el-table-column v-if="isMobile" type="selection" width="55" align="center" :selectable="selectableRow"/>
+          <el-table-column
+            v-if="isMobile"
+            type="selection"
+            width="55"
+            align="center"
+            :selectable="selectableRow"
+          />
           <el-table-column
             label="序号"
             type="index"
@@ -113,7 +119,7 @@
                 effect="dark"
               >
                 <span class="text-ellipsis">
-                  {{row.batchCode}}
+                  {{ row.batchCode }}
                 </span>
               </el-tooltip>
             </template>
@@ -227,7 +233,7 @@
             excel.sort="9"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column
@@ -250,17 +256,16 @@
                   查看
                 </el-link>
                 <span v-if="!isSystem && !isMdgAdmin">
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link
                     type="primary"
                     plain
-                    @click="edit(row)"
                     :disabled="editDisabled(row)"
-                  >处理</el-link
-                  >
+                    @click="edit(row)"
+                  >处理</el-link>
                 </span>
                 <span v-if="isSystem">
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link type="danger" plain @click="handelDeleteRow(row)">
                     管理员删除
                   </el-link>
@@ -273,17 +278,17 @@
     </table-layout>
 
     <dataform
-      :treeNode="treeNode"
+      v-if="oprateRow.dialogShow"
+      :tree-node="treeNode"
       :node="node"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    ></dataform>
+    />
   </div>
 </template>
 
@@ -298,14 +303,14 @@ import dataform from "./dataform";
 import bimShow from "@/components/Bim/Show";
 
 export default {
-  name: "test-detection",
-  mixins: [ListMixin],
+  name: "TestDetection",
   components: {
     TableLayout,
     // ListButton,
     dataform,
-    bimShow
+    bimShow,
   },
+  mixins: [ListMixin],
   data() {
     return {
       isMobile: false,
@@ -316,18 +321,18 @@ export default {
       DitSpeciality: [],
       defaultProps: {
         children: "children",
-        label: "dictName"
+        label: "dictName",
       },
       pageParams: {
         size: 20,
         current: 1,
-        total: 0
+        total: 0,
       },
       options: [],
       tableData: [],
       query: {
         type: null,
-        params: {}
+        params: {},
       },
       node: {},
       dictList: [],
@@ -348,11 +353,11 @@ export default {
       let params = {
         ...this.pageParams,
         entity: {
-          ...this.query
-        }
+          ...this.query,
+        },
       };
       return params;
-    }
+    },
   },
   created() {
     this.getTypeDictMap();
@@ -362,9 +367,13 @@ export default {
     this.getUnit();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     selectableRow(row) {
-      const bool = this.editDisabled(row)
-      return !bool
+      const bool = this.editDisabled(row);
+      return !bool;
     },
     handleSelectionChange(val) {
       //   选中得数据
@@ -380,34 +389,39 @@ export default {
     // 发送闭合请求
     requestClose() {
       if (this.multipleSelection.length == 0) {
-        this.$message.warning('请至少选择一条检测记录')
-        return
+        this.$message.warning("请至少选择一条检测记录");
+        return;
       }
-      let tips = this.multipleSelection.every(item => item.testResult != 1 && item.testResult != 2)
-      this.$confirm(`确认要闭合所选材料报检？${!tips ? '(勾选数据包含已检测)' : ''}`, "提示", {
-        cancelButtonText: "取消",
-        confirmButtonText: "确定",
-        type: "warning",
-      })
+      let tips = this.multipleSelection.every(
+        (item) => item.testResult != 1 && item.testResult != 2
+      );
+      this.$confirm(
+        `确认要闭合所选材料报检？${!tips ? "(勾选数据包含已检测)" : ""}`,
+        "提示",
+        {
+          cancelButtonText: "取消",
+          confirmButtonText: "确定",
+          type: "warning",
+        }
+      )
         .then((_) => {
           console.log("关闭", _);
           let params = {
-            ids: this.multipleSelection.map(item => item.id).join(",")
-          }
+            ids: this.multipleSelection.map((item) => item.id).join(","),
+          };
           closeMultiple(params).then((res) => {
-            console.log('批量闭合', res)
+            console.log("批量闭合", res);
             const { success } = res;
             if (success) {
               this.getTableData();
-              this.isMobile = false
-              this.$message.success('闭合成功')
+              this.isMobile = false;
+              this.$message.success("闭合成功");
             } else {
-              this.$message.error('闭合失败')
+              this.$message.error("闭合失败");
             }
-          })
+          });
         })
-        .catch((_) => {
-        });
+        .catch((_) => {});
     },
     closedDialog() {
       this.oprateRow.dialogShow = false;
@@ -511,17 +525,17 @@ export default {
         const name = this.query.name;
         this.query = {
           name: name,
-          params: {}
+          params: {},
         };
       } else if (this.query.classification) {
         const classification = this.query.classification;
         this.query = {
           classification: classification,
-          params: {}
+          params: {},
         };
       } else {
         this.query = {
-          params: {}
+          params: {},
         };
       }
       this.startTimeAndEndTime = [];
@@ -584,17 +598,17 @@ export default {
       );
       if (node.dictUpCode === "-") {
         this.query = {
-          params: {}
+          params: {},
         };
       } else if (node.children) {
         this.query = {
           classification: node.dictCode,
-          params: {}
+          params: {},
         };
       } else {
         this.query = {
           name: node.dictCode,
-          params: {}
+          params: {},
         };
       }
       this.pageParams.current = 1;
@@ -635,7 +649,7 @@ export default {
     /** 删除*/
     deleteHandle(row) {
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (!res.success) {
           return this.$message.error("删除失败：" + res.message);
@@ -663,7 +677,7 @@ export default {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           closeOnClickModal: false,
-          type: "warning"
+          type: "warning",
         });
         this.deleteHandle(row);
       } catch (e) {
@@ -685,8 +699,8 @@ export default {
       if (data) {
         return data.name;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

@@ -2,24 +2,24 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="人员管理列表"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="人员管理列表"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="姓名:">
-            <el-input v-model="query.name" placeholder="请输入"></el-input>
+            <el-input v-model="query.name" placeholder="请输入" />
           </el-form-item>
 
           <el-form-item label="人员类型:">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               ref="planRef"
               v-model="query.type"
               placeholder="请选择"
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in staffTypeList"
@@ -32,10 +32,10 @@
 
           <el-form-item label="所属单位:">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="selectedUnitName"
               clearable
               popper-class="tree-select"
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option value="" label="">
                 <el-tree
@@ -64,10 +64,10 @@
         >
           新增
         </el-button>
-        <el-button @click="downloadTemplate()" :disabled="readonly">
+        <el-button :disabled="readonly" @click="downloadTemplate()">
           模板下载
         </el-button>
-        <el-button @click="triggerFileInput()" :disabled="readonly">
+        <el-button :disabled="readonly" @click="triggerFileInput()">
           导入数据
         </el-button>
       </template>
@@ -166,7 +166,7 @@
           <el-table-column label="操作" prop="name" width="200" align="center">
             <template #default="{ row }">
               <el-link type="primary" @click="edit(row)">编辑 </el-link>
-              <el-divider direction="vertical"></el-divider>
+              <el-divider direction="vertical" />
               <el-link type="danger" @click="deleteHandle(row)">删除 </el-link>
             </template>
           </el-table-column>
@@ -175,22 +175,21 @@
     </table-layout>
 
     <dataform
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    >
-    </dataform>
+    />
     <input
-      type="file"
       ref="fileInput"
+      type="file"
       style="display: none"
       @change="handleFileUpload"
-    />
+    >
   </div>
 </template>
 
@@ -205,13 +204,13 @@ import { getDictItemList } from "@/api/dict";
 import * as XLSX from "xlsx";
 
 export default {
-  name: "staffManagement",
-  mixins: [ListMixin],
+  name: "StaffManagement",
   components: {
     TableLayout,
     ListButton,
     dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       // 进退场状态枚举
@@ -260,6 +259,10 @@ export default {
     this.getDictItemList();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     downloadTemplate() {
       console.log("下载模板");
       let fileName = "人员信息导入模板.xlsx";

@@ -5,7 +5,7 @@
       :showSearchBtns="false"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       title="监测点列表"
     >
@@ -144,6 +144,10 @@ export default {
     this.userId = this.$getStorage("userInfo").userId;
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     closedDialog() {
       this.oprateRow.dialogShow = false;
     },

@@ -3,27 +3,28 @@
     <table-layout
       :page="pageParams"
       title="设计成果分发"
+      :show-export-btn="true"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
-      :showExportBtn="true"
+      @query="handleQuery"
       @initExportParams="initExportParams"
     >
       <template slot="form">
-        <el-form :model="query" ref="query" :inline="true">
+        <el-form ref="query" :model="query" :inline="true">
           <el-form-item label="图纸编号:" size="mini" prop="code">
-            <el-input v-model="query.code" placeholder="请输入内容"></el-input>
+            <el-input v-model="query.code" placeholder="请输入内容" />
           </el-form-item>
           <el-form-item label="图纸名称:" size="mini" prop="name">
-            <el-input v-model="query.name" placeholder="请输入内容"></el-input>
+            <el-input v-model="query.name" placeholder="请输入内容" />
           </el-form-item>
           <el-form-item label="专业:" size="mini" prop="profession">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="query.profession"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in designProfessionOptions"
@@ -34,11 +35,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="流程状态:" size="mini" prop="flowState">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="query.flowStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in flowStatusOptions"
@@ -54,8 +56,7 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -124,8 +125,7 @@
                   designProfessionOptions,
                   scope.row.profession
                 )
-              }}</template
-            >
+              }}</template>
           </el-table-column>
 
           <el-table-column
@@ -150,7 +150,7 @@
             excel.args="pbs"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column
@@ -162,7 +162,7 @@
             excel.readConverterExp="0=未提交,1=流转中,2=已完成"
           >
             <template slot-scope="scope">
-              <flow-status :row="scope.row" :flowName="flowName"></flow-status>
+              <flow-status :row="scope.row" :flow-name="flowName" />
             </template>
           </el-table-column>
           <el-table-column
@@ -203,12 +203,12 @@
             <template #default="{ row }">
               <div class="flex justify-center">
                 <flow-button
-                  :promiseCode="'design-center-drawingSend_delete'"
+                  :promise-code="'design-center-drawingSend_delete'"
                   :row="row"
-                  :flowName="flowName"
+                  :flow-name="flowName"
                   @click="handelShowDialog"
                   @delete="deletedata"
-                ></flow-button>
+                />
               </div>
             </template>
           </el-table-column>
@@ -218,10 +218,10 @@
 
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -234,29 +234,16 @@ import { FlowListMixin } from "@/mixins/FlowListMixin";
 import TableLayout from "@/components/ContentLayout/Table";
 import bimShow from "@/components/Bim/Show";
 export default {
-  name: "design-center-drawingSupply",
-  mixins: [FlowListMixin],
+  name: "DesignCenterDrawingSupply",
   components: { TableLayout, bimShow },
-  computed: {
-    exportParams() {
-      this.pageParams.entity = this.query;
-      if (this.startTimeAndEndTime?.length > 0) {
-        this.pageParams.entity.startTime = this.startTimeAndEndTime[0];
-        this.pageParams.entity.endTime = this.startTimeAndEndTime[1];
-      } else {
-        this.pageParams.entity.startTime = "";
-        this.pageParams.entity.endTime = "";
-      }
-      return this.pageParams;
-    }
-  },
+  mixins: [FlowListMixin],
   data() {
     return {
       startTimeAndEndTime: [],
       pageParams: {
         pageSize: 20,
         currentSize: 1,
-        total: 0
+        total: 0,
       },
       options: [],
       tableData: [],
@@ -281,7 +268,7 @@ export default {
         leaveReason: "",
         leaveStarttime: null,
         uploadFile: "",
-        uploadFileList: []
+        uploadFileList: [],
       },
       /** 设计专业字典*/
       designProfessionCode: "DESIGN_PROFESSION",
@@ -300,9 +287,22 @@ export default {
         businessId: "",
         // flowCfgId: "P1131979769345212416",
         /**状态 */
-        status: false
-      }
+        status: false,
+      },
     };
+  },
+  computed: {
+    exportParams() {
+      this.pageParams.entity = this.query;
+      if (this.startTimeAndEndTime?.length > 0) {
+        this.pageParams.entity.startTime = this.startTimeAndEndTime[0];
+        this.pageParams.entity.endTime = this.startTimeAndEndTime[1];
+      } else {
+        this.pageParams.entity.startTime = "";
+        this.pageParams.entity.endTime = "";
+      }
+      return this.pageParams;
+    },
   },
   created() {
     this.getTableData();
@@ -326,7 +326,7 @@ export default {
         data.push({
           id: options[key].value,
           dictCode: options[key].value,
-          dictName: options[key].name
+          dictName: options[key].name,
         });
       }
       this.flowStatusOptions = data;
@@ -348,7 +348,7 @@ export default {
         return;
       }
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (res.success) {
           this.getTableData();
@@ -356,6 +356,10 @@ export default {
           this.$message.error("数据删除异常，" + res.message);
         }
       });
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     // 查询表格数据
     getTableData(pageInfo) {
@@ -388,8 +392,8 @@ export default {
           });
         }
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

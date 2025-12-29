@@ -4,7 +4,7 @@
       :page="pageParams"
       :title="'合同登记列表'"
       :show-page="false"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="form">
@@ -114,6 +114,10 @@ export default {
     this.getContractList();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     /**
      * @description 获取合同list
      */

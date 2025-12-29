@@ -3,18 +3,18 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="检测台账"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="检测台账"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="dictId"
           :default-checked-keys="defaultChecked"
           :current-node-key="currentNodekey"
@@ -26,20 +26,21 @@
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="样品编号:" size="mini">
-            <el-input v-model="query.code" placeholder="请输入样品编号"></el-input>
+            <el-input v-model="query.code" placeholder="请输入样品编号" />
           </el-form-item>
           <el-form-item label="报告编号:" size="mini">
             <el-input
               v-model="query.reportCode"
               placeholder="请输入报告编号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="检测结论:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="query.testResult"
               placeholder="请选择检测结论"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in resultOptions"
@@ -106,9 +107,8 @@
             show-overflow-tooltip
           >
             <template slot-scope="{ row }">
-              <el-button @click="downFile(row)" type="text" size="small">
-                {{ getFileName(row.uploadFile) }}</el-button
-              >
+              <el-button type="text" size="small" @click="downFile(row)">
+                {{ getFileName(row.uploadFile) }}</el-button>
             </template>
           </el-table-column>
           <el-table-column label="试验人员" align="center" prop="testPerson" />
@@ -132,32 +132,32 @@
           />
           <el-table-column label="使用部位" prop="pbsCode" align="center">
             <template slot-scope="{ row }">
-              <bim-show :pbsCode="getPbsCode(row.pbsCode)"></bim-show>
+              <bim-show :pbs-code="getPbsCode(row.pbsCode)" />
             </template>
           </el-table-column>
           <el-table-column label="操作" prop="name" width="200" align="center">
             <template slot-scope="{ row }">
-<!--              <list-button-->
-<!--                :data="row"-->
-<!--                @delete="deleteHandle"-->
-<!--                @view="viewHandle"-->
-<!--                @edit="editHandle"-->
-<!--              ></list-button>-->
+              <!--              <list-button-->
+              <!--                :data="row"-->
+              <!--                @delete="deleteHandle"-->
+              <!--                @view="viewHandle"-->
+              <!--                @edit="editHandle"-->
+              <!--              ></list-button>-->
               <div class="list-button-container">
                 <el-link type="primary" plain @click="viewHandle(row)"> 查看 </el-link>
-                <el-divider direction="vertical" ></el-divider>
+                <el-divider direction="vertical" />
                 <el-link
                   type="primary"
                   :disabled="isDisabled(row)"
                   plain
                   @click="editHandle(row)"
                 >编辑</el-link>
-                <el-divider direction="vertical"></el-divider>
+                <el-divider direction="vertical" />
                 <el-link
                   :disabled="isDisabled(row)"
-                  @click="deleteHandle(row)"
                   type="danger"
                   plain
+                  @click="deleteHandle(row)"
                 >
                   删除
                 </el-link>
@@ -168,17 +168,17 @@
       </template>
     </table-layout>
     <dataform
-      ref="dataform"
-      @childrenSure="childrenSure"
-      :viewAble="oprateRow.viewAble"
-      :enterAble="enterAble"
-      :title="title"
       v-if="oprateRow.dialogShow"
+      ref="dataform"
+      :view-able="oprateRow.viewAble"
+      :enter-able="enterAble"
+      :title="title"
       :visible="oprateRow.dialogShow"
       :data="oprateRow"
       :readonly="oprateRow.isView"
+      @childrenSure="childrenSure"
       @sureson="sureson"
-    ></dataform>
+    />
   </div>
 </template>
 
@@ -195,14 +195,14 @@ import bimShow from "@/components/Bim/Show";
 import { sectionAllList } from '../../reagentTesting/reagents/api';
 
 export default {
-  name: "monitoring-point",
-  mixins: [ListMixin],
+  name: "MonitoringPoint",
   components: {
     TableLayout,
     ListButton,
     dataform,
     bimShow,
   },
+  mixins: [ListMixin],
   data() {
     return {
       currentNodekey: "",
@@ -255,7 +255,7 @@ export default {
       url: { list: "" },
       /**施工标段 */
       sectionOptions: [],
-      oprateRow: { dialogShow: "", data: {} },
+      oprateRow: { dialogShow: "", data: {}},
     };
   },
   computed: {},
@@ -285,6 +285,10 @@ export default {
     this.getSectionList();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getFileName(fileName) {
       let name = "";
       try {

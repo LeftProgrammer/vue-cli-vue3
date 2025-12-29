@@ -2,11 +2,11 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="行为监控列表"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="行为监控列表"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
@@ -65,9 +65,14 @@
               }}</el-link>
             </template>
           </el-table-column>
-          <el-table-column label="记录时间" align="center" prop="type" width="200">
+          <el-table-column
+            label="记录时间"
+            align="center"
+            prop="type"
+            width="200"
+          >
             <template slot-scope="scoped">
-              {{ timeFormat(scoped.row.actionTime,"YYYY-MM-DD HH:mm") }}
+              {{ timeFormat(scoped.row.actionTime, "YYYY-MM-DD HH:mm") }}
             </template>
           </el-table-column>
           <el-table-column label="详细内容" prop="detail" align="center">
@@ -78,17 +83,15 @@
                 effect="dark"
                 popper-class="detail-tooltip"
               > -->
-                <span class="text-ellipsis">
-                  {{ row.detail }}
-                </span>
+              <span class="text-ellipsis">
+                {{ row.detail }}
+              </span>
               <!-- </el-tooltip> -->
             </template>
           </el-table-column>
           <el-table-column label="操作" width="200" align="center">
             <template #default="{ row }">
-              <el-link type="danger" @click="handelDeleteRow(row)"
-                >删除</el-link
-              >
+              <el-link type="danger" @click="handelDeleteRow(row)">删除</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -96,16 +99,15 @@
     </table-layout>
 
     <dataform
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    >
-    </dataform>
+    />
   </div>
 </template>
 
@@ -120,14 +122,14 @@ import { getDictItemList } from "@/api/dict";
 import bimShow from "@/components/Bim/Show/index.vue";
 
 export default {
-  name: "actionMonitor",
-  mixins: [ListMixin],
+  name: "ActionMonitor",
   components: {
     bimShow,
     TableLayout,
     ListButton,
     dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       type: "",
@@ -164,6 +166,10 @@ export default {
     this.getEquipmentList();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getEquipmentList() {
       equipmentList().then((res) => {
         this.equipmentList = res.data;

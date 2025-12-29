@@ -2,11 +2,11 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="设备管理列表"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="设备管理列表"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
@@ -148,11 +148,11 @@
             align="center"
           />
           <el-table-column
+            v-slot="{ row }"
             label="设备状态"
             width="120"
             prop="phone"
             align="center"
-            v-slot="{ row }"
           >
             <template v-if="row.workEndDate">
               <el-tag type="info" class="fixed-width-tag">已退场</el-tag>
@@ -171,7 +171,7 @@
                 @view="view"
                 @delete="deleteHandle"
                 @edit="edit"
-              ></list-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -179,17 +179,16 @@
     </table-layout>
 
     <dataform
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
-      :unitOptions="unitOptions"
+      :unit-options="unitOptions"
       @closed="closedDialog"
       @ok="getTableData"
-    >
-    </dataform>
+    />
   </div>
 </template>
 
@@ -201,17 +200,17 @@ import TableLayout from "@/components/ContentLayout/Table";
 import ListButton from "@/components/ListButton";
 import dataform from "./dataform";
 import { getDictItemList } from "@/api/dict";
-import bimShow from "@/components/Bim/Show/index.vue";
+// import bimShow from "@/components/Bim/Show/index.vue";
 
 export default {
-  name: "equipmentManagement",
-  mixins: [ListMixin],
+  name: "EquipmentManagement",
   components: {
-    bimShow,
+    // bimShow,
     TableLayout,
     ListButton,
     dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       // 进退场状态枚举
@@ -337,6 +336,11 @@ export default {
     },
     handleCurrentChange(val) {
       this.pageParams.current = val.current;
+      this.getTableData();
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.pageParams.pageSize = 20;
       this.getTableData();
     },
     // 查询表格数据

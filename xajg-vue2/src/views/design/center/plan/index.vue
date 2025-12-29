@@ -3,31 +3,30 @@
     <table-layout
       :page="pageParams"
       title="供应计划列表"
+      :show-export-btn="true"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
-      :showExportBtn="true"
+      @query="handleQuery"
       @initExportParams="initExportParams"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="计划年度:">
             <el-date-picker
-              value-format="yyyy"
               v-model="query.year"
+              value-format="yyyy"
               type="year"
               placeholder="选择年"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
           <el-form-item label="流程状态:">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               ref="flowStateRef"
               v-model="query.flowStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in flowStatusOptions"
@@ -44,8 +43,7 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -143,8 +141,7 @@
             prop="createUsername"
             align="center"
             excel.sort="5"
-          >
-          </el-table-column>
+          />
           <el-table-column
             label="发起时间"
             prop="createDate"
@@ -154,7 +151,11 @@
             excel.dateFormat="yyyy-MM-dd HH:mm"
           >
             <template slot-scope="{ row }">
-              {{ row.createDate ? timeFormat(row.createDate,"yyyy-MM-DD HH:mm") : "" }}
+              {{
+                row.createDate
+                  ? timeFormat(row.createDate, "yyyy-MM-DD HH:mm")
+                  : ""
+              }}
             </template>
           </el-table-column>
           <el-table-column
@@ -166,7 +167,7 @@
             excel.readConverterExp="0=未提交,1=流转中,2=已完成"
           >
             <template #default="{ row }">
-              <flow-status :row="row" :flowName="flowName"></flow-status>
+              <flow-status :row="row" :flow-name="flowName" />
             </template>
           </el-table-column>
           <el-table-column
@@ -196,13 +197,13 @@
           >
             <template #default="{ row }">
               <flow-button
+                v-if="!flowShow"
                 :row="row"
-                :promiseCode="'design-center-plan_delete'"
-                :flowName="flowName"
+                :promise-code="'design-center-plan_delete'"
+                :flow-name="flowName"
                 @click="handelShowDialog"
                 @delete="deletedata"
-                v-if="!flowShow"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -210,10 +211,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -225,24 +226,11 @@ import { FlowListMixin } from "@/mixins/FlowListMixin";
 import TableLayout from "@/components/ContentLayout/Table";
 
 export default {
-  name: "designPlan",
-  mixins: [FlowListMixin],
+  name: "DesignPlan",
   components: {
     TableLayout,
   },
-  computed: {
-    exportParams() {
-      this.pageParams.entity = this.query;
-      if (this.startTimeAndEndTime?.length > 0) {
-        this.pageParams.entity.beginTime = this.startTimeAndEndTime[0];
-        this.pageParams.entity.endTime = this.startTimeAndEndTime[1];
-      } else {
-        this.pageParams.entity.beginTime = "";
-        this.pageParams.entity.endTime = "";
-      }
-      return this.pageParams;
-    },
-  },
+  mixins: [FlowListMixin],
   data() {
     return {
       startTimeAndEndTime: [],
@@ -316,6 +304,19 @@ export default {
       //编辑通过当前人待办做判断。流程数据不运输删除
     };
   },
+  computed: {
+    exportParams() {
+      this.pageParams.entity = this.query;
+      if (this.startTimeAndEndTime?.length > 0) {
+        this.pageParams.entity.beginTime = this.startTimeAndEndTime[0];
+        this.pageParams.entity.endTime = this.startTimeAndEndTime[1];
+      } else {
+        this.pageParams.entity.beginTime = "";
+        this.pageParams.entity.endTime = "";
+      }
+      return this.pageParams;
+    },
+  },
   created() {
     // if(this.query.salaryMonth){
     //   this.query.salaryMonth
@@ -358,6 +359,10 @@ export default {
       this.pageParams.current = 1;
       this.pageParams.pageSize = 20;
       this.startTimeAndEndTime = [];
+      this.getTableData();
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
       this.getTableData();
     },
     // 查询表格数据

@@ -4,7 +4,7 @@
       :page="pageParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       title="文件列表"
       :showExportBtn="true"
@@ -332,6 +332,10 @@ export default {
     this.getDepartmentsList();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     /**初始化导出Excel参数 */
     initExportParams(exportParams) {
       exportParams.url = "/api/synthesis/profile-manage/export";

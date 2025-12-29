@@ -2,20 +2,20 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
-      :showExportBtn="true"
+      :show-export-btn="true"
+      title="检测记录列表"
       @initExportParams="initExportParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="检测记录列表"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="dictId"
           highlight-current
           @node-click="handleNodeClick"
@@ -27,7 +27,7 @@
             <el-input
               v-model="query.code"
               placeholder="请输入材料编号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="闭合日期:" size="mini" prop="startTime">
             <el-date-picker
@@ -35,15 +35,15 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
           <el-form-item label="所属标段" size="mini" prop="sectionId">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
+            <el-select
               v-model="query.section"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sectionOptions"
@@ -57,15 +57,14 @@
             <el-input
               v-model="query.batchCode"
               placeholder="请输入材料批号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="创建时间">
             <el-date-picker
               v-model="query.createDate"
               type="date"
               placeholder="创建时间"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -88,7 +87,7 @@
       </template>
       <template slot="table">
         <el-table ref="multipleTable" :data="tableData" border>
-          <el-table-column v-if="isMobile" type="selection" width="55" align="center" :selectable="selectableRow"/>
+          <el-table-column v-if="isMobile" type="selection" width="55" align="center" :selectable="selectableRow" />
           <el-table-column
             label="序号"
             type="index"
@@ -121,7 +120,7 @@
                 effect="dark"
               >
                 <span class="text-ellipsis">
-                  {{row.batchCode}}
+                  {{ row.batchCode }}
                 </span>
               </el-tooltip>
             </template>
@@ -235,7 +234,7 @@
             excel.sort="9"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column
@@ -258,17 +257,16 @@
                   查看
                 </el-link>
                 <span v-if="!isSystem && !isMdgAdmin">
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link
                     type="primary"
                     plain
-                    @click="edit(row)"
                     :disabled="editDisabled(row)"
-                  >处理</el-link
-                  >
+                    @click="edit(row)"
+                  >处理</el-link>
                 </span>
                 <span v-if="isSystem">
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link type="danger" plain @click="handelDeleteRow(row)">
                     管理员删除
                   </el-link>
@@ -281,17 +279,17 @@
     </table-layout>
 
     <dataform
-      :treeNode="treeNode"
+      v-if="oprateRow.dialogShow"
+      :tree-node="treeNode"
       :node="node"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    ></dataform>
+    />
   </div>
 </template>
 
@@ -306,14 +304,14 @@ import dataform from "./dataform";
 import bimShow from "@/components/Bim/Show";
 
 export default {
-  name: "test-detection",
-  mixins: [ListMixin],
+  name: "TestDetection",
   components: {
     TableLayout,
     // ListButton,
     dataform,
     bimShow
   },
+  mixins: [ListMixin],
   data() {
     return {
       startTimeAndEndTime: [],
@@ -370,6 +368,10 @@ export default {
     this.getUnit();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     selectableRow(row) {
       const bool = this.editDisabled(row)
       return !bool

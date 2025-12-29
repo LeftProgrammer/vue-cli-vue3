@@ -3,18 +3,18 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="检测台账"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="检测台账"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="dictId"
           :default-checked-keys="defaultChecked"
           :current-node-key="currentNodekey"
@@ -29,21 +29,22 @@
             <el-input
               v-model="query.code"
               placeholder="请输入样品编号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="报告编号:" size="mini">
             <el-input
               v-model="query.reportCode"
               placeholder="请输入报告编号"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="检测结论:" size="mini">
             <!-- <el-input v-model="query.testResult" placeholder="请输入内容"></el-input> -->
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="query.testResult"
               placeholder="请选择检测结论"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in resultOptions"
@@ -54,11 +55,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="流程状态:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="query.flowStatus"
               placeholder="请选择流程状态"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in flowStatusOptions"
@@ -126,9 +128,8 @@
             show-overflow-tooltip
           >
             <template slot-scope="{ row }">
-              <el-button @click="downFile(row)" type="text" size="small">
-                {{ getFileName(row.uploadFile) }}</el-button
-              >
+              <el-button type="text" size="small" @click="downFile(row)">
+                {{ getFileName(row.uploadFile) }}</el-button>
             </template>
           </el-table-column>
           <el-table-column label="试验人员" align="center" prop="testPerson" />
@@ -152,12 +153,12 @@
           />
           <el-table-column label="使用部位" prop="pbsCode" align="center">
             <template slot-scope="{ row }">
-              <bim-show :pbsCode="getPbsCode(row.pbsCode)"></bim-show>
+              <bim-show :pbs-code="getPbsCode(row.pbsCode)" />
             </template>
           </el-table-column>
           <el-table-column label="流程状态" prop="flowStatus" align="center">
             <template slot-scope="scope">
-              <flow-status :row="scope.row" :flowName="flowName"></flow-status>
+              <flow-status :row="scope.row" :flow-name="flowName" />
             </template>
           </el-table-column>
           <el-table-column label="当前节点" prop="flowName" align="center" />
@@ -169,12 +170,12 @@
             <template #default="{ row }">
               <div class="flex justify-center">
                 <flow-button
-                  :promiseCode="'design-center-drawingSupply_delete'"
+                  :promise-code="'design-center-drawingSupply_delete'"
                   :row="row"
-                  :flowName="flowName"
+                  :flow-name="flowName"
                   @click="handelShowDialog"
                   @delete="deleteHandle"
-                ></flow-button>
+                />
               </div>
             </template>
           </el-table-column>
@@ -183,10 +184,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -202,14 +203,14 @@ import dataform from "./dataform";
 import bimShow from "@/components/Bim/Show";
 
 export default {
-  name: "monitoring-point",
-  mixins: [FlowListMixin],
+  name: "MonitoringPoint",
   components: {
     TableLayout,
     ListButton,
     dataform,
     bimShow,
   },
+  mixins: [FlowListMixin],
   data() {
     return {
       currentNodekey: "",
@@ -296,6 +297,10 @@ export default {
     this.getSectionList();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getFileName(fileName) {
       let name = "";
       let arr = JSON.parse(fileName);

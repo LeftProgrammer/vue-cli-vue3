@@ -5,7 +5,7 @@
       title="质量验收"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="form">
@@ -78,11 +78,7 @@
                           : 'el-icon-folder'
                       "
                     />
-                    <el-tooltip
-                      effect="dark"
-                      :content="data.nodeName"
-                      placement="top"
-                    >
+                    <el-tooltip effect="dark" :content="data.nodeName" placement="top">
                       <span>{{ data.nodeName }}</span>
                     </el-tooltip>
                   </span>
@@ -130,7 +126,7 @@
                           'view'
                         )
                       "
-                    >{{ row.name }}
+                      >{{ row.name }}
                     </el-link>
                   </el-tooltip>
                 </template>
@@ -162,43 +158,23 @@
               </el-table-column>
               <el-table-column label="验收状态" align="center" prop="qbsStatus">
                 <template slot-scope="{ row }">
-                  <el-link
-                    :underline="false"
-                    :type="getQbsStatusColor(row.qbsStatus)"
-                  >{{
+                  <el-tag :type="getQbsStatusColor(row.qbsStatus)">{{
                     row.qbsStatus ? getQbsStatusName(row.qbsStatus) : ""
-                  }}</el-link>
+                  }}</el-tag>
                 </template>
               </el-table-column>
-              <el-table-column
-                label="验收结论"
-                align="center"
-                prop="qualityGrade"
-              >
+              <el-table-column label="验收结论" align="center" prop="qualityGrade">
                 <template slot-scope="{ row }">
-                  {{
-                    row.qualityGrade
-                      ? getQualityGradeName(row.qualityGrade)
-                      : ""
-                  }}
+                  {{ row.qualityGrade ? getQualityGradeName(row.qualityGrade) : "" }}
                 </template>
               </el-table-column>
 
-              <el-table-column
-                label="关联工程部位"
-                align="center"
-                prop="pbsName"
-              >
+              <el-table-column label="关联工程部位" align="center" prop="pbsName">
                 <template slot-scope="{ row }">
                   <bim-show :pbs-code="row.pbsCode" />
                 </template>
               </el-table-column>
-              <el-table-column
-                label="操作"
-                prop="name"
-                width="200"
-                align="center"
-              >
+              <el-table-column label="操作" prop="name" width="200" align="center">
                 <template #default="{ row }">
                   <flow-button
                     :row="row"
@@ -237,7 +213,7 @@ export default {
   components: {
     // DragLine,
     bimShow,
-    TreeTableLayout,
+    TreeTableLayout
   },
   mixins: [FlowListMixin],
   data() {
@@ -250,12 +226,12 @@ export default {
       title: "验评台账",
       defaultProps: {
         children: "children",
-        label: "label",
+        label: "label"
       },
       pageParams: {
         size: 20,
         current: 1,
-        total: 0,
+        total: 0
       },
       tableLoading: true,
       treeLoading: true,
@@ -263,7 +239,7 @@ export default {
         searchDate: [],
         sectionId: null,
         name: null,
-        code: null,
+        code: null
       },
       selectionNode: {},
       options: [],
@@ -275,7 +251,7 @@ export default {
       treeWidth: 267,
       currentNodeKey: "",
       sectionList: [],
-      unitProjectTypeList: [],
+      unitProjectTypeList: []
     };
   },
   computed: {},
@@ -299,7 +275,7 @@ export default {
     async getSectionList(corporateId) {
       try {
         const { data, success, message } = await getSectionByCorpId({
-          corpId: corporateId,
+          corpId: corporateId
         });
         if (!success) {
           this.$message.error("查询标段失败：" + message);
@@ -329,7 +305,7 @@ export default {
       }
       this.$setStorage("acceptance_evaluation", {
         sectionId: this.query.sectionId,
-        treeNode: this.treeNode,
+        treeNode: this.treeNode
       });
       this.handelShowDialog(null, "mine");
     },
@@ -356,10 +332,10 @@ export default {
     getQbsStatusColor(val) {
       //1:未验评、2:验评中、3:已验评
       const qbsColor = new Map();
-      qbsColor.set("1", "default");
+      qbsColor.set("1", "info");
       qbsColor.set("2", "warning");
       qbsColor.set("3", "primary");
-      return qbsColor.get(val) ? qbsColor.get(val) : "default";
+      return qbsColor.get(val) ? qbsColor.get(val) : "info";
     },
     getQbsStatusName(val) {
       //1:未验评、2:验评中、3:已验评
@@ -403,6 +379,10 @@ export default {
       unitProjectYype.set("a301", "房建");
       return unitProjectYype.get(id);
     },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     reset() {
       //不要清空 query.catalogue
       console.log("this.query", this.query);
@@ -423,7 +403,7 @@ export default {
         this.$set(this.query, "sectionId", this.sectionList[0].id);
       }
       let params = {
-        ...this.pageParams,
+        ...this.pageParams
       };
       params.entity = { ...this.query };
       if (params.entity.searchDate?.length === 2) {
@@ -434,8 +414,8 @@ export default {
 
       params.orderProperties = [
         {
-          property: "createDate",
-        },
+          property: "createDate"
+        }
       ];
       page(params).then((data) => {
         this.$set(this, "tableData", data?.data?.records || []);
@@ -448,8 +428,7 @@ export default {
       this.treeLoaded = false;
       let params = {};
       params.sectionIds = sectionIds;
-      const { data, success, message } =
-        await getArchiveFileCatalogueManagerTree(params);
+      const { data, success, message } = await getArchiveFileCatalogueManagerTree(params);
       if (!success) {
         this.$message.error("获取目录树失败：" + message);
         return false;
@@ -487,11 +466,7 @@ export default {
     },
 
     handleTreeNodeClick(data, node, ve) {
-      if (
-        this.treeData &&
-        this.treeData.length > 0 &&
-        data.id === this.treeData[0].id
-      ) {
+      if (this.treeData && this.treeData.length > 0 && data.id === this.treeData[0].id) {
         this.isRootNode = true;
       } else {
         this.isRootNode = false;
@@ -515,7 +490,7 @@ export default {
     edit(row, status, task) {
       this.$setStorage("acceptance_evaluation", {
         sectionId: this.query.sectionId,
-        treeNode: this.treeNode,
+        treeNode: this.treeNode
       });
       this.handelShowDialog(row, status, task);
     },
@@ -543,7 +518,7 @@ export default {
         return;
       }
       remove({
-        id: row.id,
+        id: row.id
       }).then((res) => {
         if (res.success) {
           this.getTableData();
@@ -551,8 +526,8 @@ export default {
           this.$message.error("数据删除异常，" + res.message);
         }
       });
-    },
-  },
+    }
+  }
 };
 </script>
 

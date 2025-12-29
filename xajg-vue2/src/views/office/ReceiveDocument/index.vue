@@ -3,14 +3,14 @@
     <treeTableLayout
       :page="pageParams"
       :title="title"
-      @query="getTableData"
+      :show-export-btn="showExportBtn"
+      @query="handleQuery"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      :showExportBtn="showExportBtn"
       @initExportParams="initExportParams"
     >
-      <template slot="opratebtns"><span></span></template>
+      <template slot="opratebtns"><span /></template>
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="文件编号:" size="mini">
@@ -18,22 +18,22 @@
               v-model="query.code"
               placeholder="请输入编号"
               clearable
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="标题:" size="mini">
             <el-input
               v-model="query.title"
               placeholder="请输入标题"
               clearable
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="文种:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               ref="flowStateRef"
               v-model="query.type"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in wzCodeOptions"
@@ -46,12 +46,12 @@
           <!-- v-if="showFlowStatus" -->
           <el-form-item label="流程状态:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               ref="flowStateRef"
-              style="width: 100%"
               v-model="query.flowStatus"
+              style="width: 100%"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in flowStatusOptions"
@@ -68,15 +68,14 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
           <el-form-item label="收文状态:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.signStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in signStatusOptions"
@@ -89,17 +88,16 @@
         </el-form>
       </template>
       <!-- <template slot="opratebtns"> </template> -->
-      <template slot="tree"
-        ><el-tree
-          default-expand-all
-          ref="tree"
-          node-key="corpId"
-          :data="treeData"
-          :props="defaultProps"
-          @node-click="handleNodeClick"
-          highlight-current
-          :current-node-key="'1'"
-        ></el-tree>
+      <template slot="tree"><el-tree
+        ref="tree"
+        default-expand-all
+        node-key="corpId"
+        :data="treeData"
+        :props="defaultProps"
+        highlight-current
+        :current-node-key="'1'"
+        @node-click="handleNodeClick"
+      />
       </template>
 
       <template slot="table">
@@ -243,7 +241,7 @@
             excel.sort="6"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column
@@ -255,7 +253,7 @@
             excel.sort="7"
           >
             <template slot-scope="scope">
-              <flow-status :row="scope.row" :flowName="flowName"></flow-status>
+              <flow-status :row="scope.row" :flow-name="flowName" />
             </template>
           </el-table-column>
           <el-table-column
@@ -297,8 +295,7 @@
                     color:
                       row.signStatus == 3 || row.signStatus == 4 ? 'red' : '',
                   }"
-                  >{{ getSignStatus(row) }}</span
-                >
+                >{{ getSignStatus(row) }}</span>
               </span>
             </template>
           </el-table-column>
@@ -319,8 +316,8 @@
             </template>
           </el-table-column>
           <el-table-column
-            fixed="right"
             v-if="showOperate"
+            fixed="right"
             label="操作"
             align="center"
             width="200"
@@ -330,13 +327,13 @@
                 <flow-button
                   :btns="['view', 'deal', 'press']"
                   :row="row"
-                  :flowName="flowName"
+                  :flow-name="flowName"
                   @click="handelShowDialog"
                   @delete="deletedata"
-                  ><template slot="button" v-if="showEdit(row)">
-                    <el-link type="primary" @click="reply(row)">回复</el-link>
-                    <el-divider direction="vertical"></el-divider>
-                  </template>
+                ><template v-if="showEdit(row)" slot="button">
+                  <el-link type="primary" @click="reply(row)">回复</el-link>
+                  <el-divider direction="vertical" />
+                </template>
                 </flow-button>
               </div>
             </template>
@@ -346,10 +343,10 @@
     </treeTableLayout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -460,6 +457,22 @@ export default {
       ],
     };
   },
+  computed: {
+    exportParams() {
+      const { documentType, unitType } = this.$route.meta;
+      let params = {
+        ...this.pageParams,
+        entity: {
+          ...this.query,
+          startDate: this.startTimeAndEndTime?.[0] || "",
+          endDate: this.startTimeAndEndTime?.[1] || "",
+          unitType,
+          documentType,
+        },
+      };
+      return params;
+    },
+  },
   watch: {
     unityTitle: {
       handler(newValue) {
@@ -478,22 +491,6 @@ export default {
       },
     },
   },
-  computed: {
-    exportParams() {
-      const { documentType, unitType } = this.$route.meta;
-      let params = {
-        ...this.pageParams,
-        entity: {
-          ...this.query,
-          startDate: this.startTimeAndEndTime?.[0] || "",
-          endDate: this.startTimeAndEndTime?.[1] || "",
-          unitType,
-          documentType,
-        },
-      };
-      return params;
-    },
-  },
   created() {
     console.log("获取配置信息", this.$route);
     const { title } = this.$route.meta;
@@ -504,13 +501,17 @@ export default {
   },
   mounted() {
     // 做签收监听
-    window.addEventListener( 'message', this.signListener, false);
+    window.addEventListener('message', this.signListener, false);
   },
   destroyed() {
     window.removeEventListener('message', this.signListener, false, null);
   },
   methods: {
-    signListener(event){
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
+    signListener(event) {
       // 处理接收到的消息
       if (Object.prototype.hasOwnProperty.call(event.data, "flowShow")) {
         console.log("处理接收到的消息", event.data);
@@ -685,15 +686,15 @@ export default {
     },
     // 选中当前行
     handleRowClick(row) {
-      this.tableData.forEach(x=>{
-        let rowIndex = row.findIndex(x1=>x1.id===x.id);
-        let currentIndex = this.currentRow.findIndex(x2=>x2.id===x.id);
-        if(rowIndex>-1){
-          if(currentIndex===-1){
+      this.tableData.forEach(x => {
+        let rowIndex = row.findIndex(x1 => x1.id === x.id);
+        let currentIndex = this.currentRow.findIndex(x2 => x2.id === x.id);
+        if (rowIndex > -1) {
+          if (currentIndex === -1) {
             this.currentRow.push(x);
           }
-        }else{
-          if(currentIndex>-1){
+        } else {
+          if (currentIndex > -1) {
             this.currentRow.splice(currentIndex, 1);
           }
         }
@@ -839,20 +840,19 @@ export default {
       });
     },
     setTableRowSelection() {
-      this.$nextTick(()=>{
-        console.log("setTableRowSelection",this.selectedRowIds,this.tableData)
+      this.$nextTick(() => {
+        console.log("setTableRowSelection", this.selectedRowIds, this.tableData)
         if (this.selectedRowIds) {
           this.tableData.forEach(row => {
             console.log(this.selectedRowIds.indexOf(row.id))
             if (this.selectedRowIds.indexOf(row.id) > -1) {
-              this.$refs.multipleTable.toggleRowSelection(row,true);
-            }else{
-              this.$refs.multipleTable.toggleRowSelection(row,false);
+              this.$refs.multipleTable.toggleRowSelection(row, true);
+            } else {
+              this.$refs.multipleTable.toggleRowSelection(row, false);
             }
           })
         }
       })
-
     },
     deletedata(row) {
       console.log("----------", row.id);

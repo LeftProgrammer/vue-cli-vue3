@@ -2,11 +2,11 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="车辆管理"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="车辆管理"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
@@ -14,13 +14,12 @@
             <el-input v-model="query.code" placeholder="请输入" />
           </el-form-item>
 
-
           <el-form-item label="车辆类型:">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.type"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="value in vehicleTypeEnum"
@@ -30,10 +29,10 @@
               />
             </el-select>
           </el-form-item>
-                    <el-form-item label="工程部位:">
+          <el-form-item label="工程部位:">
             <pbs-select v-model="query.pbsCode" style="height: 100%" />
           </el-form-item>
-                    <el-form-item label="所属单位:">
+          <el-form-item label="所属单位:">
             <el-select v-model="pageParams.entity.unit">
               <el-option
                 v-for="item in unitListAll"
@@ -91,7 +90,7 @@
             <template slot-scope="{ row }">
               {{
                 unitListAll.find((item) => item.corpId == row.unit)?.corpName ||
-                "-"
+                  "-"
               }}
             </template>
           </el-table-column>
@@ -129,9 +128,7 @@
           </el-table-column>
           <el-table-column label="操作" width="200" align="center">
             <template #default="{ row }">
-              <el-link type="danger" @click="handelDeleteRow(row)"
-                >删除</el-link
-              >
+              <el-link type="danger" @click="handelDeleteRow(row)">删除</el-link>
             </template>
           </el-table-column>
         </el-table>
@@ -139,16 +136,15 @@
     </table-layout>
 
     <dataform
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    >
-    </dataform>
+    />
   </div>
 </template>
 
@@ -163,14 +159,14 @@ import bimShow from "@/components/Bim/Show/index.vue";
 import { VEHICLE_TYPE, VEHICLE_TYPE_NAME } from "./constants";
 
 export default {
-  name: "vehicle",
-  mixins: [ListMixin],
+  name: "Vehicle",
   components: {
     bimShow,
     TableLayout,
     ListButton,
     dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       unitListAll: [],
@@ -185,14 +181,14 @@ export default {
       oprateRow: {
         dialogShow: false,
         data: {},
-        isView: false
+        isView: false,
       },
       options: [],
       tableData: [],
       query: {
         code: null,
         pbsCode: null,
-        type: null
+        type: null,
       },
       date: [],
       dictList: [],
@@ -229,6 +225,11 @@ export default {
       } catch (err) {
         console.log("err", err);
       }
+    },
+
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
 
     closedDialog() {
@@ -318,8 +319,6 @@ export default {
         console.error(e);
       }
     },
-
-
 
     getStaffNameById(staffId) {
       let item = this.staffList?.find((item) => item.id == staffId) || "";

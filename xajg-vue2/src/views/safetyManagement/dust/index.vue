@@ -4,7 +4,7 @@
       :page="pageParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="form">
@@ -157,6 +157,10 @@ export default {
     this.getTableData();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     processLine(row, dataType) {
       this.$nextTick(() => {
         if (this.$refs.processLine && this.$refs.processLine.loadDialog) {

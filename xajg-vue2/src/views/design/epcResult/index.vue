@@ -3,7 +3,7 @@
     <treeTableLayout
       :page="pageParams"
       :title="title"
-      @query="getTableData"
+      @query="handleQuery"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
@@ -716,6 +716,10 @@ export default {
       }
       console.log("单选", val);
       this.currentRow = val;
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     customRequest() {
       this.getTableData();

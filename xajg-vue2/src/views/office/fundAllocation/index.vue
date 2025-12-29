@@ -2,40 +2,41 @@
   <div style="width: 100%; height: 100%; padding: 15px">
     <table-layout
       title="资金调拨"
-      @query="getTableData"
-      @reset="reset"
       :page="pageParams"
+      :show-export-btn="true"
+      @query="handleQuery"
+      @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      :showExportBtn="true"
       @initExportParams="initExportParams"
     >
       <!-- 查询表单 -->
       <template slot="form">
         <el-form :model="pageParams.entity" :inline="true">
           <el-form-item label="申请单位:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
-              class="w-100pre"
+            <el-select
               v-model="pageParams.entity.unit"
+              class="w-100pre"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in unitOptions"
                 :key="item.corpId"
                 :label="item.corpName"
                 :value="item.corpId"
-              >
-              </el-option>
+              />
             </el-select>
           </el-form-item>
 
           <el-form-item label="流程状态:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')"
+            <el-select
               ref="flowStateRef"
               v-model="pageParams.entity.flowStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in flowStatusOptions"
@@ -51,8 +52,7 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -81,7 +81,6 @@
           height="100%"
           border
           @header-dragend="handleHeaderDragEnd"
-
         >
           <el-table-column
             label="序号"
@@ -101,8 +100,7 @@
               <el-tooltip :content="row.name" placement="top" effect="dark">
                 <div class="text-ellipsis-clamp">{{ row.name }}</div>
               </el-tooltip>
-            </template></el-table-column
-          >
+            </template></el-table-column>
           <el-table-column
             label="合同编号"
             prop="code"
@@ -126,16 +124,13 @@
             <template slot-scope="{ row }">
               <el-tooltip :content="row.total" placement="top" effect="dark">
                 <div class="text-ellipsis-clamp">{{ row.total }}</div>
-              </el-tooltip></template
-            ></el-table-column
-          >
+              </el-tooltip></template></el-table-column>
           <el-table-column
             label="发起日期"
             prop="createDate"
             align="center"
             :width="$calculateWidth(180)"
             excel.dateFormat="yyyy-MM-dd HH:mm:ss"
-
           >
             <template slot-scope="{ row }">
               <el-tooltip
@@ -210,8 +205,8 @@
             <template slot-scope="scope">
               <flow-status
                 :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
 
@@ -224,10 +219,10 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deletedata"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -235,10 +230,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -249,9 +244,9 @@ import TableLayout from "@/components/ContentLayout/Table";
 import enums from "@/config/enums";
 
 export default {
-  name: "fund-allocation",
-  mixins: [FlowListMixin],
+  name: "FundAllocation",
   components: { TableLayout },
+  mixins: [FlowListMixin],
   data() {
     return {
       unitOptions: [],
@@ -276,10 +271,6 @@ export default {
       flowStatusOptions: [], //PROC_TASK_TODO_STATUS
     };
   },
-  created() {
-    this.getUnitList(); //获取所有的单位
-    this.getFlowStatus();
-  },
   computed: {
     exportParams() {
       if (this.startTimeAndEndTime?.length > 0) {
@@ -291,18 +282,26 @@ export default {
       return this.pageParams;
     },
   },
+  created() {
+    this.getUnitList(); //获取所有的单位
+    this.getFlowStatus();
+  },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     handleExportDetail() {
       let columns = [];
-      columns.push({label: '申请单位', prop: 'unit', handler: 'excelHandleCovert', args: 'unit'});
-      columns.push({label: '合同名称', prop: 'name'});
-      columns.push({label: '合同编号', prop: 'code'});
-      columns.push({label: '工程建设资金调拨申请编码', prop: 'applyCode'});
-      columns.push({label: '收款单位', prop: 'collectingUnit'});
-      columns.push({label: '付款内容', prop: 'paymentContent'});
-      columns.push({label: '金额（元）', prop: 'amount'});
-      columns.push({label: '发起日期', prop: 'createDate', dateFormat: 'yyyy-MM-dd HH:mm:ss'});
-      columns.push({label: '完成时间', prop: 'flowFinishTime', dateFormat: 'yyyy-MM-dd HH:mm:ss'});
+      columns.push({ label: '申请单位', prop: 'unit', handler: 'excelHandleCovert', args: 'unit' });
+      columns.push({ label: '合同名称', prop: 'name' });
+      columns.push({ label: '合同编号', prop: 'code' });
+      columns.push({ label: '工程建设资金调拨申请编码', prop: 'applyCode' });
+      columns.push({ label: '收款单位', prop: 'collectingUnit' });
+      columns.push({ label: '付款内容', prop: 'paymentContent' });
+      columns.push({ label: '金额（元）', prop: 'amount' });
+      columns.push({ label: '发起日期', prop: 'createDate', dateFormat: 'yyyy-MM-dd HH:mm:ss' });
+      columns.push({ label: '完成时间', prop: 'flowFinishTime', dateFormat: 'yyyy-MM-dd HH:mm:ss' });
       let exportParams = {
         url: "",
         params: {},

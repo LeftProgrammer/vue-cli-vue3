@@ -213,7 +213,9 @@
       </el-form>
       <div slot="footer" align="center" class="dialog-footer">
         <el-button @click="showDialog = false">{{ isSHow ? "关闭" : "取消" }}</el-button>
-        <el-button v-if="!isSHow" type="primary" @click="handelDialogConfirm">确定</el-button>
+        <el-button v-if="!isSHow" type="primary" @click="handelDialogConfirm"
+          >确定</el-button
+        >
       </div>
     </el-dialog>
 
@@ -367,10 +369,12 @@ export default {
 
     handelResetButtonClick() {
       this.date = [];
-      this.searchData.id = this.selectionNode.id;
-      this.searchData.current = 1;
-      this.searchData.pageSize = 20;
-      this.searchData.size = 20;
+      this.searchData = {
+        id: this.selectionNode.id,
+        current: 1,
+        pageSize: 20,
+        size: 20
+      };
       this.fileCatalogueTreeFindList();
     },
     handelNodeClick(data, node, own) {
@@ -381,7 +385,7 @@ export default {
     },
     async fileCatalogueTreeFindList() {
       try {
-        const searchData = { ...this.searchData, entity: {}};
+        const searchData = { ...this.searchData, entity: {} };
         if (this.date?.length > 0) {
           searchData.entity.startDate = this.date[0];
           searchData.entity.endDate = this.date[1];

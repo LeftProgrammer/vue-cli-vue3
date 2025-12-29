@@ -13,7 +13,7 @@
         :page="pageParams"
         @pageSizeChange="handleSizeChange"
         @pageCurrentChange="handleCurrentChange"
-        @query="getTableData"
+        @query="handleQuery"
         @reset="reset"
         :showSearchBtn="false"
         title="监测记录台账"
@@ -422,6 +422,10 @@ export default {
       } catch (e) {
         console.error(e);
       }
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     }
   }
 };

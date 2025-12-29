@@ -5,7 +5,7 @@
       :page="pageParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="form">
@@ -22,7 +22,7 @@
               :props="unitTreeProps"
               :show-all-levels="false"
               :options="unitTree"
-            ></el-cascader>
+            />
             <!-- <el-select
               v-model="selectedUnitName"
               clearable
@@ -98,9 +98,9 @@
                 placement="top"
                 effect="dark"
               > -->
-                <div class="text-ellipsis">
-                  {{ getUnitName(row.issuanceUnit) }}
-                </div>
+              <div class="text-ellipsis">
+                {{ getUnitName(row.issuanceUnit) }}
+              </div>
               <!-- </el-tooltip> -->
             </template>
           </el-table-column>
@@ -134,16 +134,16 @@
     </table-layout>
 
     <dataform
-      :enterAble="enterAble"
-      :unitTree="unitTree"
-      :title="title"
       v-if="oprateRow.dialogShow"
+      :enter-able="enterAble"
+      :unit-tree="unitTree"
+      :title="title"
       :visible="oprateRow.dialogShow"
       :data="oprateRow"
       :date="type"
       :readonly="oprateRow.isView"
       @sureson="sureson"
-    ></dataform>
+    />
   </div>
 </template>
 
@@ -158,13 +158,13 @@ import bimShow from "@/components/Bim/Show";
 
 export default {
   name: "QualityRegulation",
-  mixins: [ListMixin],
   components: {
     TableLayout,
     ListButton,
     dataform,
     bimShow
   },
+  mixins: [ListMixin],
   data() {
     return {
       showExportBtn: true,
@@ -277,6 +277,10 @@ export default {
         name = arr[0].name;
       }
       return name;
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     query() {
       this.pageParams.current = 1;

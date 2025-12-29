@@ -2,15 +2,13 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="预警指标"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="预警指标"
     >
-      <template slot="form">
-
-      </template>
+      <template slot="form" />
       <template slot="opratebtns">
         <el-button
           icon="el-icon-plus"
@@ -35,45 +33,47 @@
             align="center"
           >
             <template slot-scope="{ row }">
-              {{getTypeDictName(row.monitorProject)}}
+              {{ getTypeDictName(row.monitorProject) }}
+            </template>
+          </el-table-column>
+          <el-table-column label="预警指标" prop="warningItem" align="center">
+            <template slot-scope="{ row }">
+              {{ getTypeDictName(row.warningItem) }}
             </template>
           </el-table-column>
           <el-table-column
-            label="预警指标"
-            prop="warningItem"
+            label="阈值"
+            prop="thresholdUpperLimit"
             align="center"
           >
             <template slot-scope="{ row }">
-              {{getTypeDictName(row.warningItem)}}
-            </template>
-          </el-table-column>
-          <el-table-column label="阈值" prop="thresholdUpperLimit" align="center">
-            <template slot-scope="{ row }">
               {{
-                (row.thresholdLowerLimit?('>'+row.thresholdLowerLimit):'')
-                + ((row.thresholdLowerLimit && row.thresholdUpperLimit)?',':'')
-                + (row.thresholdUpperLimit?('<'+row.thresholdUpperLimit):'')
+                (row.thresholdLowerLimit ? ">" + row.thresholdLowerLimit : "") +
+                  (row.thresholdLowerLimit && row.thresholdUpperLimit
+                    ? ","
+                    : "") +
+                  (row.thresholdUpperLimit ? "<" + row.thresholdUpperLimit : "")
               }}
             </template>
           </el-table-column>
           <el-table-column label="状态" prop="status" align="center">
             <template slot-scope="{ row }">
-              {{ row.status==='1'?'启用':'禁用' }}
+              {{ row.status === "1" ? "启用" : "禁用" }}
             </template>
           </el-table-column>
           <el-table-column label="操作" prop="name" width="200" align="center">
             <template #default="{ row }">
               <list-button
                 :data="row"
+                :btns="['edit', 'delete', 'view']"
+                :disabled-btns="[
+                  row.createUser !== userId ? 'edit' : '',
+                  row.createUser !== userId ? 'delete' : '',
+                ]"
                 @view="view"
                 @delete="deleteHandle"
                 @edit="edit"
-                :btns="['edit', 'delete', 'view']"
-                :disabledBtns="[
-                  row.createUser !== userId ? 'edit' : '',
-                  row.createUser !== userId ? 'delete' : ''
-                ]"
-              ></list-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -81,16 +81,15 @@
     </table-layout>
 
     <dataForm
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    >
-    </dataForm>
+    />
   </div>
 </template>
 
@@ -104,13 +103,13 @@ import dataForm from "@/views/safetyManagement/warningConfig/dataform.vue";
 import { getDictItemList, buildTree } from "@/api/dict";
 
 export default {
-  name: "rainMonitoring",
-  mixins: [ListMixin],
+  name: "RainMonitoring",
   components: {
     TableLayout,
     ListButton,
-    dataForm
+    dataForm,
   },
+  mixins: [ListMixin],
   data() {
     return {
       type: "",
@@ -119,7 +118,7 @@ export default {
       pageParams: {
         pageSize: 20,
         current: 1,
-        total: 0
+        total: 0,
       },
       oprateRow: {},
       options: [],
@@ -135,7 +134,7 @@ export default {
       /**组织机构选择 */
       deptShow: false,
 
-      url: { list: "" }
+      url: { list: "" },
     };
   },
   created() {
@@ -144,6 +143,10 @@ export default {
     this.userId = this.$getStorage("userInfo").userId;
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getTypeDictName(id) {
       for (let item of this.typeDictMap) {
         if (item.dictCode === id) {
@@ -151,7 +154,7 @@ export default {
         }
       }
     },
-    async getDict(){
+    async getDict() {
       let res = await getDictItemList("zxjclx");
       this.typeDictMap = res.data;
       this.typeOptions = buildTree(res.data, "-");
@@ -202,7 +205,7 @@ export default {
     /** 删除*/
     deleteHandle(row) {
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (!res.success) {
           return this.$message.error("删除失败：" + res.message);
@@ -230,14 +233,14 @@ export default {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
           closeOnClickModal: false,
-          type: "warning"
+          type: "warning",
         });
         this.deletedata(row.id);
       } catch (e) {
         console.error(e);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

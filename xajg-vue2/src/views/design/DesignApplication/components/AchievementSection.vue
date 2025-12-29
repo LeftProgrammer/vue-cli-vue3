@@ -3,7 +3,7 @@
     <treeTableLayout
       :page="pageParams"
       :title="title"
-      @query="getTableData"
+      @query="handleQuery"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
@@ -270,6 +270,10 @@ export default {
   },
   mounted() {},
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     //查看数据
     viewHandle(row) {
       console.log("viewHandle", row);

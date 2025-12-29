@@ -1,31 +1,32 @@
 <!-- 材料报检页面 -->
 <template>
   <div class="page-leave">
-    <table-layout :page="pageParams" title="报检列表" @pageSizeChange="handleSizeChange"
-      @pageCurrentChange="handleCurrentChange" @reset="reset" @query="getTableData">
+    <table-layout
+      :page="pageParams" title="报检列表" @pageSizeChange="handleSizeChange"
+      @pageCurrentChange="handleCurrentChange" @reset="reset" @query="handleQuery"
+    >
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="样品编号:" size="mini">
-            <el-input v-model="query.code" placeholder="请输入样品编号"></el-input>
+            <el-input v-model="query.code" placeholder="请输入样品编号" />
           </el-form-item>
           <el-form-item label="材料名称:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')" ref="typeRef" v-model="query.name" placeholder="请选择材料名称" clearable filterable>
+            <el-select ref="typeRef" v-model="query.name" placeholder="请选择材料名称" clearable filterable @visible-change="$visibleChange($event, 'el-popper')">
               <el-option v-for="item in nameList" :key="item.dictName" :label="item.dictName" :value="item.dictCode" />
             </el-select>
           </el-form-item>
           <el-form-item label="材料分类:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')" ref="typeRef" v-model="query.materialClass" placeholder="请选择材料分类" clearable>
+            <el-select ref="typeRef" v-model="query.materialClass" placeholder="请选择材料分类" clearable @visible-change="$visibleChange($event, 'el-popper')">
               <el-option v-for="item in typeList" :key="item.dictName" :label="item.dictName" :value="item.dictCode" />
             </el-select>
           </el-form-item>
           <el-form-item label="流程状态:" size="mini">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')" ref="flowStateRef" v-model="query.flowStatus" placeholder="请选择流程状态" clearable>
+            <el-select ref="flowStateRef" v-model="query.flowStatus" placeholder="请选择流程状态" clearable @visible-change="$visibleChange($event, 'el-popper')">
               <el-option v-for="item in flowStatusOptions" :key="item.id" :label="item.dictName" :value="item.dictCode" />
             </el-select>
           </el-form-item>
           <el-form-item label="发起日期:" size="mini">
-            <el-date-picker v-model="startTimeAndEndTime" type="daterange" value-format="yyyy-MM-dd" style="width: 230px">
-            </el-date-picker>
+            <el-date-picker v-model="startTimeAndEndTime" type="daterange" value-format="yyyy-MM-dd" style="width: 230px" />
           </el-form-item>
         </el-form>
       </template>
@@ -36,7 +37,7 @@
       </template>
       <template slot="table">
         <el-table ref="multipleTable" :data="tableData" height="100%" border>
-          <el-table-column label="序号" type="index" width="80" align="center" :index="getIndex"/>
+          <el-table-column label="序号" type="index" width="80" align="center" :index="getIndex" />
           <el-table-column label="样品编号" prop="code" header-align="center" align="left" />
           <el-table-column label="材料名称" prop="name" align="left" header-align="center">
             <template slot-scope="scope">
@@ -58,8 +59,8 @@
             <template slot-scope="{ row }">
               {{
                 row.commencementDate
-                ? timeFormat(row.commencementDate, "YYYY-MM-DD")
-                : ""
+                  ? timeFormat(row.commencementDate, "YYYY-MM-DD")
+                  : ""
               }}
             </template>
           </el-table-column>
@@ -75,8 +76,7 @@
           </el-table-column> -->
           <!-- <el-table-column label="使用部位" prop="pbsCode" align="center" /> -->
           <el-table-column label="施工单位" prop="contractor" align="center" />
-          <el-table-column label="所属标段" prop="sectionId" align="center" width="120" :formatter="sectionIdFormatter">
-          </el-table-column>
+          <el-table-column label="所属标段" prop="sectionId" align="center" width="120" :formatter="sectionIdFormatter" />
           <el-table-column label="发起人" width="100" prop="createUser" align="center">
             <template slot-scope="scope">
               <span>{{
@@ -93,27 +93,31 @@
           </el-table-column>
           <el-table-column label="使用部位" width="180" prop="pbsCode" align="center">
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column label="流程状态" prop="flowStatus" align="center" width="180">
             <template slot-scope="scope">
-              <flow-status :row="scope.row" :flowName="flowName"></flow-status>
+              <flow-status :row="scope.row" :flow-name="flowName" />
             </template> </el-table-column>>
           <el-table-column label="当前节点" prop="flowName" align="center" />
           <el-table-column label="操作" width="200" prop="name" align="center">
             <template #default="{ row }">
               <div class="flex justify-center">
-                <flow-button :promiseCode="'design-center-drawingSupply_delete'" :row="row" :flowName="flowName"
-                  @click="handelShowDialog" @delete="deletedata"></flow-button>
+                <flow-button
+                  :promise-code="'design-center-drawingSupply_delete'" :row="row" :flow-name="flowName"
+                  @click="handelShowDialog" @delete="deletedata"
+                />
               </div>
             </template>
           </el-table-column>
         </el-table>
       </template>
     </table-layout>
-    <flow-dialog :visible="flowShow" :flowInfo="flowInfo" @childEvt="childEvtHandle"
-      @closed="flowShow = false"></flow-dialog>
+    <flow-dialog
+      :visible="flowShow" :flow-info="flowInfo" @childEvt="childEvtHandle"
+      @closed="flowShow = false"
+    />
   </div>
 </template>
 
@@ -128,9 +132,9 @@ import { FlowListMixin } from "@/mixins/FlowListMixin";
 import bimShow from "@/components/Bim/Show";
 
 export default {
-  name: "materialInspection",
-  mixins: [FlowListMixin],
+  name: "MaterialInspection",
   components: { TableLayout, bimShow },
+  mixins: [FlowListMixin],
   data() {
     return {
       sectionOptions: "",
@@ -220,7 +224,6 @@ export default {
   },
   methods: {
 
-
     //翻译列表所属标段 id=>name
     sectionIdFormatter(row, column) {
       var value = "";
@@ -269,8 +272,6 @@ export default {
       this.startTimeAndEndTime = [];
       this.getTableData();
     },
-
-
 
     /**获取流程状态字典 */
     async getFlowStatus() {
@@ -321,9 +322,12 @@ export default {
               this.designProfessionOptions = res.data;
             }
           });
-        } else {
         }
       }
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     deletedata(row) {
       let params = {

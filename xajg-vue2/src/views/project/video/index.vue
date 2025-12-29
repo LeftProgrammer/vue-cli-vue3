@@ -1,17 +1,17 @@
 <template>
   <div class="page-list">
     <table-layout
-      :showSearchBtns="false"
-      :showPage="false"
+      :show-search-btns="false"
+      :show-page="false"
       title="影像列表"
-      @query="getTableData"
+      @query="handleQuery"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="类型:">
             <el-select v-model="query.type" @change="handleTypeChange">
-              <el-option label="工程概览" :value="1"></el-option>
-              <el-option label="工程面貌" :value="0"></el-option>
+              <el-option label="工程概览" :value="1" />
+              <el-option label="工程面貌" :value="0" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -23,23 +23,23 @@
             <div class="media-preview" :style="getBackgroundStyle(item)">
               <div class="media-actions">
                 <span class="action-icon view-icon" @click="previewMedia(item)">
-                  <i class="el-icon-view"></i>
+                  <i class="el-icon-view" />
                 </span>
                 <span class="action-icon edit-icon" @click="handleEdit(item)">
-                  <i class="el-icon-edit"></i>
+                  <i class="el-icon-edit" />
                 </span>
                 <span
                   class="action-icon delete-icon"
                   @click="deleteMedia(item)"
                 >
-                  <i class="el-icon-delete"></i>
+                  <i class="el-icon-delete" />
                 </span>
               </div>
             </div>
           </div>
           <div class="media-item add-item" @click="handleAdd">
             <div class="add-icon">
-              <i class="el-icon-plus"></i>
+              <i class="el-icon-plus" />
             </div>
           </div>
         </div>
@@ -51,20 +51,20 @@
     <div style="display: none">
       <el-image
         v-if="currentPreview && currentPreview.type === 0"
+        ref="imagePreview"
         style="width: 0; height: 0"
         :src="currentPreview?.url"
         :preview-src-list="imagePreviewList"
         :initial-index="initialIndex"
-        ref="imagePreview"
       />
     </div>
 
     <!-- 上传对话框 -->
     <el-dialog
+      v-draggable
       :visible.sync="uploadVisible"
       :title="title"
       width="50%"
-      v-draggable
     >
       <el-form
         ref="uploadFormRef"
@@ -76,32 +76,32 @@
           <el-col :span="12">
             <el-form-item label="类型" prop="type">
               <el-select v-model="uploadForm.type" disabled style="width: 100%">
-                <el-option label="工程概览" :value="1"></el-option>
-                <el-option label="工程面貌" :value="0"></el-option>
+                <el-option label="工程概览" :value="1" />
+                <el-option label="工程面貌" :value="0" />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="排序" prop="sort" v-if="dialogType === 'edit'">
+            <el-form-item v-if="dialogType === 'edit'" label="排序" prop="sort">
               <el-input-number
                 v-model="uploadForm.sort"
                 :min="1"
                 :max="100"
                 style="width: 100%"
-              ></el-input-number>
+              />
             </el-form-item>
           </el-col>
         </el-row>
 
-        <el-form-item label="文件" prop="file" v-if="dialogType === 'add'">
+        <el-form-item v-if="dialogType === 'add'" label="文件" prop="file">
           <uploadFile
             :key="acceptValue"
             v-model="uploadForm.file"
             :limit="5"
             :accept="accept"
-            :maxSize="500"
+            :max-size="500"
             @change="handleFileChange"
-          ></uploadFile>
+          />
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -160,6 +160,10 @@ export default {
     this.getTableData();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     editMedia(item) {
       this.uploadVisible = true;
       this.uploadForm = {

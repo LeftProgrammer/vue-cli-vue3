@@ -2,20 +2,20 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="培训台账"
+      :show-export-btn="true"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="培训台账"
-      :showExportBtn="true"
       @initExportParams="initExportParams"
     >
       <template slot="tree">
         <el-tree
+          ref="tree"
           :data="typeOptions"
           :props="defaultProps"
           :expand-on-click-node="false"
-          ref="tree"
           node-key="corpId"
           default-expand-all
           highlight-current
@@ -25,14 +25,13 @@
       <template slot="form">
         <el-form :model="query" :inline="true">
           <el-form-item label="类型:" prop="type" class="ml-20">
-            <el-select @visible-change="$visibleChange($event, 'el-popper')" v-model="query.type" placeholder="请选择" clearable>
+            <el-select v-model="query.type" placeholder="请选择" clearable @visible-change="$visibleChange($event, 'el-popper')">
               <el-option
                 v-for="item in DitSpeciality"
                 :key="item.dictId"
                 :label="item.dictName"
                 :value="item.dictId"
-              >
-              </el-option>
+              />
             </el-select>
           </el-form-item>
           <el-form-item label="培训日期:" class="ml-20">
@@ -41,8 +40,7 @@
               value-format="yyyy-MM-dd"
               type="daterange"
               range-separator="-"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -55,7 +53,7 @@
         >
           新增
         </el-button>
-        <span v-else></span>
+        <span v-else />
       </template>
       <template slot="table">
         <el-table
@@ -168,24 +166,23 @@
                 @delete="deleteHandle"
                 @view="view"
                 @edit="edit"
-              ></list-button>
+              />
             </template>
           </el-table-column>
         </el-table>
       </template>
     </table-layout>
     <dataform
-      :treeNode="treeNode"
+      v-if="oprateRow.dialogShow"
+      :tree-node="treeNode"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="oprateRow.dialogShow = false"
       @ok="getTableData"
-    >
-    </dataform>
+    />
   </div>
 </template>
 
@@ -200,13 +197,13 @@ import ListButton from "@/components/ListButton";
 import dataform from "./dataform";
 
 export default {
-  name: "monitoring-point",
-  mixins: [ListMixin],
+  name: "MonitoringPoint",
   components: {
     TableLayout,
     ListButton,
     dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       belongUnit: [], //登陆人的归宿单位
@@ -274,6 +271,10 @@ export default {
     this.corpId = this.$getStorage("userInfo").corpId;
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
 
     /**初始化导出Excel参数 */
     initExportParams(exportParams) {

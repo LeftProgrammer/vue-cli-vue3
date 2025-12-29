@@ -6,7 +6,7 @@
           :page="pageParams"
           @pageSizeChange="handleSizeChange"
           @pageCurrentChange="handleCurrentChange"
-          @query="getTableData"
+          @query="handleQuery"
           @reset="reset"
           title="危险区域维护"
         >
@@ -186,6 +186,10 @@ export default {
       return type.get(val) ? type.get(val) : '---'
     },
 
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     query() {
       this.pageParams.current = 1
       this.getTableData()

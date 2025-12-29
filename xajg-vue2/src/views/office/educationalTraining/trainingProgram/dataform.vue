@@ -58,7 +58,7 @@
         <el-row class="table">
           <content-layout
             :page="pageParams"
-            @query="getTableData"
+            @query="handleQuery"
             title="计划培训项列表"
             :showPage="false"
             :showSearchBtns="false"
@@ -351,6 +351,10 @@ export default {
     },
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getDle(row) {
       let dle = false;
       if (!row.createUser) {

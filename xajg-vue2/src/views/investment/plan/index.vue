@@ -1,6 +1,6 @@
 <template>
   <div style="width: 100%; height: 100%; padding: 15px">
-    <table-layout title="投资计划列表" :page="pageParams" @query="getTableData" @reset="reset"
+    <table-layout title="投资计划列表" :page="pageParams" @query="handleQuery" @reset="reset"
       @pageSizeChange="handleSizeChange" @pageCurrentChange="handleCurrentChange" :showPage="!showPlan"
       :showSearchBtns="!showPlan">
       <!-- 查询表单 -->
@@ -103,6 +103,10 @@ export default {
     handleSaveSuccess() {
       this.getTableData();
       this.back();
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     back() {
       this.showPlan = false;

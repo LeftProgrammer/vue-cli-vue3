@@ -7,7 +7,7 @@
       @initExportParams="initExportParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="form">
@@ -371,6 +371,10 @@ export default {
         })
       }
       this.flowStatusOptions = data
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     editForm(val) {
       this.oprateRow.dialogShow = true

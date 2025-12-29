@@ -11,7 +11,7 @@
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
+      @query="handleQuery"
       @initExportParams="initExportParams"
     >
       <template slot="form">
@@ -403,6 +403,10 @@ export default {
     }
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getLevel(level) {
       return this.levelOptions.find((item) => item.dictId === level)?.dictName;
     },

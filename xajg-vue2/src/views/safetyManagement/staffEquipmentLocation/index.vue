@@ -4,7 +4,7 @@
       :page="pageParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="form">
@@ -98,15 +98,13 @@
                 type="success"
                 effect="dark"
                 size="medium"
-                >正常</el-tag
-              >
+              >正常</el-tag>
               <el-tag
                 v-if="scope.row.status == 0"
                 type="danger"
                 effect="dark"
                 size="medium"
-                >异常</el-tag
-              >
+              >异常</el-tag>
             </template>
           </el-table-column>
           <el-table-column
@@ -125,16 +123,15 @@
     </table-layout>
 
     <dataform
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
       :data="oprateRow.data"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="getTableData"
-    >
-    </dataform>
+    />
   </div>
 </template>
 
@@ -147,13 +144,13 @@ import ListButton from "@/components/ListButton";
 import dataform from "./dataform";
 
 export default {
-  name: "staffManagement",
-  mixins: [ListMixin],
+  name: "StaffManagement",
   components: {
     TableLayout,
     ListButton,
     dataform,
   },
+  mixins: [ListMixin],
   data() {
     return {
       type: "",
@@ -227,6 +224,10 @@ export default {
         this.pageParams.total = data.data.total;
         console.log("page结果", data, this.tableData);
       });
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     /* 新增 */
     addHandle() {

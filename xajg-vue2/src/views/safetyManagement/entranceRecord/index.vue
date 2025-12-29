@@ -9,20 +9,17 @@
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
-          <el-form-item label="车牌号:">
-            <el-input
-              v-model="query.licensePlate"
-              placeholder="请输入"
-              clearable
-            />
+          <el-form-item label="姓名:">
+            <el-input v-model="query.name" placeholder="请输入" clearable />
           </el-form-item>
           <el-form-item label="所属单位:">
             <el-cascader
-              v-model="query.unit"
+              v-model="query.belongUnit"
+              clearable
               :props="unitTreeProps"
               :show-all-levels="false"
               :options="unitTree"
-              clearable
+              placeholder="请选择"
             />
           </el-form-item>
           <el-form-item label="通行日期:">
@@ -41,8 +38,8 @@
               placeholder="请选择"
               clearable
             >
-              <el-option label="入场" value="1" />
-              <el-option label="出场" value="0" />
+              <el-option label="入场" :value="1" />
+              <el-option label="出场" :value="2" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -56,110 +53,93 @@
             label="序号"
             type="index"
             :index="getIndex"
-            width="54"
+            width="60"
             align="center"
           />
           <el-table-column
-            label="车牌号"
-            prop="licensePlate"
+            label="姓名"
+            prop="name"
             align="center"
-            width="180"
-          >
+            width="100"
+            show-overflow-tooltip
+          />
+          <el-table-column label="性别" prop="sex" align="center" width="60">
             <template #default="{ row }">
-              <el-link type="primary" @click="view(row)">{{
-                row.licensePlate
-              }}</el-link>
+              <span>{{
+                row.sex === 1 ? "男" : row.sex === 2 ? "女" : "-"
+              }}</span>
             </template>
           </el-table-column>
           <el-table-column
-            label="车辆类型"
-            prop="vehicleType"
+            label="班组"
+            prop="groupName"
+            align="left"
+            width="120"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            label="工种"
+            prop="professionName"
+            align="left"
+            width="120"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            label="联系电话"
+            prop="mobile"
             align="center"
             width="120"
-          >
-            <template #default="{ row }">
-              <span>{{ getTypeName(row) }}</span>
-            </template>
-          </el-table-column>
+            show-overflow-tooltip
+          />
           <el-table-column
             label="所属单位"
-            prop="unit"
+            prop="belongUnitName"
             align="left"
+            min-width="150"
             show-overflow-tooltip
+          />
+          <el-table-column
+            label="通行设备名称"
+            prop="deviceName"
+            align="left"
+            min-width="150"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            label="通行时间"
+            prop="recordTime"
+            align="center"
+            width="160"
+          />
+          <el-table-column
+            label="通行类型"
+            prop="recordType"
+            align="center"
+            width="100"
           >
             <template #default="{ row }">
-              <span>{{ getUnitName(row.unit) }}</span>
+              <el-tag :type="row.recordType === 1 ? 'success' : ''">
+                {{ row.recordType === 1 ? "入场" : "出场" }}
+              </el-tag>
             </template>
           </el-table-column>
-
-          <el-table-column label="入场时间" width="180" align="center">
-            <template #default="{ row }">
-              <span>{{
-                row.recordType === 1
-                  ? dateFormat(row.recordTime, "yyyy-MM-DD HH:mm")
-                  : "-"
-              }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="入场道闸" width="180" align="center">
-            <template #default="{ row }">
-              <span>{{ row.recordType === 1 ? row.deviceCode : "-" }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="出场时间" width="180" align="center">
-            <template #default="{ row }">
-              <span>{{
-                row.recordType === 0
-                  ? dateFormat(row.recordTime, "yyyy-MM-DD HH:mm")
-                  : "-"
-              }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="出场道闸" width="180" align="center">
-            <template #default="{ row }">
-              <span>{{ row.recordType === 0 ? row.deviceCode : "-" }}</span>
-            </template>
-          </el-table-column>
-          <el-table-column label="通行类型" align="center" width="120">
-            <template #default="{ row }">
-              <span v-if="row.recordType === 1">入场</span>
-              <span v-else>出场</span>
-            </template>
-          </el-table-column>
-          <!-- <el-table-column label="操作" width="200" align="center">
-            <template #default="{ row }">
-              <el-link type="primary" @click="editHandle(row)"> 编辑</el-link>
-              <el-divider direction="vertical" />
-              <el-link type="danger" @click="handelDeleteRow(row)"
-                >删除
-              </el-link>
-            </template>
-          </el-table-column> -->
         </el-table>
       </template>
     </table-layout>
-    <dataform ref="form" @submit="handleSubmit" />
   </div>
 </template>
 
 <script>
 import TableLayout from "@/components/ContentLayout/Table";
-import { page, unitAllList, getVehicleList } from "./api";
+import { page, unitAllList } from "./api";
 import { dateFormat } from "@/utils";
-import dataform from "./dataform.vue";
-import { VEHICLE_TYPE, VEHICLE_TYPE_NAME } from "../vehicle/constants.js";
 export default {
   name: "ModelConfig",
   components: {
     TableLayout,
-    dataform,
   },
   data() {
     return {
-      vehicleTypeEnum: VEHICLE_TYPE,
-      vehicleTypeNameMap: VEHICLE_TYPE_NAME,
-
-      vehicleList: [],
       unitListAll: [],
       unitTreeProps: {
         expandTrigger: "hover",
@@ -183,37 +163,22 @@ export default {
       },
       tableData: [],
       query: {
-        personName: "",
-        unit: "",
+        name: "",
+        belongUnit: "",
         date: [],
-        recordType: "",
+        recordType: null,
       },
       unitOptions: [],
     };
   },
   mounted() {
     this.getUnitAll();
-    this.getVehicleList();
     this.getTableData();
   },
   methods: {
-    getUnitName(unit) {
-      return this.unitListAll.find((item) => item.corpId == unit)?.corpName;
-    },
-    async getVehicleList() {
-      try {
-        const result = await getVehicleList();
-        const { data, success } = result;
-        if (!success) {
-          this.vehicleList = [];
-          this.$message.error("获取车辆列表失败");
-          return;
-        }
-        this.vehicleList = data;
-      } catch (error) {
-        this.vehicleList = [];
-        this.$message.error("获取车辆列表失败");
-      }
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     // 获取当前人的所属机构，同时构建树形结构
     /**
@@ -269,6 +234,7 @@ export default {
           return;
         }
         this.unitListAll = data;
+        console.log("unitListAll", this.unitListAll);
         let unitList = data
           // .filter((item) => {
           //   return item.corpLeaf !== 0;
@@ -314,15 +280,13 @@ export default {
         }
       });
     },
-    getTypeName(row) {
-      return this.vehicleTypeNameMap[row.vehicleType] || "-";
-    },
+
     // 重置查询条件
     reset() {
-      this.query.personName = "";
-      this.query.unit = "";
+      this.query.name = "";
+      this.query.belongUnit = "";
       this.query.date = [];
-      this.query.recordType = "";
+      this.query.recordType = null;
       this.pageParams.current = 1;
       this.pageParams.pageSize = 20;
       this.getTableData();
@@ -340,23 +304,27 @@ export default {
       this.getTableData();
     },
 
-    handleQuery() {
-      this.pageParams.current = 1;
-      this.getTableData();
-    },
-
     // 查询表格数据
     getTableData() {
-      this.pageParams.entity = { ...this.query };
-      delete this.pageParams.entity.date;
+      const entity = {
+        name: this.query.name,
+        belongUnit: this.query.belongUnit,
+        recordType: this.query.recordType,
+      };
       if (this.query.date && this.query.date.length > 0) {
-        this.pageParams.entity.startDate = this.query.date[0];
-        this.pageParams.entity.endDate = this.query.date[1];
+        entity.startDate = this.query.date[0];
+        entity.endDate = this.query.date[1];
       }
-      const params = JSON.parse(JSON.stringify(this.pageParams));
+
+      const params = {
+        current: this.pageParams.current,
+        pageSize: this.pageParams.pageSize,
+        entity,
+      };
+
       page(params)
         .then((res) => {
-          if (res.success && res.data) {
+          if (res.code === 0) {
             this.tableData = res.data.records;
             this.pageParams.total = res.data.total;
           } else {
@@ -385,34 +353,6 @@ export default {
           this.$refs.form.loadDialog(row, "edit");
         }
       });
-    },
-
-    // 处理删除
-    deleteHandle(row) {
-      deleteDustPoint(row).then((res) => {
-        if (!res.success) {
-          return this.$message.error(
-            "删除失败：" + (res.message || "未知错误")
-          );
-        }
-        this.$message.success("删除成功");
-        this.getTableData();
-      });
-    },
-
-    // 确认删除
-    async handelDeleteRow(row) {
-      try {
-        await this.$confirm("确认删除吗?", "提示", {
-          confirmButtonText: "确定",
-          cancelButtonText: "取消",
-          closeOnClickModal: false,
-          type: "warning",
-        });
-        this.deleteHandle(row);
-      } catch (e) {
-        console.error(e);
-      }
     },
   },
 };

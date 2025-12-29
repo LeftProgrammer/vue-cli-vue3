@@ -2,11 +2,11 @@
   <div class="page-list">
     <table-layout
       :page="pageParams"
+      title="安全管理制度列表"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
-      title="安全管理制度列表"
     >
       <template slot="form">
         <el-form :model="pageParams.entity" :inline="true">
@@ -14,13 +14,13 @@
             <el-input
               v-model="pageParams.entity.regulationName"
               placeholder="请输入"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="制度编号:">
             <el-input
               v-model="pageParams.entity.regulationCode"
               placeholder="请输入"
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="签发单位:">
             <el-cascader
@@ -28,7 +28,7 @@
               :props="unitTreeProps"
               :show-all-levels="false"
               :options="unitTree"
-            ></el-cascader>
+            />
           </el-form-item>
         </el-form>
       </template>
@@ -65,8 +65,7 @@
             header-align="center"
             align="left"
             :width="$calculateWidth(350)"
-          >
-          </el-table-column>
+          />
           <el-table-column
             label="签发单位"
             prop="issuanceUnit"
@@ -128,16 +127,16 @@
     </table-layout>
 
     <dataform
-      :enterAble="enterAble"
-      :title="title"
-      :unitTree="unitTree"
       v-if="oprateRow.dialogShow"
+      :enter-able="enterAble"
+      :title="title"
+      :unit-tree="unitTree"
       :visible="oprateRow.dialogShow"
       :data="oprateRow"
       :date="type"
       :readonly="oprateRow.isView"
       @sureson="sureson"
-    ></dataform>
+    />
     <!-- <dataform
       :enterAble="enterAble"
       :title="title"
@@ -161,14 +160,14 @@ import dataform from "./dataform";
 import bimShow from "@/components/Bim/Show";
 
 export default {
-  name: "regime",
-  mixins: [ListMixin],
+  name: "Regime",
   components: {
     TableLayout,
     ListButton,
     dataform,
     bimShow,
   },
+  mixins: [ListMixin],
   data() {
     return {
       showExportBtn: true,
@@ -239,6 +238,10 @@ export default {
         name = arr[0].name;
       }
       return name;
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     query() {
       this.pageParams.current = 1;

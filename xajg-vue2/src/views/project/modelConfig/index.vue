@@ -4,7 +4,7 @@
       :page="pageParams"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
     >
       <template slot="form">
@@ -153,6 +153,11 @@ export default {
     closedDialog() {
       console.log("对话框已关闭");
       // 此处不需要做任何操作，因为对话框通过内部的visible属性自行控制
+    },
+
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
 
     // 详情查看

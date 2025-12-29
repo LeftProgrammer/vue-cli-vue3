@@ -162,7 +162,10 @@ export default {
           this.pos.length > 0 ? JSON.stringify(this.pos) : ''
         )
       } else {
-        this.$emit('change', JSON.stringify(this.coverPos))
+        this.$emit(
+          'change',
+          this.coverPos.length > 0 ? JSON.stringify(this.coverPos) : ''
+        )
       }
     },
     // 模型加载完成后

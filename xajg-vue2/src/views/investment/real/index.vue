@@ -3,7 +3,7 @@
     <table-layout
       title="实际投资列表"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -149,6 +149,11 @@ export default {
   methods: {
     dateFormat,
     moment,
+
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
 
     /**
      * @description 保存成功回调

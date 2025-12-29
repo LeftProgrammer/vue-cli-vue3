@@ -3,7 +3,7 @@
     <table-layout
       title="隐患排查"
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -171,7 +171,7 @@
               {{ dateFormat(row.rectifyDate, "YYYY-MM-DD") }}
             </template>
           </el-table-column>
-          <el-table-column
+          <!-- <el-table-column
             label="逾期情况"
             prop="overdueState"
             align="center"
@@ -197,7 +197,7 @@
               }}
               </el-tag>
             </template>
-          </el-table-column>
+          </el-table-column> -->
           <el-table-column
             label="隐患上报人"
             prop="hiddenDangerReportorFullname"
@@ -224,10 +224,7 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="scope">
-              <flow-status
-                :row="scope.row"
-                :flow-name="scope.row.flowName"
-              />
+              <flow-status :row="scope.row" :flow-name="scope.row.flowName" />
             </template>
           </el-table-column>
           <el-table-column
@@ -511,6 +508,10 @@ export default {
         });
       }
       this.flowStatusOptions = data;
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     deletedata(row) {
       console.log(row);

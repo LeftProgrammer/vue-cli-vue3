@@ -10,7 +10,7 @@
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
       @reset="reset"
-      @query="getTableData"
+      @query="handleQuery"
     >
       <template slot="form">
         <el-form :model="query" :inline="true">
@@ -382,6 +382,10 @@ export default {
     // this.getFlowStatus();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     /** 工程部位可查看 */
     getPbsName(val) {
       let text = "*";

@@ -255,7 +255,7 @@
             :page="pageParams"
             @pageSizeChange="handleSizeChange"
             @pageCurrentChange="handleCurrentChange"
-            @query="getTableData"
+            @query="handleQuery"
             @reset="reset"
             :showSearchBtn="false"
             title="监测记录台账"
@@ -440,6 +440,10 @@ export default {
         console.log("bgWidth:" + this.bgWidth);
         this.initTree();
       };
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     tabsHandleClick() {
       this.getTableData();

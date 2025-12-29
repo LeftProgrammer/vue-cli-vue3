@@ -3,12 +3,12 @@
     <treeTableLayout
       :page="pageParams"
       :title="title"
-      :showSearchBtns="false"
-      @query="getTableData"
+      :show-search-btns="false"
+      :show-export-btn="showExportBtn"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      :showExportBtn="showExportBtn"
       @initExportParams="initExportParams"
     >
       <template slot="opratebtns">&nbsp;</template>
@@ -21,7 +21,7 @@
             reset();
             getTableData();
           "
-          >月度计划
+        >月度计划
         </el-button>
         <el-button
           type="primary"
@@ -31,7 +31,7 @@
             reset();
             getTableData();
           "
-          >年度计划
+        >年度计划
         </el-button>
         <el-button
           type="primary"
@@ -41,7 +41,7 @@
             reset();
             getTableData();
           "
-          >总计划
+        >总计划
         </el-button>
         <el-button
           type="primary"
@@ -51,7 +51,7 @@
             reset();
             getTableData();
           "
-          >全部
+        >全部
         </el-button>
       </template>
 
@@ -62,9 +62,9 @@
           default-expand-all
           :data="treeData"
           :props="defaultProps"
-          @node-click="handleNodeClick"
           highlight-current
-        ></el-tree>
+          @node-click="handleNodeClick"
+        />
       </template>
       <!-- v-if="flowInited || rows.length === 0" -->
       <template slot="table">
@@ -167,8 +167,7 @@
           >
             <template #default="{ row }">
               <div class="">
-                <el-button type="text" @click="details(row, 'view')"
-                  >查看
+                <el-button type="text" @click="details(row, 'view')">查看
                 </el-button>
               </div>
             </template>
@@ -274,6 +273,10 @@ export default {
     this.getSectionList();
   },
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     /**初始化导出Excel参数 */
     initExportParams(exportParams) {
       exportParams.url = "/api/schedule/management/export";

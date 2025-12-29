@@ -2,7 +2,7 @@
   <div style="width: 100%; height: 100%; padding: 15px">
     <table-layout
       :page="pageParams"
-      @query="getTableData"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -118,7 +118,7 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="{ row }">
-              {{ dateFormat(row.createDate, 'YYYY-MM-DD') }}
+              {{ dateFormat(row.createDate, "YYYY-MM-DD") }}
             </template>
           </el-table-column>
           <el-table-column
@@ -143,8 +143,8 @@
             <template slot-scope="scope">
               <flow-status
                 :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -156,10 +156,10 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deletedata"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -167,25 +167,25 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
 <script>
-import { page, remove, unitAllList } from './api'
-import { FlowListMixin } from '@/mixins/FlowListMixin'
-import TableLayout from '@/components/ContentLayout/Table'
-import enums from '@/config/enums'
-import { dateFormat } from '@/utils'
-import moment from 'moment'
+import { page, remove, unitAllList } from "./api";
+import { FlowListMixin } from "@/mixins/FlowListMixin";
+import TableLayout from "@/components/ContentLayout/Table";
+import enums from "@/config/enums";
+import { dateFormat } from "@/utils";
+import moment from "moment";
 
 export default {
-  name: 'investGeneralPay',
-  mixins: [FlowListMixin],
+  name: "InvestGeneralPay",
   components: { TableLayout },
+  mixins: [FlowListMixin],
   data() {
     return {
       sectionOptions: [],
@@ -193,145 +193,149 @@ export default {
       pageParams: {
         orderProperties: [
           {
-            property: 'createDate',
-            asc: false
-          }
+            property: "createDate",
+            asc: false,
+          },
         ],
         pageSize: 20,
         size: 20,
         current: 1,
         total: 0,
         entity: {
-          params: {}
-        }
+          params: {},
+        },
       },
       tableData: [],
       /**流程状态 */
       flowStatusOptions: [], //PROC_TASK_TODO_STATUS
-      notFirst: false
-    }
+      notFirst: false,
+    };
   },
   created() {
-    this.getFlowStatus()
-    this.getUnitList()
+    this.getFlowStatus();
+    this.getUnitList();
   },
   methods: {
     dateFormat,
     moment,
     async getUnitList() {
-      const { data, success } = await unitAllList()
+      const { data, success } = await unitAllList();
       if (success) {
         this.unitOptions = data
           .filter((x) => x.corpPid)
           .sort((a, b) => {
-            return a.corpSort - b.corpSort
-          })
+            return a.corpSort - b.corpSort;
+          });
       }
     },
     getCodeName(row, type) {
-      let name = row[type] || row.designSupply?.[type] || ''
-      return name
+      let name = row[type] || row.designSupply?.[type] || "";
+      return name;
     },
     getText(options, value) {
-      let a = []
+      let a = [];
       if (value) {
-        value = value.split(',')
+        value = value.split(",");
         a = value.map((x) => {
-          let item = options.find((y) => y.id == x)
+          let item = options.find((y) => y.id == x);
           if (item) {
-            return item.name
+            return item.name;
           }
-        })
+        });
       }
-      return a.toString()
+      return a.toString();
     },
 
     //表格序号
     getIndex(index) {
-      let curpage = this.pageParams.current //单前页码，具体看组件取值
-      let limitpage = this.pageParams.pageSize //每页条数，具体是组件取值
-      return index + 1 + (curpage - 1) * limitpage
+      let curpage = this.pageParams.current; //单前页码，具体看组件取值
+      let limitpage = this.pageParams.pageSize; //每页条数，具体是组件取值
+      return index + 1 + (curpage - 1) * limitpage;
     },
 
     reset() {
       this.pageParams = {
         orderProperties: [
           {
-            property: 'createDate',
-            asc: false
-          }
+            property: "createDate",
+            asc: false,
+          },
         ],
         pageSize: 20,
         size: 20,
         current: 1,
         total: 0,
         entity: {
-          params: {}
-        }
-      }
-      this.getTableData()
+          params: {},
+        },
+      };
+      this.getTableData();
+    },
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
     },
     getTableData(pageInfo) {
-      const pageParams = Object.assign(this.pageParams, pageInfo)
+      const pageParams = Object.assign(this.pageParams, pageInfo);
       if (pageParams.entity.createData?.length > 0) {
-        pageParams.entity.startCreateDate = pageParams.entity.createData[0]
-        pageParams.entity.endCreateDate = pageParams.entity.createData[1]
-        delete pageParams.createData
+        pageParams.entity.startCreateDate = pageParams.entity.createData[0];
+        pageParams.entity.endCreateDate = pageParams.entity.createData[1];
+        delete pageParams.createData;
       }
-      pageParams.entity.type = 1
+      pageParams.entity.type = 1;
       page(pageParams).then((res) => {
         if (res.success) {
-          this.tableData = res.data.records
-          this.pageParams.total = res.data.total
+          this.tableData = res.data.records;
+          this.pageParams.total = res.data.total;
           console.log(
-            '🚀 ~ getTableData ~ this.$route.query.id && !this.notFirst:',
+            "🚀 ~ getTableData ~ this.$route.query.id && !this.notFirst:",
             this.$route.query.id,
             this.notFirst
-          )
+          );
           if (this.$route.query.id && !this.notFirst) {
-            this.notFirst = true
+            this.notFirst = true;
             const row = this.tableData.find(
               (item) => item.id === this.$route.query.id
-            )
+            );
             this.handelShowDialog(
               row,
-              'fine',
+              "fine",
               row.procMatterTaskDone || row.matterTaskTodo || row.procMatterRun,
-              'view'
-            )
+              "view"
+            );
           }
         }
-      })
+      });
     },
     /**获取流程状态字典 */
     getFlowStatus() {
-      let data = []
-      let options = enums.FLOW_STATUS_ENUM
+      let data = [];
+      let options = enums.FLOW_STATUS_ENUM;
       for (const key in options) {
         data.push({
           id: options[key].value,
           dictCode: options[key].value,
-          dictName: options[key].name
-        })
+          dictName: options[key].name,
+        });
       }
-      this.flowStatusOptions = data
+      this.flowStatusOptions = data;
     },
     deletedata(row) {
       if (!row.id) {
-        return
+        return;
       }
       remove({
-        id: row.id
+        id: row.id,
       }).then((res) => {
         if (res.success) {
-          this.getTableData()
+          this.getTableData();
         } else {
-          this.$message.error('数据删除异常，' + res.message)
+          this.$message.error("数据删除异常，" + res.message);
         }
-      })
-    }
-  }
-}
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss"></style>

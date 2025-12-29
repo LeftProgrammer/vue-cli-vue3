@@ -3,9 +3,9 @@
     <table-layout
       :title="showPlan ? baseData.name : '进度计划'"
       :page="pageParams"
-      :showPage="!showPlan"
-      :showSearchBtns="!showPlan"
-      @query="getTableData"
+      :show-page="!showPlan"
+      :show-search-btns="!showPlan"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
@@ -13,10 +13,10 @@
       <!-- 查询表单 -->
       <template slot="form">
         <el-form :model="pageParams.name" :inline="true">
-          <el-form-item label="计划名称:" v-if="!showPlan">
-            <el-input v-model="pageParams.entity.name" placeholder="请输入"/>
+          <el-form-item v-if="!showPlan" label="计划名称:">
+            <el-input v-model="pageParams.entity.name" placeholder="请输入" />
           </el-form-item>
-          <el-form-item label="标段:" v-if="!showPlan">
+          <el-form-item v-if="!showPlan" label="标段:">
             <el-select
               v-model="pageParams.entity.sectionId"
               placeholder="请选择"
@@ -174,7 +174,7 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="scope">
-              <flow-status :row="scope.row" :flowName="scope.row.flowName"/>
+              <flow-status :row="scope.row" :flow-name="scope.row.flowName" />
             </template>
           </el-table-column>
           <el-table-column
@@ -206,7 +206,7 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 :btns="[
                   { title: '办理', method: 'deal' },
                   { title: '催办', method: 'press' },
@@ -240,20 +240,20 @@
           ref="gantt"
           class="w-100pre h-100pre"
           @ganttHandleClick="ganttHandleClick"
-        ></gantt>
+        />
       </template>
     </table-layout>
     <planModal
       v-if="showPlanDetail"
       :visible="showPlanDetail"
       :data="planDetailData"
-      :baseId="baseData.id"
+      :base-id="baseData.id"
       :type="planModalType"
       @sureson="sureson"
     />
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
     />
@@ -402,7 +402,10 @@ export default {
       };
       this.getTableData();
     },
-
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     getTableData(pageInfo) {
       const pageParams = Object.assign(this.pageParams, pageInfo);
       if (pageParams.entity.createDate?.length > 0) {

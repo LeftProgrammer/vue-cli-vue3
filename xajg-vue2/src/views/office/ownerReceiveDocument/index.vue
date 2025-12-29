@@ -3,16 +3,16 @@
     <treeTableLayout
       :page="pageParams"
       :title="title"
-      @query="getTableData"
+      :show-export-btn="true"
+      @query="handleQuery"
       @reset="reset"
       @pageSizeChange="handleSizeChange"
       @pageCurrentChange="handleCurrentChange"
-      :showExportBtn="true"
       @initExportParams="initExportParams"
     >
       <template slot="opratebtns">
-        <el-button type="primary" @click="syncOa" :disabled="oaLoading">
-          <i class="el-icon-refresh" :class="oaLoading ? 'oa-loading' : ''"></i>
+        <el-button type="primary" :disabled="oaLoading" @click="syncOa">
+          <i class="el-icon-refresh" :class="oaLoading ? 'oa-loading' : ''" />
           同步OA
         </el-button>
       </template>
@@ -23,22 +23,22 @@
               v-model="query.code"
               placeholder="请输入编号"
               clearable
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="标题:" size="mini">
             <el-input
               v-model="query.title"
               placeholder="请输入标题"
               clearable
-            ></el-input>
+            />
           </el-form-item>
           <el-form-item label="文种:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               ref="flowStateRef"
               v-model="query.type"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in wzCodeOptions"
@@ -50,11 +50,11 @@
           </el-form-item>
           <el-form-item label="已上报:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               ref="flowStateRef"
               v-model="query.sendStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in sendOaOption"
@@ -71,15 +71,14 @@
               type="daterange"
               value-format="yyyy-MM-dd"
               style="width: 230px"
-            >
-            </el-date-picker>
+            />
           </el-form-item>
           <el-form-item label="收文状态:" size="mini">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="query.signStatus"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
               <el-option
                 v-for="item in signStatusOptions"
@@ -99,13 +98,13 @@
           default-expand-all
           :data="treeData"
           :props="defaultProps"
-          @node-click="handleNodeClick"
           highlight-current
           :current-node-key="'1'"
-        ></el-tree>
+          @node-click="handleNodeClick"
+        />
       </template>
       <!-- v-if="flowInited || rows.length === 0" -->
-      <template v-slot:table>
+      <template #table>
         <!-- v-if="flowInited" -->
         <el-table
           ref="multipleTable"
@@ -236,7 +235,7 @@
             excel.sort="6"
           >
             <template slot-scope="scope">
-              <bim-show :pbsCode="scope.row.pbsCode"></bim-show>
+              <bim-show :pbs-code="scope.row.pbsCode" />
             </template>
           </el-table-column>
           <el-table-column
@@ -262,8 +261,7 @@
                     color:
                       row.signStatus == 3 || row.signStatus == 4 ? 'red' : '',
                   }"
-                  >{{ getSignStatus(row) }}</span
-                >
+                >{{ getSignStatus(row) }}</span>
               </span>
             </template>
           </el-table-column>
@@ -280,8 +278,8 @@
                 row.sendStatus == 1
                   ? "已上报"
                   : row.sendStatus == 2
-                  ? "已退回"
-                  : "未上报"
+                    ? "已退回"
+                    : "未上报"
               }}</span>
             </template>
           </el-table-column>
@@ -290,13 +288,11 @@
               <div class="flex justify-center align-center">
                 <template v-if="showEdit(row)">
                   <el-link type="primary" @click="reply(row)">回复</el-link>
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                 </template>
-                <el-button type="text" @click="details(row, 'view')"
-                  >查看</el-button
-                >
+                <el-button type="text" @click="details(row, 'view')">查看</el-button>
                 <template v-if="isSystem">
-                  <el-divider direction="vertical"></el-divider>
+                  <el-divider direction="vertical" />
                   <el-link type="danger" plain @click="deleteHandle(row)">
                     管理员删除
                   </el-link>
@@ -305,22 +301,19 @@
                   <el-button
                     :disabled="
                       row.signStatus == 3 ||
-                      row.signStatus == 4 ||
-                      row.signStatus == 5
+                        row.signStatus == 4 ||
+                        row.signStatus == 5
                     "
                     type="text"
                     @click="details(row, 'edit')"
-                    >办理</el-button
-                  >
+                  >办理</el-button>
                   <el-button
                     :disabled="
                       row.sendStatus == 1 || row.sending ? true : false
                     "
                     type="text"
                     @click="reportOa(row)"
-                    ><i v-if="row.sending" class="el-icon-loading"></i
-                    >上报OA</el-button
-                  >
+                  ><i v-if="row.sending" class="el-icon-loading" />上报OA</el-button>
                 </template>
               </div>
             </template>
@@ -328,7 +321,7 @@
         </el-table>
       </template>
     </treeTableLayout>
-    <components :is="componentsName" ref="dataform" @close="close"></components>
+    <components :is="componentsName" ref="dataform" @close="close" />
     <!-- <dataform ref="dataform" @close="close" /> -->
   </div>
 </template>
@@ -450,6 +443,10 @@ export default {
   },
 
   methods: {
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     async reply(row) {
       // 存下当前的发文的id
       this.$setStorage("reply", {

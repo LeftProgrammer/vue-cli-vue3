@@ -77,7 +77,7 @@
             v-if="formData.videoType == 'RTSP' || formData.videoType == 'YSXY'"
             :span="12"
           >
-            <el-form-item label="channelId" prop="channelId">
+            <el-form-item label="识别号" prop="channelId">
               <el-input
                 v-model="formData.channelId"
                 placeholder="请输入"
@@ -227,7 +227,7 @@ export default {
     ContentLayout,
     BimEngine,
     RelatePlace,
-    bimPoint,
+    bimPoint
   },
   mixins: [FormMixin],
   data() {
@@ -238,18 +238,16 @@ export default {
       formData: {
         id: null,
         regionType: "",
-        videoType: "M3U8",
+        videoType: "M3U8"
       },
       formDataRules: {
         code: [{ required: true, message: "请输入", trigger: "blur" }],
         name: [{ required: true, message: "请输入名称", trigger: "blur" }],
-        discernNumber: [
-          { required: true, message: "请输入识别号", trigger: "blur" },
-        ],
+        discernNumber: [{ required: true, message: "请输入", trigger: "blur" }],
         ranges: [{ required: true, message: "请选择", trigger: "change" }],
         regionType: [{ required: true, message: "请选择", trigger: "change" }],
         videoType: [{ required: true, message: "请选择", trigger: "change" }],
-        channelId: [{ required: true, message: "请输入", trigger: "change" }],
+        channelId: [{ required: true, message: "请输入", trigger: "change" }]
       },
       /**bim相关参数 */
       bimconfig: bimconfig.find((x) => x.use) || {},
@@ -257,11 +255,11 @@ export default {
       ssqyList: [],
       jklxList: [],
       jksblxList: [],
-      sectionList: [],
+      sectionList: []
     };
   },
   computed: {
-    ...mapGetters(["sidebar", "menuRoutes"]),
+    ...mapGetters(["sidebar", "menuRoutes"])
   },
   watch: {
     visible: {
@@ -278,8 +276,8 @@ export default {
         this.dialogShow = newValue;
       },
       immediate: true,
-      deep: true,
-    },
+      deep: true
+    }
   },
   async created() {
     this.jcxmDictItem();
@@ -292,20 +290,20 @@ export default {
     /**显示弹窗 */
     visible: {
       type: Boolean,
-      default: false,
+      default: false
     },
     treeNode: {
       type: Object,
-      default: () => {},
+      default: () => {}
     },
     type: {
       type: String,
-      default: "",
+      default: ""
     },
     title: {
       type: String,
-      default: "",
-    },
+      default: ""
+    }
   },
   methods: {
     selectDeviceInfo() {
@@ -437,8 +435,8 @@ export default {
       console.log(e, "父组件获取");
       this.point = e.join(",");
       this.pointShow = true;
-    },
-  },
+    }
+  }
 };
 </script>
 
