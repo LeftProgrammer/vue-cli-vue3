@@ -17,6 +17,8 @@ import base from "@/common/js/base.js"; // 导入公用方法
 import draggable from "@/utils/dialogdrag";
 import watermark from "@/utils/watermark"; // 水印指令
 import debounce from "@/utils/debounce.js"; // 防抖指令
+import vue3TreeOrg from 'vue3-tree-org';
+import "vue3-tree-org/lib/vue3-tree-org.css";
 
 const app = createApp(App);
 
@@ -217,5 +219,6 @@ app.use(ElementPlus, {
   locale: zhCn,
 });
 
+app.use(vue3TreeOrg); // 注册组织架构树组件
 app.use(MyPlugin); // 使用插件注册全局组件
 app.use(store).use(router).mount("#app");
