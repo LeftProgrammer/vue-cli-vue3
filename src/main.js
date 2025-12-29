@@ -13,10 +13,19 @@ import { download as handleExportDownload } from "@/utils/request";
 import setupSvgIcon from "@/icons";
 import draggable from "@/utils/dialogdrag";
 import { fromApp } from "@/utils";
+import MyPlugin from "@/common/js/MyPlugin.js"; // 导入公用插件
+import base from "@/common/js/base.js"; // 导入公用方法
+import watermark from "@/utils/watermark"; // 水印指令
+import "@/utils/debounce.js"; // 防抖工具
 
 const app = createApp(App);
 
 setupSvgIcon(app);
+
+// 遍历base工具包内部方法，挂载到vue实例上面
+Object.keys(base).forEach((item) => {
+  app.config.globalProperties["$" + item] = base[item];
+});
 
 const bus = {
   arr: [],
@@ -200,10 +209,12 @@ app.directive("thousands", {
 });
 
 app.directive("draggable", draggable);
+app.directive("watermark", watermark);
 
 app.use(ElementPlus, {
   size: "medium",
   locale: zhCn,
 });
 
+app.use(MyPlugin); // 使用插件注册全局组件
 app.use(store).use(router).mount("#app");
