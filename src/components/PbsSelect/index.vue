@@ -85,7 +85,7 @@ export default {
     ContentLayout,
     ArrowRight,
   },
-  emits: ["update:pbsId", "change", "closed"],
+  emits: ["update:modelValue", "update:pbsId", "change", "closed"],
   data() {
     return {
       /**显示弹窗 */
@@ -114,6 +114,11 @@ export default {
     };
   },
   props: {
+    /** Vue3 默认 v-model */
+    modelValue: {
+      type: String,
+      default: "",
+    },
     /**已经选中pbs对应的code信息 */
     pbsId: {
       type: String,
@@ -152,6 +157,9 @@ export default {
       let fromapp = fromApp();
       return fromapp;
     },
+    effectivePbsId() {
+      return this.modelValue !== undefined && this.modelValue !== null && this.modelValue !== "" ? this.modelValue : this.pbsId;
+    },
     /**pbs名称 */
     pbsName() {
       let name = this.pbs?.pathName || this.pbs?.name;
@@ -169,16 +177,8 @@ export default {
   watch: {
     dialogShow: {
       handler(newValue) {
-        // console.log(
-        //   "visible",
-        //   newValue,
-        //   this.pbsId,
-        //   this.pbs?.name,
-        //   this.readonly
-        // );
         if (newValue) {
           this.load();
-        } else {
         }
       },
       immediate: true,
@@ -186,7 +186,21 @@ export default {
     },
     pbsId: {
       handler(newValue) {
-        if (newValue) {
+        if (this.modelValue !== undefined && this.modelValue !== null && this.modelValue !== "") {
+          return;
+        }
+        if (this.effectivePbsId) {
+          this.getPbs();
+        } else {
+          this.pbs = {};
+        }
+      },
+      immediate: true,
+      deep: true,
+    },
+    modelValue: {
+      handler(newValue) {
+        if (this.effectivePbsId) {
           this.getPbs();
         } else {
           this.pbs = {};
@@ -207,8 +221,8 @@ export default {
     //通过pbsId请求pbs
     getPbs() {
       this.pbs = {};
-      if (this.pbsId) {
-        let pbsId = this.pbsId;
+      if (this.effectivePbsId) {
+        let pbsId = this.effectivePbsId;
         let fn = getByCode;
         if (this.type === _type.id) {
           fn = get;
@@ -264,6 +278,7 @@ export default {
       if (this.type === _type.id) {
         value = this.pbs.id;
       }
+      this.$emit("update:modelValue", value);
       this.$emit("update:pbsId", value);
       this.$emit("change", value, this.pbs);
       // console.log("confirmHandle", JSON.stringify(this.pbs));
