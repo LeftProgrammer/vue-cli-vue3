@@ -88,7 +88,7 @@
         />
       </el-tab-pane>
       <el-tab-pane label="组织机构图" name="image">
-        <vue3-tree-org v-if="treeData" :data="treeData" />
+        <vue3-tree-org v-if="treeData" :data="treeData" :tool-bar="false" :scalable="false" />
       </el-tab-pane>
     </el-tabs>
   </div>
@@ -211,6 +211,7 @@ export default {
 
 <style scoped lang="scss">
 .Organization {
+  padding: 12px;
   height: 100%;
   
   :deep(.el-tabs) {
@@ -231,6 +232,11 @@ export default {
           }
         }
       }
+    }
+
+    .zoom-container {
+      display: flex;
+      justify-content: center;
     }
   }
 }
