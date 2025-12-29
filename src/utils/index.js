@@ -71,3 +71,125 @@ export function windowOpen(url, target = "_blank") {
     void e;
   }
 }
+
+// 解析时间
+export function parseTime(time, cFormat) {
+  if (arguments.length === 0) {
+    return null;
+  }
+  const format = cFormat || "{y}-{m}-{d} {h}:{i}:{s}";
+  let date;
+  if (typeof time === "object") {
+    date = time;
+  } else {
+    if (("" + time).length === 10) time = parseInt(time) * 1000;
+    date = new Date(time);
+  }
+  const formatObj = {
+    y: date.getFullYear(),
+    m: date.getMonth() + 1,
+    d: date.getDate(),
+    h: date.getHours(),
+    i: date.getMinutes(),
+    s: date.getSeconds(),
+    a: date.getDay(),
+  };
+  const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
+    let value = formatObj[key];
+    if (key === "a") {
+      return ["一", "二", "三", "四", "五", "六", "日"][value - 1];
+    }
+    if (result.length > 0 && value < 10) {
+      value = "0" + value;
+    }
+    return value || 0;
+  });
+  return time_str;
+}
+
+// 格式化时间
+export function formatTime(time, option) {
+  time = +time * 1000;
+  const d = new Date(time);
+  const now = Date.now();
+
+  const diff = (now - d) / 1000;
+
+  if (diff < 30) {
+    return "刚刚";
+  } else if (diff < 3600) {
+    return Math.ceil(diff / 60) + "分钟前";
+  } else if (diff < 3600 * 24) {
+    return Math.ceil(diff / 3600) + "小时前";
+  } else if (diff < 3600 * 24 * 2) {
+    return "1天前";
+  }
+  if (option) {
+    return parseTime(time, option);
+  } else {
+    return (
+      d.getMonth() +
+      1 +
+      "月" +
+      d.getDate() +
+      "日" +
+      d.getHours() +
+      "时" +
+      d.getMinutes() +
+      "分"
+    );
+  }
+}
+
+// 生成 GUID
+export function guid() {
+  return "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx".replace(/x/g, () =>
+    Math.floor(Math.random() * 16)
+      .toString(16)
+      .toUpperCase()
+  );
+}
+
+// 防抖函数
+export function debounce(fn, wait, immediate) {
+  let timer;
+  return function () {
+    if (timer) clearTimeout(timer);
+    if (immediate) {
+      const callNow = !timer;
+      timer = setTimeout(() => {
+        timer = null;
+      }, wait);
+      if (callNow) fn.apply(this, arguments);
+    } else {
+      timer = setTimeout(() => {
+        fn.apply(this, arguments);
+      }, wait);
+    }
+  };
+}
+
+// 表单重置（需要在 Vue 组件中使用）
+export function resetForm(refName) {
+  if (this.$refs[refName]) {
+    this.$refs[refName].resetFields();
+  }
+}
+
+// 添加 iframe
+export function addFrame(url = "", width = "100px", height = "100px") {
+  return `<iframe src="${url}" width="${width}" height="${height}" frameborder="0"></iframe>`;
+}
+
+// 预览 PDF 文件
+export function viewPdf(fileUrl = "", isOpen = true) {
+  const extension = fileUrl.split(".").pop().toUpperCase();
+  if (extension !== "PDF") {
+    console.error("文件格式错误：只能预览PDF文件");
+    return;
+  }
+  const pdfUrl = isOpen
+    ? `/pdfjs/web/viewer.html?file=${encodeURIComponent(fileUrl)}`
+    : `/pdfjs/web/viewer.html?file=${encodeURIComponent(fileUrl)}`;
+  window.open(pdfUrl, "_blank");
+}
