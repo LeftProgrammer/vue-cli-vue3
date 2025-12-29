@@ -338,9 +338,6 @@ export default {
 
 <style scoped lang="scss">
 .page-list {
-  width: 100%;
-  height: 100%;
-  padding: 15px;
   .el-row {
     height: 100%;
     .el-col {

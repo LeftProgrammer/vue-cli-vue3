@@ -271,7 +271,7 @@ export default {
 }
 
 :deep(.table-cnotent) {
-  height: calc(100% - 40px - -14px) !important;
+  height: calc(100% - 40px - 14px) !important;
 }
 
 .disabledBtn {

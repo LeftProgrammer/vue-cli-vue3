@@ -260,12 +260,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.page-list {
-  width: 100%;
-  height: 100%;
-  padding: 15px;
-}
-
 .el-col .el-input {
   width: 60%;
 }

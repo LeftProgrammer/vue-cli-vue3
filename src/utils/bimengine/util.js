@@ -26,6 +26,10 @@ export function setcookie (name, value){
   expdate.setTime(expdate.getTime() + 24 * 60 * 60 * 1000);   //设置过期时间，单位毫秒，这里以一天过期时间为例
   document.cookie = name+"="+value+";expires="+expdate.toGMTString()+";path=/";
 }
+export function removeCookie(name) {
+  // 删除指定名称的 Cookie，通过设置过期时间为过去的时间
+  document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/";
+}
 export function handleScrollHeader (callback) {
   let timer = 0
 

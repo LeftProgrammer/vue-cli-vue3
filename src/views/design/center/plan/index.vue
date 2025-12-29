@@ -59,7 +59,7 @@
         </el-button>
       </template>
       <template #table>
-        <el-table ref="multipleTable" :data="tableData" height="100%" border>
+        <el-table ref="multipleTable" :data="tableData" height="100%" border style="width: 100%">
           <el-table-column
             label="序号"
             type="index"
@@ -195,7 +195,6 @@
                 :flowName="flowName"
                 @click="handelShowDialog"
                 @delete="deletedata"
-                v-if="!flowShow"
               ></flow-button>
             </template>
           </el-table-column>
