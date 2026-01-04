@@ -100,7 +100,7 @@
 	.line-#{$i} { line-height: $i + px;}
 }
 
-@for $i from 0 through 9999 {
+@for $i from 0 through 100 {
 	.index-#{$i} { z-index: $i;}
 }
 

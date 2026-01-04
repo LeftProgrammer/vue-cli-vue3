@@ -557,7 +557,18 @@ export default {
         return;
       }
 
-      api = new API(defaults);
+      // 确保 secretkey 配置正确
+      if (!defaults.secretkey) {
+        defaults.secretkey = '';
+      }
+
+      try {
+        api = new API(defaults);
+      } catch (error) {
+        console.error('BIM API 初始化失败:', error);
+        this.$message && this.$message.error('BIM 引擎初始化失败: ' + error.message);
+        return;
+      }
       api.Public.addImageryProvider("https://image.glendale.top", true, {
         serverType: 1,
         maximumLevel: 21,

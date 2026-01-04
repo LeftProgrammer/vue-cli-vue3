@@ -19,6 +19,10 @@ const types = {
 };
 
 let getGetValue = (v) => {
+  // 如果值为 null、undefined 或空字符串，直接返回空字符串
+  if (!v || v === 'null' || v === 'undefined') {
+    return '';
+  }
   let r;
   try {
     r = JSON.parse(v);
