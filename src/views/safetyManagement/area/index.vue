@@ -162,37 +162,15 @@ export default {
   created() {},
   mounted() {
     this.$nextTick(async () => {
-      try {
-        // 清理可能存在的无效 sessionStorage 数据
-        const secretKey = sessionStorage.getItem("BIM_SECRETKEY");
-        if (secretKey === 'null' || secretKey === 'undefined' || secretKey === '') {
-          sessionStorage.removeItem("BIM_SECRETKEY");
-        }
-        
-        if (this.$refs.bimDom && this.$refs.bimDom.InitEngine) {
-          await this.$refs.bimDom.InitEngine();
-        }
-      } catch (e) {
-        console.error('BIM引擎初始化失败:', e);
-        
-        // 如果是 JSON 解析错误，清理 sessionStorage 后重试
-        if (e.message && e.message.includes('JSON')) {
-          console.log('检测到 JSON 解析错误，清理缓存后重试...');
-          sessionStorage.removeItem("BIM_SECRETKEY");
-          
-          setTimeout(async () => {
-            try {
-              if (this.$refs.bimDom && this.$refs.bimDom.InitEngine) {
-                await this.$refs.bimDom.InitEngine();
-              }
-            } catch (retryError) {
-              console.error('BIM引擎重试失败:', retryError);
-              this.$message && this.$message.error('BIM 引擎初始化失败，请刷新页面重试');
-            }
-          }, 1000);
-        } else {
-          this.$message && this.$message.error('BIM 引擎初始化失败: ' + e.message);
-        }
+      // 清理可能存在的无效 sessionStorage 数据
+      const secretKey = sessionStorage.getItem("BIM_SECRETKEY");
+      if (secretKey === 'null' || secretKey === 'undefined' || secretKey === '') {
+        sessionStorage.removeItem("BIM_SECRETKEY");
+      }
+      
+      // 简化初始化逻辑，直接调用
+      if (this.$refs.bimDom && this.$refs.bimDom.InitEngine) {
+        await this.$refs.bimDom.InitEngine();
       }
     });
   },

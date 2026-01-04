@@ -7,9 +7,9 @@
     </el-input>
     <!--BIM显示弹窗-->
     <el-dialog
+      v-model="dialogShow"
       :title="'三维模型视图' + '（' + pbsCode + '）'"
       custom-class="wbench-el-dialog"
-      v-model="dialogShow"
       :destroy-on-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -72,24 +72,6 @@ export default {
   components: {
     BimEngine
   },
-  emits: ['update:bimCode', 'change', 'closed'],
-  data() {
-    return {
-      /**弹窗显示 */
-      dialogShow: false,
-      /**是否点击确认 */
-      isConfirm: false,
-
-      /**左侧列表数据 */
-      tableData: [],
-
-      //默认原始传入的值
-      bimCodeChild: [],
-      //默认展开行
-      expandRowKeys: [],
-      modelList: []
-    }
-  },
   props: {
     /**已经选中pbs对应的bim构件信息 */
     bimCode: {
@@ -110,6 +92,24 @@ export default {
     readonly: {
       type: Boolean,
       default: false
+    }
+  },
+  emits: ['update:bimCode', 'change', 'closed'],
+  data() {
+    return {
+      /**弹窗显示 */
+      dialogShow: false,
+      /**是否点击确认 */
+      isConfirm: false,
+
+      /**左侧列表数据 */
+      tableData: [],
+
+      //默认原始传入的值
+      bimCodeChild: [],
+      //默认展开行
+      expandRowKeys: [],
+      modelList: []
     }
   },
   computed: {},
@@ -315,11 +315,11 @@ export default {
   height: 100%;
 }
 
-::v-deep .el-dialog__body {
+:deep(.el-dialog__body) {
   height: calc(100% - 45px - 57px);
 }
 
-::v-deep .pane-left {
+:deep(.pane-left) {
   .el-table {
     height: 100%;
 
@@ -330,7 +330,7 @@ export default {
   }
 }
 
-::v-deep .indeterminate {
+:deep(.indeterminate) {
   .el-checkbox__input {
     .el-checkbox__inner {
       background-color: #409eff !important;

@@ -329,7 +329,7 @@ export default {
 
 <style lang="scss" scoped>
 .user-select {
-  ::v-deep .el-dialog {
+  :deep(.el-dialog) {
     padding: 0;
   }
 

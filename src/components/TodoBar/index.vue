@@ -92,7 +92,7 @@ export default {
     align-items: center;
   }
 
-  ::v-deep .badge-item .el-badge__content.is-fixed {
+  :deep(.badge-item .el-badge__content.is-fixed) {
     padding: 3px;
     height: 22px;
     line-height: 14px;
@@ -118,7 +118,7 @@ export default {
   color: white;
 }
 
-::v-deep .el-badge__content {
+:deep(.el-badge__content) {
   border: 0;
 }
 </style>

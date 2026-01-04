@@ -173,7 +173,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-::v-deep .el-table {
+:deep(.el-table) {
   .el-table__body tr.current-row > td {
     color: #606266;
     background-color: #b5eaff;
@@ -185,7 +185,7 @@ export default {
   }
 }
 
-/deep/ .el-radio__label {
+:deep(.el-radio__label) {
   display: none;
 }
 </style>

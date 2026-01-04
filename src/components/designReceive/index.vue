@@ -227,7 +227,7 @@ export default {
   .table {
     height: 80%;
 
-    ::v-deep(.el-table__row .cell button) {
+    :deep(.el-table__row .cell button) {
       padding: 5px 10px !important;
       margin: 0 5px;
     }

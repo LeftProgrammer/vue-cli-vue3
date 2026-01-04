@@ -72,7 +72,7 @@ export default {
     }
   }
 
-  ::v-deep(.el-card__header) {
+  :deep(.el-card__header) {
     padding: 10px 10px 10px 20px;
     margin: 0 -10px;
     display: flex;
@@ -94,11 +94,11 @@ export default {
     }
   }
 
-  ::v-deep(.el-card__body) {
+  :deep(.el-card__body) {
     padding: 10px;
   }
 
-  ::v-deep(.el-input-number .el-input__inner) {
+  :deep(.el-input-number .el-input__inner) {
     text-align: left !important;
   }
 }

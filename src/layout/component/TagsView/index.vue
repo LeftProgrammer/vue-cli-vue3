@@ -314,7 +314,7 @@ export default {
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 0 0 3px 0 rgba(0, 0, 0, 0.04);
 
   .tags-view-wrapper {
-    ::v-deep .el-scrollbar__view {
+    :deep(.el-scrollbar__view) {
       border-left: 1px solid #e5e6eb;
       padding: 0 8px;
       text-align: left; // 确保所有标签从左开始排布
@@ -397,7 +397,7 @@ export default {
       transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
       transform-origin: 100% 50%;
 
-      ::v-deep svg {
+      :deep(svg) {
         width: 14px;
         height: 14px;
       }
@@ -405,25 +405,25 @@ export default {
   }
 }
 
-::v-deep .el-scrollbar__wrap {
+:deep(.el-scrollbar__wrap) {
   margin-bottom: 0 !important;
 }
 
-::v-deep .el-scrollbar__wrap::-webkit-scrollbar {
+:deep(.el-scrollbar__wrap::-webkit-scrollbar) {
   width: 0;
   height: 0 !important;
 }
 
-::v-deep .el-scrollbar__thumb {
+:deep(.el-scrollbar__thumb) {
   height: auto !important;
 }
 
-::v-deep .el-scrollbar__bar {
+:deep(.el-scrollbar__bar) {
   display: none;
 }
 
-::v-deep .el-icon-arrow-left,
-.el-icon-arrow-right {
+:deep(.el-icon-arrow-left),
+:deep(.el-icon-arrow-right) {
   background-color: #fff;
   margin-top: auto;
   margin-bottom: auto;

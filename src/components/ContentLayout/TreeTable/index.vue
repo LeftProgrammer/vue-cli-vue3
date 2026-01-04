@@ -153,7 +153,7 @@ export default {
   background: #fff;
 
   // el-tree 选中项背景颜色（保持旧项目风格）
-  ::v-deep .el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content {
+  :deep(.el-tree--highlight-current .el-tree-node.is-current > .el-tree-node__content) {
     background-color: rgba(var(--el-color-primary-rgb), 0.12);
     font-weight: bold;
 
@@ -163,11 +163,11 @@ export default {
   }
 
   // el-tree 聚焦样式
-  ::v-deep .el-tree-node:focus > .el-tree-node__content {
+  :deep(.el-tree-node:focus > .el-tree-node__content) {
     background-color: #ffffff;
   }
 
-  ::v-deep {
+  :deep {
     .el-tree-node__content {
       height: 32px;
 
@@ -209,7 +209,7 @@ export default {
   .content-row {
     height: calc(100% - 40px);
 
-    ::v-deep .el-tree {
+    :deep(.el-tree) {
       & > .el-tree-node > .el-tree-node__content > .el-tree-node__label,
       & > .el-tree-node > .el-tree-node__content > div > .el-tree-node__label {
         font-size: 16px;
@@ -228,7 +228,7 @@ export default {
     }
 
     &.noSplitpane {
-      ::v-deep .splitter-pane-resizer {
+      :deep(.splitter-pane-resizer) {
         pointer-events: none;
       }
     }

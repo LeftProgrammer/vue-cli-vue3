@@ -8,8 +8,8 @@
         <span class="font-12">{{ tips || `请上传${maxSize}M以内的文件` }}</span>
       </div>
       <el-upload
-        class="upload-demo"
         ref="uploadFile"
+        class="upload-demo"
         :action="uploadApi"
         :on-success="handleUploadSuccess"
         width="100%"
@@ -38,11 +38,11 @@
     <!--  文本格式的时候 -->
     <el-row class="table">
       <el-table
+        id="uploadfileTable"
         ref="multipleTable"
         class="w-100pre"
         :data="tableData"
         :border="true"
-        id="uploadfileTable"
       >
         <el-table-column type="index" label="序号" width="50">
         </el-table-column>
@@ -52,22 +52,22 @@
           width="290"
           align="center"
         >
-          <template slot-scope="{ row }">
+          <template #default="{ row }">
             <span>{{ row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column label="文件大小" prop="size" align="center">
-          <template slot-scope="{ row }">
+          <template #default="{ row }">
             <span>{{ $computedSzie(row.size || row.fileSize) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="文件格式" prop="type" align="center">
-          <template slot-scope="{ row }">
+          <template #default="{ row }">
             <span>{{ getFileType(row.name) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="上传进度" prop="percentage" align="center">
-          <template slot-scope="{ row }">
+          <template #default="{ row }">
             <el-progress
               v-if="row.percentage || row.percentage === 0"
               :percentage="getPercentage(row.percentage)"
@@ -78,8 +78,8 @@
 
         <el-table-column label="操作" prop="name" width="220" align="center">
           <template
-            slot-scope="{ row, $index }"
             v-if="!(row.percentage || row.percentage === 0)"
+            #default="{ row, $index }"
           >
             <!--            <el-tooltip-->
             <!--              class="item"-->
@@ -99,21 +99,21 @@
             <!--            </el-tooltip>-->
 
             <el-button
+              type="text"
               @click="
                 $visibleChange($event, 'el-tooltip__popper');
                 $downFileById(row);
               "
-              type="text"
             >
               下载
             </el-button>
 
             <el-button
+              type="text"
               @click="
                 $visibleChange($event, 'el-tooltip__popper');
                 handlePreview(row);
               "
-              type="text"
             >
               预览
             </el-button>
@@ -121,14 +121,15 @@
               title="确定删除吗？"
               @confirm="handleRemoveText($index)"
             >
-              <el-button
-                :disabled="readonly"
-                type="text"
-                slot="reference"
-                :style="{ color: readonly ? '#ccc' : 'red' }"
-              >
-                删除
-              </el-button>
+              <template #reference>
+                <el-button
+                  :disabled="readonly"
+                  type="text"
+                  :style="{ color: readonly ? '#ccc' : 'red' }"
+                >
+                  删除
+                </el-button>
+              </template>
             </el-popconfirm>
           </template>
         </el-table-column>
@@ -136,11 +137,11 @@
     </el-row>
     <el-image
       v-show="false"
+      id="imPre"
+      ref="imageRef"
       style="width: 0; height: 0"
       :src="url"
       :preview-src-list="srcList"
-      ref="imageRef"
-      id="imPre"
       draggable="false"
     >
     </el-image>
@@ -148,17 +149,13 @@
 </template>
 <script>
 import {
-  getNtkoInstalled,
-  getNtkoVersion,
-  getMinioUrl,
-  getNtkoSignParams,
-  getNtkoExe
+  getMinioUrl
 } from '@/utils/ntko'
 import { UploadFileMixin } from '@/mixins/UploadFileMixin'
 
 export default {
-  mixins: [UploadFileMixin],
   components: {},
+  mixins: [UploadFileMixin],
   model: {
     prop: 'uploadFile',
     event: 'change'
@@ -241,7 +238,7 @@ export default {
       uploadFileList: [],
       uploadingFileList: [],
       /**存储刚刚上传的图片json字符串 */
-      _uploadFile: '',
+      uploadFileTemp: '',
       compKey: new Date().getTime() + '',
       srcList: [],
       url: ''
@@ -292,8 +289,8 @@ export default {
           }
           filelist[this.fileNtkoIndex] = file
           this.uploadFileList = [...filelist]
-          this._uploadFile = JSON.stringify(this.uploadFileList)
-          this.$emit('changeNtkoFile', this._uploadFile, this.fileNtkoIndex)
+          this.uploadFileTemp = JSON.stringify(this.uploadFileList)
+          this.$emit('changeNtkoFile', this.uploadFileTemp, this.fileNtkoIndex)
           if (typeof onSuccess === 'function') onSuccess()
           this.$message.success('盖章成功！')
         }
@@ -331,6 +328,7 @@ export default {
       // console.log("event, file", event, file, file.percentage);
       // 计算上传进度
       if (file.percentage === 100) {
+        // 上传完成，不做处理
       } else {
         let fileIndex = this.uploadingFileList.findIndex(
           (x) => x.uid === file.uid
@@ -383,9 +381,12 @@ export default {
             fileUrl: url
           }
         }
-        uni.postMessage({
-          data: JSON.stringify(params)
-        })
+        // 检查是否在 uni-app 环境
+        if (typeof uni !== 'undefined') {
+          uni.postMessage({
+            data: JSON.stringify(params)
+          })
+        }
       } else if (
         file?.blobType &&
         (file.blobType == 'application/pdf' || file.blobType == 'video/mp4')
@@ -603,9 +604,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// ::v-deep .el-upload-list--text.el-upload-list {
-//   display: none;
-// }
 .file-list {
   display: flex;
   justify-content: space-between;

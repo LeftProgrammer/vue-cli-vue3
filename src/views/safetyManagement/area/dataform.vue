@@ -1,8 +1,8 @@
 <template>
   <div>
     <el-dialog
-      :title="title"
       v-model="dialogShow"
+      :title="title"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
       append-to-body
@@ -84,9 +84,19 @@ import BimPoint from "@/components/Bim/Point/index.vue";
 
 export default {
   name: "SafetyAreaForm",
-  mixins: [FormMixin],
   components: {
     BimPoint,
+  },
+  mixins: [FormMixin],
+  props: {
+    view: {
+      type: String,
+      default: "",
+    },
+    title: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
@@ -106,18 +116,26 @@ export default {
     };
   },
   computed: {},
-  created() {},
-  mounted() {},
-  props: {
-    view: {
-      type: String,
-      default: "",
-    },
-    title: {
-      type: String,
-      default: "",
+  watch: {
+    visible: {
+      handler(newValue) {
+        this.dialogShow = newValue;
+        this.$nextTick(() => {
+          const raw = (this.data && this.data.data) ? this.data.data : {};
+          try {
+            this.formData = JSON.parse(JSON.stringify(raw));
+          } catch (e) {
+            this.formData = { ...(raw || {}) };
+          }
+          this.formData.enable = this.formData.enable == 1;
+        });
+      },
+      immediate: true,
+      deep: true,
     },
   },
+  created() {},
+  mounted() {},
   methods: {
     // 确认按钮
     sure() {
@@ -158,24 +176,6 @@ export default {
       this.dialogShow = false;
     },
   },
-  watch: {
-    visible: {
-      handler(newValue) {
-        this.dialogShow = newValue;
-        this.$nextTick(() => {
-          const raw = (this.data && this.data.data) ? this.data.data : {};
-          try {
-            this.formData = JSON.parse(JSON.stringify(raw));
-          } catch (e) {
-            this.formData = { ...(raw || {}) };
-          }
-          this.formData.enable = this.formData.enable == 1;
-        });
-      },
-      immediate: true,
-      deep: true,
-    },
-  },
 };
 </script>
 
@@ -186,7 +186,7 @@ export default {
   padding: 15px;
 
   .table {
-    ::v-deep .el-table__row .cell button {
+    :deep(.el-table__row .cell button) {
       padding: 0 !important;
     }
   }
@@ -214,13 +214,13 @@ export default {
   }
 }
 
-::v-deep {
+:deep {
   .el-col .el-input {
     width: 100%;
   }
 }
 
-::v-deep .el-input-group__append {
+:deep(.el-input-group__append) {
   border: 1px solid #0096ff;
   color: #0096ff;
   cursor: pointer;

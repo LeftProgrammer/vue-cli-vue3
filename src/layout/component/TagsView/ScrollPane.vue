@@ -113,13 +113,9 @@ export default {
   overflow: hidden;
   width: 100%;
 
-  ::v-deep {
+  :deep {
     .el-scrollbar__bar {
       bottom: 0;
-    }
-    .el-scrollbar__wrap {
-      // tab 区域的样式
-      // height: 49px;
     }
   }
 }

@@ -490,7 +490,7 @@ $height: 32px;
         height: $height + 16;
         overflow: hidden;
 
-        ::v-deep .el-form-item {
+        :deep(.el-form-item) {
           height: $height;
           margin-bottom: 20px;
           min-width: 20%;
@@ -607,7 +607,7 @@ $height: 32px;
         width: 100%;
         height: $height;
 
-        ::v-deep button {
+        :deep(button) {
           padding: 8px 14px;
 
           svg {
@@ -633,7 +633,7 @@ $height: 32px;
       }
 
       .table-btns {
-        ::v-deep button {
+        :deep(button) {
           height: $height;
           font-size: 14px;
 
@@ -653,11 +653,11 @@ $height: 32px;
       flex: 1;
       min-height: 0;
 
-      ::v-deep.el-table::before {
+      :deep(.el-table::before) {
         height: 0;
       }
 
-      ::v-deep .el-tag {
+      :deep(.el-tag) {
         border-radius: 14px;
         padding: 0 15px;
         height: 24px;
@@ -695,20 +695,20 @@ $height: 32px;
         }
       }
 
-      ::v-deep .el-link:hover {
+      :deep(.el-link:hover) {
         &::after {
           border: none;
         }
       }
 
-      ::v-deep .el-table--border::after,
-      ::v-deep .el-table--group::after,
-      ::v-deep .el-table::before {
+      :deep(.el-table--border::after),
+      :deep(.el-table--group::after),
+      :deep(.el-table::before) {
         background: #ebeef5 !important;
         z-index: 1;
       }
 
-      ::v-deep .el-table {
+      :deep(.el-table) {
         height: 100%;
 
         .el-table__header {
@@ -783,7 +783,7 @@ $height: 32px;
     justify-content: flex-end;
     align-items: center;
 
-    ::v-deep .el-pagination {
+    :deep(.el-pagination) {
       padding-top: 0;
       padding-bottom: 0;
       text-align: right;
@@ -852,16 +852,16 @@ $height: 32px;
 }
 
 .table {
-  ::v-deep .el-drawer__wrapper {
+  :deep(.el-drawer__wrapper) {
     position: absolute;
   }
 
-  ::v-deep .v-modal {
+  :deep(.v-modal) {
     position: absolute;
   }
 }
 
-::v-deep .el-tree {
+:deep(.el-tree) {
   height: 100% !important;
   overflow: auto;
 }

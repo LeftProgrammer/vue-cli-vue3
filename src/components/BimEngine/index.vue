@@ -549,7 +549,7 @@ export default {
         ? (defaults.isRequestWebgl2 = false)
         : (defaults.isRequestWebgl2 = true);
 
-      defaults.maxspaceerror = 1000; // 模型可视距
+      defaults.maxspaceerror = 2000; // 模型可视距 - 与原始项目保持一致
 
       const API = window.API;
       if (!API) {
@@ -557,11 +557,19 @@ export default {
         return;
       }
 
-      // 确保 secretkey 配置正确
+      // 简化 secretkey 处理 - 直接使用 store 中的配置
       if (!defaults.secretkey) {
-        defaults.secretkey = '';
+        defaults.secretkey = sessionStorage.getItem("BIM_SECRETKEY") || '';
+      }
+      
+      // 确保 secretkey 是字符串类型，避免 JSON 解析问题
+      if (typeof defaults.secretkey === 'string') {
+        defaults.secretkey = defaults.secretkey.trim();
+      } else {
+        defaults.secretkey = String(defaults.secretkey || '');
       }
 
+      // 直接初始化 API，不添加复杂的错误处理
       try {
         api = new API(defaults);
       } catch (error) {
@@ -569,6 +577,12 @@ export default {
         this.$message && this.$message.error('BIM 引擎初始化失败: ' + error.message);
         return;
       }
+      
+      // 禁用 Cesium Ion 服务，避免 401 错误
+      if (typeof Cesium !== 'undefined' && Cesium.Ion) {
+        Cesium.Ion.defaultAccessToken = '';
+      }
+      
       api.Public.addImageryProvider("https://image.glendale.top", true, {
         serverType: 1,
         maximumLevel: 21,
@@ -686,36 +700,73 @@ export default {
         // url = `http://192.168.10.110:18086/tools/output/model/${data.name}/tileset.json`;
       }
       console.log("🚀 ~ AddModel ~ url:", url);
+      
+      // 添加模型加载前的验证
+      if (!url || !that.api) {
+        console.error('模型加载失败: URL 或 API 不存在');
+        that.$message && that.$message.error('模型加载失败：引擎未初始化');
+        return;
+      }
+      
       this.api.Model.mergeModel(
         url,
         data.id,
         null,
         res => {
           console.log("🚀 ~ AddModel ~ res:", res);
-          let complete = true;
-          for (let i = 0; i < that.modelList.length; i++) {
-            if (that.modelList[i].complete || that.modelList[i].id === res.obj.id) {
-              that.modelList[i].complete = true;
+          
+          // 检查模型加载结果
+          if (res && res.loaded) {
+            let complete = true;
+            for (let i = 0; i < that.modelList.length; i++) {
+              if (that.modelList[i].complete || that.modelList[i].id === res.obj.id) {
+                that.modelList[i].complete = true;
+              } else {
+                complete = false;
+              }
+            }
+            if (complete) {
+              // 模型加载完成回调
+              that.spinning = false;
+              console.log("AddModel===>", "模型加载完成");
+              // 添加光源
+              this.api.Model.original(this.bimconfig.modelId);
+              // if (!this.noAdjustme) this.setConfig();
+              this.$emit("LoadComplete", this.api, this.modelList);
+            }
+            that.InitPartialEffect();
+          } else {
+            console.error('模型加载失败:', res);
+            that.$message && that.$message.warning('模型加载部分失败，请检查模型文件');
+          }
+        },
+        error => {
+          console.error('模型加载错误:', error);
+          
+          // 根据错误类型提供不同的提示
+          let errorMessage = '模型加载失败';
+          
+          if (error.message) {
+            if (error.message.includes('INVALID_TOKEN')) {
+              errorMessage = '模型授权失败，请重新登录或联系管理员';
+            } else if (error.message.includes('域名') || error.message.includes('domain')) {
+              errorMessage = '域名验证失败，请检查访问域名配置';
+            } else if (error.message.includes('not exist') || error.message.includes('不存在')) {
+              errorMessage = '模型文件不存在，请检查模型配置';
             } else {
-              complete = false;
+              errorMessage = `模型加载失败: ${error.message}`;
             }
           }
-          if (complete) {
-            // 模型加载完成回调
-            that.spinning = false;
-            console.log("AddModel===>", "模型加载完成");
-            // 添加光源
-            this.api.Model.original(this.bimconfig.modelId);
-            // if (!this.noAdjustme) this.setConfig();
-            this.$emit("LoadComplete", this.api, this.modelList);
+          
+          that.$message && that.$message.error(errorMessage);
+          
+          // 标记模型加载失败
+          for (let i = 0; i < that.modelList.length; i++) {
+            if (that.modelList[i].id === data.id) {
+              that.modelList[i].loadError = true;
+              break;
+            }
           }
-          that.InitPartialEffect();
-          this.modelinitedNum++;
-        },
-        {
-          flyto: false, // 是否飞到模型跟前,false是静默加载，针对多个模型
-          matrix: data.matrix ? data.matrix : undefined, // 模型矩阵，gis模式下使用较多
-          maxspaceerror: data.docType === 6 ? 0.2 : 2000, // 模型可视距离
           // RotateAxis: 90,
           // initView: [50, -30, 0.5]
         }

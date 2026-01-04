@@ -182,7 +182,7 @@ export default {
   height: 100%;
   width: 100%;
 
-  ::v-deep(.el-select) {
+  :deep(.el-select) {
     width: 100%;
   }
 }

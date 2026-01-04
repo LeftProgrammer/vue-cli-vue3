@@ -6,8 +6,8 @@
     }"
   >
     <div class="choose-dev">
-      <div class="tags text" v-if="choosedUsers.length == 0">请选择</div>
-      <div class="tags" v-else>
+      <div v-if="choosedUsers.length == 0" class="tags text">请选择</div>
+      <div v-else class="tags">
         <el-tag v-for="(user, i) in choosedUsers" :key="i" type="info">
           {{ getKeyNameByUser(user) }}
         </el-tag>
@@ -17,8 +17,8 @@
 
     <!--不要删除，需要将父页面组件进行必填校验及时刷新-->
     <el-input
-      class="input-hidden"
       v-model="keyValue"
+      class="input-hidden"
       type="hidden"
       placeholder="请选择"
       :title="keyValue"
@@ -37,15 +37,15 @@
     </el-input> -->
 
     <el-dialog
+      v-model="dialogShow"
+      v-draggable
       title="选择人员"
       custom-class="wbench-el-dialog"
-      :visible.sync="dialogShow"
+      width="960px"
+      append-to-body
       :destroy-on-close="true"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
-      append-to-body
-      width="960px"
-      v-draggable
       @closed="closedHandle"
     >
       <div class="user-main" :class="{ single: !multiple }">
@@ -57,25 +57,24 @@
             :defaultPercent="30"
             :showSearchBtns="false"
           >
-            <template slot="form">
-              <el-form
-                :model="queryParams"
-                :inline="true"
-                @submit.native.prevent
+            <template #form>
+                <el-form
+                  :model="queryParams"
+                  :inline="true"
+                  @submit.prevent>
               >
                 <el-form-item label="姓名:" prop="username">
                   <el-input
-                    size="mini"
                     v-model="queryParams.username"
+                    size="mini"
                     placeholder="请输入姓名"
-                    @keyup.native.enter="searchUserList"
+                    @keyup.enter="searchUserList"
                   >
-                    <i
-                      slot="suffix"
+                    <template #suffix>
                       @click="searchUserList"
                       class="el-input__icon el-icon-search"
                       style="cursor: pointer"
-                    ></i>
+                    ></template>
                   </el-input>
                 </el-form-item>
                 <!-- <el-form-item label="">
@@ -85,11 +84,11 @@
                 </el-form-item> -->
               </el-form>
             </template>
-            <template slot="tree">
+            <template #tree>
               <div class="tree-content">
                 <el-tree
-                  class="tree-dom"
                   ref="userTree"
+                  class="tree-dom"
                   highlight-current
                   node-key="id"
                   :data="treeData"
@@ -101,7 +100,7 @@
                 </el-tree>
               </div>
             </template>
-            <template slot="table">
+            <template #table>
               <el-form :inline="true">
                 <el-table
                   ref="userTable"
@@ -149,13 +148,13 @@
           </div>
         </div>
       </div>
-      <div slot="footer" class="dialog-footer" v-if="!readonly">
+      <template #footer class="dialog-footer" v-if="!readonly">
         <el-form>
-          <el-button type="primary"  @click="confirmHandle">
+          <el-button type="primary" @click="confirmHandle">
             确 定
           </el-button>
         </el-form>
-      </div>
+      </template>
     </el-dialog>
   </div>
 </template>
@@ -168,7 +167,7 @@ import * as api from "./api";
 //   name: "ExeCorModal"
 // })
 /**单位类型 */
-let _CorpTypes = ["yzdw", "sjdw", "jldw", "sgdw", "dsfdw"];
+const CorpTypes = ["yzdw", "sjdw", "jldw", "sgdw", "dsfdw"];
 export default {
   name: "Organize-User-Index",
   components: {
@@ -181,7 +180,7 @@ export default {
   props: {
     /**已经选中user对应的信息 */
     userId: {
-      type: String | Array,
+      type: [String, Array],
       default: "",
     },
     /**是否多选 */
@@ -197,7 +196,7 @@ export default {
     // /**默认显示指定的5种单位类型的单位 */
     // corpTypes: {
     //   type: Array,
-    //   default: () => _CorpTypes,
+    //   default: () => CorpTypes,
     //   // validator: function (value) {
     //   //   // 这个值必须匹配下列字符串中的一个
     //   //   return [_OrgType.unit, _OrgType.dept].indexOf(value) !== -1;
@@ -206,12 +205,13 @@ export default {
     /**单位id */
     unitId: {
       type: [String, Array],
+      default: () => [],
     },
   },
   data() {
     return {
       //5种单位类型
-      _CorpTypes: _CorpTypes,
+      CorpTypes: CorpTypes,
       //搜索条件
       queryParams: { username: "" },
       //类型
@@ -419,7 +419,6 @@ export default {
         let choosedUsers = [...this.choosedUsers];
 
         //记录当前列表选中的用户
-        let curUnitUserIds = val.map((x) => x.userId);
         let curUnitKeyIds = val.map((x) => x.keyId);
 
         for (let i = choosedUsers.length - 1; i >= 0; i--) {
@@ -751,13 +750,13 @@ export default {
 
 <style scoped lang="scss">
 .Organize-User {
-  ::v-deep .el-input-group__append {
+  :deep(.el-input-group__append) {
     background-color: #f5f7fa;
     color: #1298fa;
     border: 1px solid #1298fa;
   }
 
-  ::v-deep .choose-dev {
+  :deep(.choose-dev) {
     height: 40px;
     background-color: #f5f7fa;
     background-image: none;
@@ -799,7 +798,7 @@ export default {
   }
 
   &.readonly {
-    ::v-deep .el-input-group__append {
+    :deep(.el-input-group__append) {
       color: grey;
       border-color: #e4e7ed;
     }

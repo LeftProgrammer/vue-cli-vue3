@@ -11,9 +11,9 @@
     <!-- </el-tooltip> -->
     <!--BIM显示弹窗-->
     <el-dialog
+      v-model="dialogShow"
       title="三维模型视图"
       custom-class="wbench-el-dialog"
-      v-model="dialogShow"
       :destroy-on-close="true"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -37,19 +37,6 @@ export default {
   components: {
     BimEngine
   },
-  data() {
-    return {
-      /**当前行 */
-      pbs: null,
-      /**弹窗显示 */
-      dialogShow: false,
-      /**请求参数 */
-      queryParams: { pid: 0 },
-
-      /**bim相关参数 */
-      bimconfig: bimconfig.find((x) => x.use) || {}
-    };
-  },
   props: {
     /**已经选中pbs对应的bim构件信息 */
     pbsId: {
@@ -65,6 +52,19 @@ export default {
       type: Boolean,
       default: false
     }
+  },
+  data() {
+    return {
+      /**当前行 */
+      pbs: null,
+      /**弹窗显示 */
+      dialogShow: false,
+      /**请求参数 */
+      queryParams: { pid: 0 },
+
+      /**bim相关参数 */
+      bimconfig: bimconfig.find((x) => x.use) || {}
+    };
   },
   computed: {
     /**pbs名称 */
@@ -181,11 +181,11 @@ export default {
   display: block;
 }
 
-::v-deep .el-dialog__body {
+:deep(.el-dialog__body) {
   height: calc(100% - 45px);
 }
 
-::v-deep .splitter-pane {
+:deep(.splitter-pane) {
   .el-table {
     height: 100%;
 
