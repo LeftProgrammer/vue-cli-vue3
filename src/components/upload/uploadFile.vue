@@ -19,10 +19,13 @@
       :on-progress="handleUploadProgress"
       :on-change="handleUploadChange"
     >
-      <div slot="tip" class="el-upload__tip">
-        只能上传不超过 {{ maxSize }}MB 的文件
-      </div>
-      <div slot="file" slot-scope="{ file }" v-if="isShow('picture-card')">
+      <template #tip>
+        <div class="el-upload__tip">
+          只能上传不超过 {{ maxSize }}MB 的文件
+        </div>
+      </template>
+      <template #file="{ file }" v-if="isShow('picture-card')">
+      <div>
         <img class="el-upload-list__item" :src="file.url" alt="" />
         <span class="el-upload-list__item-actions">
           <!-- <span class="ml-15 pointer" v-if="showNtko" @click="handleNtko(file)">
@@ -58,6 +61,7 @@
           </el-tooltip>
         </span>
       </div>
+      </template>
       <!-- 上传按钮 -->
       <el-button
         v-if="isShow('picture') || isShow('text')"
@@ -177,7 +181,7 @@
     <el-dialog
       v-draggable
       :title="viewFileName"
-      :visible.sync="dialogShow"
+      v-model="dialogShow"
       :destroy-on-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -331,7 +335,7 @@ export default {
       /**正在上传文件的列表 */
       uploadingFileList: [],
       /**存储刚刚上传的图片json字符串 */
-      _uploadFile: '',
+      uploadFileData: '',
       // textList: [],
       compKey: new Date().getTime() + '',
       //是否签章
@@ -475,9 +479,9 @@ export default {
         this.uploadFileList = [...filelist]
         this.uploadedFileList = [...filelist]
         // console.log("this.uploadFileList", this.uploadFileList);
-        this._uploadFile = JSON.stringify(this.uploadFileList)
+        this.uploadFileData = JSON.stringify(this.uploadFileList)
         // console.log("_uploadFile", this._uploadFile);
-        this.$emit('change', this._uploadFile)
+        this.$emit('change', this.uploadFileData)
       }
       this.$message.success('盖章成功！')
     },
@@ -504,8 +508,8 @@ export default {
           }
           filelist[this.fileNtkoIndex] = file
           this.uploadFileList = [...filelist]
-          this._uploadFile = JSON.stringify(this.uploadFileList)
-          this.$emit('changeNtkoFile', this._uploadFile, this.fileNtkoIndex)
+          this.uploadFileData = JSON.stringify(this.uploadFileList)
+          this.$emit('changeNtkoFile', this.uploadFileData, this.fileNtkoIndex)
           if (typeof onSuccess === 'function') onSuccess()
           this.$message.success('盖章成功！')
         }
@@ -657,12 +661,12 @@ export default {
         // 暂时先请求下载  因为的 min 下载 没有文件名称
         this.$downFileById(file)
       }
-      return
-      if (file.url) {
-        window.open(getMinioUrl(file.url), '_blank')
-      } else {
-        this.$downFileById(file)
-      }
+      // 以下代码不可达，已注释
+      // if (file.url) {
+      //   window.open(getMinioUrl(file.url), '_blank')
+      // } else {
+      //   this.$downFileById(file)
+      // }
     },
 
     /**
@@ -742,9 +746,9 @@ export default {
           console.log('上传之后的文件', this.uploadedFileList)
           if (fileList.length === this.uploadedFileList.length) {
             this.uploadFileList = [...this.uploadedFileList]
-            this._uploadFile = JSON.stringify(this.uploadFileList)
+            this.uploadFileData = JSON.stringify(this.uploadFileList)
             // console.log("_uploadFile", this._uploadFile);
-            this.$emit('change', this._uploadFile)
+            this.$emit('change', this.uploadFileData)
           }
         } else {
           this.$message.error(`${file?.name} ${res?.message}`)
@@ -793,9 +797,9 @@ export default {
       this.uploadFileList.splice(index, 1)
       this.uploadedFileList.splice(index, 1)
       // console.log("删除", this.uploadFileList);
-      this._uploadFile = JSON.stringify(this.uploadFileList)
+      this.uploadFileData = JSON.stringify(this.uploadFileList)
 
-      this.$emit('change', this._uploadFile)
+      this.$emit('change', this.uploadFileData)
     },
     // 删除类型是 text
     handleRemoveText(index) {
@@ -806,11 +810,11 @@ export default {
       this.uploadedFileList.splice(index, 1)
       this.$emit('deleteFile', index)
       // console.log("删除", this.uploadFileList);
-      this._uploadFile = JSON.stringify(this.uploadFileList)
+      this.uploadFileData = JSON.stringify(this.uploadFileList)
       if (!this.uploadFileList || this.uploadFileList.length === 0) {
         this.$emit('change', '')
       } else {
-        this.$emit('change', this._uploadFile)
+        this.$emit('change', this.uploadFileData)
       }
     }
   }

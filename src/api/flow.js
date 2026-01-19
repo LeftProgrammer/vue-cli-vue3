@@ -141,6 +141,51 @@ export function getSignMapByIdList(userIdList) {
   });
 }
 
+// 催办消息
+export function sendMessage(data) {
+  return request({
+    url: "/api/plt/flow/urge",
+    method: "post",
+    data,
+  });
+}
+
+// 刷新读取业务流程信息
+export function freshread(data) {
+  return request({
+    url: "/api/process/read/business/fresh-read",
+    method: "post",
+    data,
+  });
+}
+
+// 流程提交
+export function submitTodo(data) {
+  return request({
+    url: "/api/process/write/todo/submit",
+    method: "post",
+    data,
+  });
+}
+
+// 获取常用语列表
+export function getPhrases() {
+  return request({
+    url: "/api/process/phrases",
+    method: "get",
+    showLoading: false,
+  });
+}
+
+// 获取子流程日志
+export function childMatterLogs(businessId) {
+  return request({
+    url: `/api/process/packages/self/proc/${businessId}/all/child-matter-logs`,
+    method: "get",
+    showLoading: false,
+  });
+}
+
 function getUserInfoFromStorage() {
   try {
     const raw = window.localStorage.getItem("userInfo");

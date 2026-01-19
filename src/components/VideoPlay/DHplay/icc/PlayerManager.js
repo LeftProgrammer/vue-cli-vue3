@@ -579,6 +579,7 @@ class PlayerManager {
             case 'picCap': // 抓图回调，配置在 new PlayerManager 中配置 picCapCb为true后即可触发
                 // data.index 窗口索引
                 // data.base64Img 
+                break
             default:
                 break;
         }

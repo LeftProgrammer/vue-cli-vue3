@@ -18,9 +18,19 @@
         <el-form-item label="流程编号">
           <el-input v-model="query.code" placeholder="请输入" clearable />
         </el-form-item>
+        <!-- <el-form-item label="流程状态">
+          <el-select v-model="query.flowStatus" placeholder="请选择" clearable>
+            <el-option
+              v-for="item in flowStatusOptions"
+              :key="item.id"
+              :label="item.dictName"
+              :value="item.dictCode"
+            />
+          </el-select>
+        </el-form-item> -->
         <el-form-item>
-          <el-button type="primary" @click="handleQuery">查询</el-button>
-          <el-button @click="handleReset">重置</el-button>
+          <el-button type="primary" :icon="Search" @click="handleQuery">查询</el-button>
+          <el-button :icon="RefreshLeft" @click="handleReset">重置</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -79,18 +89,15 @@
 </template>
 
 <script>
-import { page } from "./api";
+import { page } from "@/views/qualitySafetyManagement/ingressCheck/api";
 import enums from "@/config/enums";
 import { dateFormat } from "@/utils";
 import { getSectionByCorpId } from "@/api/measure";
 import { FlowListMixin } from "@/mixins/FlowListMixin";
-import FlowStatus from "@/components/FlowStatus";
+import { Search, RefreshLeft } from "@element-plus/icons-vue";
 
 export default {
   name: "IngressCheckSelector",
-  components: {
-    "flow-status": FlowStatus,
-  },
   mixins: [FlowListMixin],
   props: {
     visible: { type: Boolean, default: false },
@@ -101,6 +108,8 @@ export default {
   emits: ["update:visible", "closed", "confirm", "change"],
   data() {
     return {
+      Search,
+      RefreshLeft,
       innerVisible: false,
       loading: false,
       query: {

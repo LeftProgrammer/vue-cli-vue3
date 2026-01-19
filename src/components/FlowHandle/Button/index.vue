@@ -50,6 +50,7 @@
 <script>
 import { mapGetters } from "vuex";
 import { ArrowDown } from '@element-plus/icons-vue';
+import { sendMessage, deleteWait, deleteTaskData } from "@/api/flow";
 
 const flowPageStatus = {
   0: "mine",
@@ -196,10 +197,54 @@ export default {
       this.$emit("click", row, status, task, "view");
     },
     pressHandle(row) {
-      this.$message.info('催办功能待实现');
+      const task = row.matterTaskTodo || row.procMatterTaskDone;
+      if (!task) {
+        this.$message.warning("无法获取任务信息");
+        return;
+      }
+      const data = {
+        businessId: row.id,
+        businessName: this.flowName,
+        procTaskId: task.procTaskId || task.id,
+        userIds: task.userId ? [task.userId] : []
+      };
+      sendMessage(data).then((res) => {
+        if (res && res.success) {
+          this.$message.success("催办成功");
+        } else {
+          this.$message.error((res && res.message) || "催办失败");
+        }
+      }).catch(() => {
+        this.$message.error("催办失败");
+      });
     },
     deleteHandle(row) {
-      if (row.id) {
+      if (!row.id) return;
+      // 管理员删除
+      if (this.isSystem) {
+        deleteTaskData(row.id).then((res) => {
+          if (res && res.success) {
+            this.$message.success("删除成功");
+            this.$emit("delete", row);
+          } else {
+            this.$message.error((res && res.message) || "删除失败");
+          }
+        }).catch(() => {
+          this.$message.error("删除失败");
+        });
+      } else if (row.taskStatus === 4 || row.flowStatus === 0) {
+        // 待发删除
+        deleteWait(row.id).then((res) => {
+          if (res && res.success) {
+            this.$message.success("删除成功");
+            this.$emit("delete", row);
+          } else {
+            this.$message.error((res && res.message) || "删除失败");
+          }
+        }).catch(() => {
+          this.$message.error("删除失败");
+        });
+      } else {
         this.$emit("delete", row);
       }
     }

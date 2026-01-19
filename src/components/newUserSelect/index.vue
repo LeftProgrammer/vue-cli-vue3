@@ -25,7 +25,7 @@
       </div>
 
       <table class="box" cellpadding="0" cellspacing="0">
-        <tr>
+        <tbody><tr>
           <td class="lt">
             <component
               :is="group"
@@ -77,7 +77,7 @@
               </el-checkbox-group>
             </div>
           </td>
-        </tr>
+        </tr></tbody>
       </table>
     </div>
 

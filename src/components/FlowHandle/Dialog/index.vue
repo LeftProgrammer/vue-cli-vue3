@@ -1,47 +1,56 @@
 <template>
-  <el-dialog
-    v-model="visibleInner"
-    title="流程处理"
-    width="85%"
-    :destroy-on-close="true"
-    :close-on-press-escape="false"
-    :close-on-click-modal="false"
-    append-to-body
-    @closed="closedHandle"
-  >
-    <div class="flow-dialog-body">
-      <div class="info">
-        <div class="row">
-          <span class="label">businessId：</span>
-          <span class="value">{{ flowInfo && flowInfo.businessId }}</span>
-        </div>
-        <div class="row">
-          <span class="label">taskId：</span>
-          <span class="value">{{ flowInfo && (flowInfo.taskId || flowInfo.procTaskId) }}</span>
-        </div>
-        <div class="row">
-          <span class="label">page：</span>
-          <span class="value">{{ flowInfo && flowInfo.page }}</span>
-        </div>
-      </div>
+  <div>
+    <el-dialog
+      v-model="visibleInner"
+      title="流程处理表单"
+      custom-class="flow-handle-dialog wbench-el-dialog"
+      :destroy-on-close="true"
+      :close-on-press-escape="false"
+      :close-on-click-modal="false"
+      append-to-body
+      center
+      fullscreen
+      :before-close="beforeCloseDialog"
+      @closed="closedHandle"
+    >
+      <SzgcProcessGetor
+        v-if="visibleInner"
+        ref="SzgcProcessGetor"
+        :top-show="false"
+        :page="flowInfo.page"
+        :data-all="mergedDataAll"
+        :save-api="saveApi"
+        @child-evt="childEvtHandle"
+      >
+        <template #form="{ dataAll, page, readonly }">
+          <slot name="form" :data-all="dataAll" :page="page" :readonly="readonly" />
+        </template>
+        <template #flow-chart>
+          <slot name="flow-chart" />
+        </template>
+      </SzgcProcessGetor>
+    </el-dialog>
 
-      <el-alert
-        type="warning"
-        show-icon
-        :closable="false"
-        title="当前项目无法使用旧项目的 @szgc/wbench（私有库）。这里先提供占位弹窗。等你抓包提供流程办理相关接口与返回数据后，我再补齐表单渲染与提交能力。"
-      />
-    </div>
-
-    <template #footer>
-      <el-button @click="visibleInner = false">关闭</el-button>
-    </template>
-  </el-dialog>
+    <el-image
+      v-if="showImage"
+      id="imPre"
+      ref="imageRef"
+      style="width: 0; height: 0"
+      :src="imageUrl"
+      :preview-src-list="imageSrcList"
+      draggable="false"
+    />
+  </div>
 </template>
 
 <script>
+import SzgcProcessGetor from "@/components/SzgcProcess/index.vue";
+
 export default {
   name: "FlowHandleDialog",
+  components: {
+    SzgcProcessGetor,
+  },
   props: {
     visible: {
       type: Boolean,
@@ -49,56 +58,129 @@ export default {
     },
     flowInfo: {
       type: Object,
+      default: () => ({
+        businessId: "",
+        status: false,
+        page: "",
+        taskId: "",
+        procTaskId: "",
+      }),
+    },
+    dataAll: {
+      type: Object,
       default: () => ({}),
     },
+    saveApi: {
+      type: Function,
+      default: null,
+    },
   },
-  emits: ["closed", "child-evt"],
+  emits: ["closed", "childEvt", "update:visible"],
   data() {
     return {
       visibleInner: false,
+      showImage: false,
+      imageUrl: "",
+      imageSrcList: [],
     };
+  },
+  computed: {
+    mergedDataAll() {
+      return {
+        ...this.dataAll,
+        flowInfo: this.flowInfo,
+        businessId: this.flowInfo?.businessId || this.dataAll?.id,
+      };
+    },
   },
   watch: {
     visible: {
       handler(val) {
         this.visibleInner = !!val;
+        if (val) {
+          this.$bus?.emit("updateTodoNum");
+        }
       },
       immediate: true,
     },
   },
+  created() {
+    window.addEventListener("message", this.handleIframeMessage);
+  },
+  beforeUnmount() {
+    window.removeEventListener("message", this.handleIframeMessage);
+  },
   methods: {
+    handleIframeMessage(event) {
+      if (event.data?.action === "moveImage") {
+        this.showImage = true;
+        this.imageUrl = this.getMinioUrl(event.data.file?.url);
+        this.imageSrcList = [this.imageUrl];
+        this.$nextTick(() => {
+          this.$refs.imageRef?.clickHandler();
+        });
+      }
+    },
+    getMinioUrl(url) {
+      if (!url) return "";
+      try {
+        const urlObj = new URL(url);
+        return urlObj.pathname + urlObj.search;
+      } catch (e) {
+        return url;
+      }
+    },
+    childEvtHandle(data) {
+      this.$emit("childEvt", data);
+      if (data?.type === "submit" && data?.success) {
+        this.visibleInner = false;
+      }
+    },
+    beforeCloseDialog(done) {
+      if (this.$route?.query?.dialog) {
+        window.close();
+      }
+      this.$clearStorage?.("resultsType");
+      const noticePath = [
+        "/progress/TotalPlan",
+        "/progress/ProgressPlan",
+        "/progress/MonthPlan",
+      ];
+      const route = this.$route?.path;
+      const localStorage = this.$getStorage?.("flow_page_type");
+      if (
+        noticePath.includes(route) &&
+        (localStorage === "wait" || localStorage === "mine")
+      ) {
+        this.$confirm("请保存数据！", "提示", {
+          cancelButtonText: "返回填写页面",
+          confirmButtonText: "退出",
+          type: "warning",
+        })
+          .then(() => done())
+          .catch(() => {});
+      } else {
+        done();
+      }
+    },
     closedHandle() {
+      this.$clearStorage?.("reply");
       this.$emit("closed");
+      this.$emit("update:visible", false);
     },
   },
 };
 </script>
 
-<style scoped lang="scss">
-.flow-dialog-body {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+<style lang="scss" scoped>
+:deep(.wbench-el-dialog.is-fullscreen) {
+  .el-dialog__body {
+    height: calc(100% - 57px);
+  }
 }
 
-.info {
-  padding: 12px;
-  border: 1px solid #eee;
-  border-radius: 4px;
-}
-
-.row {
-  display: flex;
-  line-height: 24px;
-}
-
-.label {
-  width: 120px;
-  color: #666;
-}
-
-.value {
-  flex: 1;
-  word-break: break-all;
+:deep(.flow-handle-dialog) {
+  min-width: 1200px;
+  min-height: 700px;
 }
 </style>

@@ -1,3 +1,4 @@
+/* eslint-disable no-cond-assign */
 /**
  *  version: v1.1.202306091800
  */
@@ -680,7 +681,7 @@
                         }
                     })
                     break
-                case 'video.close':
+                case 'video.close': {
                     let i = -1
                     hwndInfo.channelList.forEach((item, index) => {
                         // 获取到要被删除的数据 (插件内部关闭且存在窗口统一)
@@ -701,6 +702,7 @@
                         })
                     }
                     break
+                }
                 case 'video.notifytalk':
                     // 判断是否有对讲
                     if (data.info.bOpen) {
@@ -774,6 +776,7 @@
                     break
                 case 'video.downloadByTime':
                     hwndInfo.downloadRecordSuccess && hwndInfo.downloadRecordSuccess(data.info)
+                    break
                 default:
                     break
             }
