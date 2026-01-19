@@ -1,18 +1,13 @@
 <template>
   <div ref="wrap">
-    <el-button ghost @click="add" class="add-btn" v-if="showList">
-      创建压平
-    </el-button>
+    <el-button ghost @click="add" class="add-btn" v-if="showList"> 创建压平 </el-button>
     <ul class="ul" v-if="showList">
       <li v-for="(item, index) in YPList" :key="index">
         <div class="title">
           <span @click="addEarthFlatten(item)">
             {{ item.name }}
           </span>
-          <el-switch
-            v-model="item.enable"
-            @change="changeEnable(item, index)"
-          />
+          <el-switch v-model="item.enable" @change="changeEnable(item, index)" />
         </div>
         <div class="action">
           <i class="el-icon-edit" @click="edit(item)" />
@@ -78,37 +73,37 @@ export default {
       YPList: [],
       pagination: { current: 1, pageSize: 1000 },
       rules: {
-        name: [{ required: true, message: '请输入名称', trigger: 'change' }]
+        name: [{ required: true, message: "请输入名称", trigger: "change" }]
       },
       argument: {},
       showList: true,
-      editId: ''
-    }
+      editId: ""
+    };
   },
   computed: {},
   mounted() {
     try {
-      this.argument = JSON.parse(this.sceneInfo.argument)
-      this.YPList = this.argument.YPList || []
+      this.argument = JSON.parse(this.sceneInfo.argument);
+      this.YPList = this.argument.YPList || [];
     } catch (error) {}
   },
   destroyed() {
-    api.Public.clearHandler()
-    api.Feature.clearSelectColor()
+    api.Public.clearHandler();
+    api.Feature.clearSelectColor();
   },
   watch: {
-    'formFolder.position': {
+    "formFolder.position": {
       handler(newVal, oldVal) {
-        api.Public.removeEarthFlatten(this.formFolder.id)
+        api.Public.removeEarthFlatten(this.formFolder.id);
         if (newVal.length >= 3) {
           this.$nextTick(() => {
             var opt = {
               id: this.formFolder.id,
               positions: newVal,
               height: 0
-            }
-            api.Public.addEarthFlatten(opt)
-          })
+            };
+            api.Public.addEarthFlatten(opt);
+          });
         }
       },
       immediate: true // 可选：立即触发一次
@@ -116,122 +111,115 @@ export default {
   },
   methods: {
     add() {
-      this.editId = ''
-      const that = this
-      this.showList = false
-      that.$set(that.formFolder, 'height', 0)
-      that.$set(that.formFolder, 'id', `YP_${new Date().getTime()}`)
-      that.$set(that.formFolder, 'position', [])
-      that.$message.info('请点击选择要压平的区域，不能少与三个点！')
-      api.Public.event('LEFT_CLICK', (click) => {
+      this.editId = "";
+      const that = this;
+      this.showList = false;
+      that.$set(that.formFolder, "height", 0);
+      that.$set(that.formFolder, "id", `YP_${new Date().getTime()}`);
+      that.$set(that.formFolder, "position", []);
+      that.$message.info("请点击选择要压平的区域，不能少与三个点！");
+      api.Public.event("LEFT_CLICK", (click) => {
         api.Public.pickupCoordinate(click.position, (data) => {
-          const position = that.formFolder.position || []
-          position.push(data)
-          that.$set(that.formFolder, 'position', position)
-        })
-      })
+          const position = that.formFolder.position || [];
+          position.push(data);
+          that.$set(that.formFolder, "position", position);
+        });
+      });
     },
     edit(data) {
-      this.editId = data.id
-      const that = this
-      this.showList = false
-      Object.assign(this.formFolder, data)
-      api.Public.event('LEFT_CLICK', (click) => {
+      this.editId = data.id;
+      const that = this;
+      this.showList = false;
+      Object.assign(this.formFolder, data);
+      api.Public.event("LEFT_CLICK", (click) => {
         api.Public.pickupCoordinate(click.position, (data) => {
-          const position = that.formFolder.position || []
-          position.push(data)
-          that.$set(that.formFolder, 'position', position)
-        })
-      })
+          const position = that.formFolder.position || [];
+          position.push(data);
+          that.$set(that.formFolder, "position", position);
+        });
+      });
     },
     addEarthFlatten(data) {
-      const conifg = data || this.formFolder
+      const conifg = data || this.formFolder;
       var opt = {
         id: conifg.id,
         positions: conifg.position,
         autoFlatten: false,
         height: conifg.height
-      }
-      api.Public.addEarthFlatten(opt)
+      };
+      api.Public.addEarthFlatten(opt);
     },
     delPos(index) {
-      this.formFolder.position.splice(index, 1)
+      this.formFolder.position.splice(index, 1);
     },
     /**
      * @description 删除视点
      * @param index
      */
     del(index) {
-      const that = this
-      this.$confirm('此操作将永久删除, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+      const that = this;
+      this.$confirm("此操作将永久删除, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
       })
         .then(() => {
-          this.YPList.splice(index, 1)
-          this.argument.YPList = this.YPList
-          this.updateConfig(
-            { argument: JSON.stringify(this.argument) },
-            (res) => {
-              that.$message.success('删除成功')
-            }
-          )
+          this.YPList.splice(index, 1);
+          this.argument.YPList = this.YPList;
+          this.updateConfig({ argument: JSON.stringify(this.argument) }, (res) => {
+            that.$message.success("删除成功");
+          });
         })
-        .catch(() => {})
+        .catch(() => {});
     },
     /**
      * @description 保存
      * @param e
      */
     save(e) {
-      const that = this
-      e.preventDefault()
+      const that = this;
+      e.preventDefault();
       that.$refs.formFolder.validate((valid) => {
         if (valid) {
-          that.confirmLoading = true
+          that.confirmLoading = true;
           if (this.editId) {
             this.YPList[
               this.YPList.findIndex((item) => item.id === this.editId)
-            ] = this.formFolder
+            ] = this.formFolder;
           } else {
-            this.YPList = this.YPList.push({
+            this.YPList.push({
               ...this.formFolder,
               enable: true
-            })
+            });
           }
-          this.$set(this.argument, 'YPList', this.YPList)
-
-          this.updateConfig(
-            { argument: JSON.stringify(this.argument) },
-            (res) => {
-              that.$message.success('创建成功')
-              that.$refs.formFolder.resetFields() //清空表单
-              that.confirmLoading = false
-              that.showList = true
-              that.YPList = JSON.parse(res.data.argument).YPList
-            }
-          )
+          this.$set(this.argument, "YPList", this.YPList);
+          this.updateConfig({ argument: JSON.stringify(this.argument) }, (res) => {
+            that.$message.success("创建成功");
+            that.$refs.formFolder.resetFields(); //清空表单
+            that.confirmLoading = false;
+            that.showList = true;
+            that.YPList = JSON.parse(res.data.argument).YPList;
+          });
         }
-      })
+      });
     },
     /**
      * @description 是否启用
      */
     changeEnable(item, index) {
-      const that = this
-      this.argument.YPList = this.YPList
+      const that = this;
+      this.argument.YPList = this.YPList;
       this.updateConfig({ argument: JSON.stringify(this.argument) }, (res) => {
-        that.$message.success('标签修改成功')
-        that.YPList = JSON.parse(res.data.argument).YPList
-      })
+        that.$message.success("标签修改成功");
+        that.YPList = JSON.parse(res.data.argument).YPList;
+      });
     },
     handleCancel() {
-      const that = this
-      that.showList = true
+      const that = this;
+      that.showList = true;
     }
   }
-}
+};
 </script>
 
 <style lang="scss" scoped>

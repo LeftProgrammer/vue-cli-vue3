@@ -10,16 +10,10 @@
       <template slot="form">
         <el-form :model="pageParams.entity" :inline="true">
           <el-form-item label="合同名称:">
-            <el-input
-              v-model="pageParams.entity.contractName"
-              placeholder="请输入"
-            />
+            <el-input v-model="pageParams.entity.contractName" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="合同编号:">
-            <el-input
-              v-model="pageParams.entity.contractCode"
-              placeholder="请输入"
-            />
+            <el-input v-model="pageParams.entity.contractCode" placeholder="请输入" />
           </el-form-item>
           <el-form-item label="合同类型:">
             <el-select v-model="pageParams.entity.type">
@@ -39,7 +33,7 @@
           </el-form-item>
           <el-form-item label="发起日期:">
             <el-date-picker
-              v-model="pageParams.entity.createData"
+              v-model="pageParams.entity.createDate"
               type="daterange"
               value-format="yyyy-MM-dd"
             />
@@ -71,11 +65,7 @@
                 :min-width="$calculateWidth(190)"
               >
                 <template slot-scope="{ row }">
-                  <el-link
-                    type="primary"
-                    class="text-ellipsis-clamp"
-                    @click="view(row)"
-                  >
+                  <el-link type="primary" class="text-ellipsis-clamp" @click="view(row)">
                     {{ row.contractName }}
                   </el-link>
                 </template>
@@ -125,11 +115,7 @@
                 :width="$calculateWidth(180)"
               >
                 <template slot-scope="{ row }">
-                  <el-tooltip
-                    :content="row.flowName"
-                    placement="top"
-                    effect="dark"
-                  >
+                  <el-tooltip :content="row.flowName" placement="top" effect="dark">
                     <div class="text-ellipsis-clamp">{{ row.flowName }}</div>
                   </el-tooltip>
                 </template>
@@ -142,10 +128,7 @@
                 :width="$calculateWidth(120)"
               >
                 <template slot-scope="scope">
-                  <flow-status
-                    :row="scope.row"
-                    :flow-name="scope.row.flowName"
-                  />
+                  <flow-status :row="scope.row" :flow-name="scope.row.flowName" />
                 </template>
               </el-table-column>
             </el-table>
@@ -183,19 +166,19 @@ export default {
         total: 0,
         current: 1,
         entity: {},
-        pageSize: 20,
+        pageSize: 20
       },
       typeList: [],
       unitOptions: [],
       tableData: [],
       title: "",
-      oprateRow: {},
+      oprateRow: {}
     };
   },
   computed: {
     userInfo() {
       return this.$getStorage("userInfo");
-    },
+    }
   },
   created() {
     this.getUnitList();
@@ -242,7 +225,7 @@ export default {
         size: 20,
         current: 1,
         entity: {},
-        total: 0,
+        total: 0
       };
       this.getTableData();
     },
@@ -275,8 +258,8 @@ export default {
       let curpage = this.pageParams.current; //单前页码，具体看组件取值
       let limitpage = this.pageParams.pageSize; //每页条数，具体是组件取值
       return index + 1 + (curpage - 1) * limitpage;
-    },
-  },
+    }
+  }
 };
 </script>
 

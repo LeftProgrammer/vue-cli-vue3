@@ -60,6 +60,24 @@
               />
             </el-form-item>
           </el-col>
+          <el-col :span="12">
+            <el-form-item label="结算类型" prop="settleType">
+              <el-select
+                v-model="formData.settleType"
+                style="width: 100%"
+                placeholder="请选择"
+                :disabled="readonly"
+                @visible-change="$visibleChange($event, 'el-popper')"
+              >
+                <el-option
+                  v-for="item in settleTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
+          </el-col>
           <el-col :span="24">
             <table :class="{ disabledTable: readonly }">
               <tr>
@@ -194,9 +212,7 @@
                   />
                 </td>
                 <td>
-                  <span v-if="!readonly" @click="addDetailBtn(1)"
-                    >添加明细</span
-                  >
+                  <span v-if="!readonly" @click="addDetailBtn(1)">添加明细</span>
                   <span @click="view(1)">查看</span>
                 </td>
               </tr>
@@ -231,9 +247,7 @@
                   />
                 </td>
                 <td>
-                  <span v-if="!readonly" @click="addDetailBtn(2)"
-                    >添加明细</span
-                  >
+                  <span v-if="!readonly" @click="addDetailBtn(2)">添加明细</span>
                   <span @click="view(2)">查看</span>
                 </td>
               </tr>
@@ -715,7 +729,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>质量安全扣款</td>
@@ -753,7 +767,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>小计（六）</td>
@@ -878,18 +892,18 @@
                       ],
                       'lastPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'lastPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'lastPrice'
+                      )
                   }}
                 </td>
                 <td>
@@ -907,18 +921,18 @@
                       ],
                       'thisPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'thisPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'thisPrice'
+                      )
                   }}
                 </td>
                 <td>
@@ -936,18 +950,18 @@
                       ],
                       'endPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'endPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'endPrice'
+                      )
                   }}
                 </td>
                 <td />
@@ -989,7 +1003,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>其中：安全生产经费</td>
@@ -1027,7 +1041,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td colspan="2">本期实际支付金额</td>
@@ -1046,18 +1060,18 @@
                       ],
                       'thisPrice'
                     ) -
-                    computedMoney(
-                      [
-                        '进度款',
-                        '其他1',
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
-                      ],
-                      'thisPrice'
-                    )
+                      computedMoney(
+                        [
+                          '进度款',
+                          '其他1',
+                          '工程预付款1',
+                          '材料预付款1',
+                          '违约赔偿扣款',
+                          '其他2',
+                          '质量安全扣款'
+                        ],
+                        'thisPrice'
+                      )
                   }}
                 </td>
                 <td colspan="3">
@@ -1177,7 +1191,7 @@
     </el-row>
     <detailTable
       v-if="oprateRow.dialogShow"
-      :oprateRow="oprateRow"
+      :oprate-row="oprateRow"
       :type="oprateRow.type"
       :title="oprateRow.title"
       :visible="oprateRow.dialogShow"
@@ -1193,15 +1207,16 @@ import { save, getCount } from './api'
 import { FlowFormMixin } from '@/mixins/FlowFormMixin'
 import { fromApp } from '@/utils/index'
 import { page as contractPage } from '../contractSign/api'
-import { dateFormat } from '@/utils'
 import detailTable from './detailTable.vue'
 import moment from 'moment'
+import { getDictItemList } from '@/api/dict'
 export default {
   name: 'DataForm',
   components: { detailTable },
   mixins: [FlowFormMixin],
   data() {
     return {
+      settleTypeOptions: [],
       isFormApp: false,
       showHiddenDangerRectifier: false,
       formData: {},
@@ -1260,6 +1275,11 @@ export default {
           required: true,
           message: '请输入',
           trigger: 'blur'
+        },
+        settleType: {
+          required: true,
+          message: '请选择',
+          trigger: 'change'
         }
       },
       //正在加载
@@ -1332,6 +1352,7 @@ export default {
   created() {
     this.isFormApp = fromApp()
     this.initTableData()
+    this.fetchSettleTypeOptions()
     //接收控件页面的值，点击 保存到服务器 执行
   },
   mounted() {
@@ -1355,6 +1376,19 @@ export default {
         return
       }
       this.htxxOptions = data.records
+    },
+    async fetchSettleTypeOptions() {
+      try {
+        const { data, success } = await getDictItemList('SETTLE_TYPE')
+        if (success) {
+          this.settleTypeOptions = (data || []).map((item) => ({
+            label: item.dictName,
+            value: item.dictCode
+          }))
+        }
+      } catch (error) {
+        console.error('获取结算类型失败', error)
+      }
     },
     /**
      * @description 合同切换

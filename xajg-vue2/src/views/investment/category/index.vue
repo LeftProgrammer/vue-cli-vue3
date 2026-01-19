@@ -38,12 +38,7 @@
           row-key="id"
           default-expand-all
         >
-          <el-table-column
-            label="序号"
-            prop="code"
-            width="120"
-            align="center"
-          />
+          <el-table-column label="序号" prop="code" width="120" align="center" />
           <el-table-column
             label="项目名称"
             align="left"
@@ -63,7 +58,7 @@
                 :data="row"
                 :btns="[
                   { title: '编辑', method: 'edit' },
-                  { title: '删除', method: 'delete' },
+                  { title: '删除', method: 'delete' }
                 ]"
                 @edit="edit"
                 @delete="deleteHandle"
@@ -98,7 +93,7 @@ export default {
   components: {
     ListButton,
     dataform,
-    TableLayout,
+    TableLayout
   },
   mixins: [ListMixin],
   data() {
@@ -110,7 +105,7 @@ export default {
       title: "",
       oprateRow: {},
       tableData: [],
-      treeData: {},
+      treeData: {}
     };
   },
   created() {
@@ -148,7 +143,7 @@ export default {
 
     reset() {
       this.pageParams = {
-        investmentYear: new Date(),
+        investmentYear: new Date()
       };
       this.getTableData();
     },
@@ -159,9 +154,10 @@ export default {
     // 查询表格数据
     getTableData() {
       const params = Object.assign({}, this.pageParams);
-      console.log("🚀 ~ params:", params);
       if (params.investmentYear) {
         params.investmentYear = dateFormat(params.investmentYear, "YYYY");
+      } else {
+        params.investmentYear = dateFormat(new Date(), "YYYY");
       }
       list(params).then((data) => {
         this.tableData = this.arrayToTree(data.data);
@@ -187,7 +183,7 @@ export default {
         idKey = "id",
         pidKey = "pid",
         sortKey = "code",
-        childrenKey = "children",
+        childrenKey = "children"
       } = opt;
 
       // 版本号比较函数（支持 1.1.2, 1.1.3 等格式）
@@ -196,8 +192,8 @@ export default {
         const codeB = b[sortKey] || "";
 
         // 将版本号拆分为数字数组
-        const partsA = codeA.split(".").map(num => parseInt(num) || 0);
-        const partsB = codeB.split(".").map(num => parseInt(num) || 0);
+        const partsA = codeA.split(".").map((num) => parseInt(num) || 0);
+        const partsB = codeB.split(".").map((num) => parseInt(num) || 0);
 
         // 逐段比较
         const maxLen = Math.max(partsA.length, partsB.length);
@@ -217,7 +213,7 @@ export default {
         map.set(item[idKey], {
           ...item,
           label: `${item.name} ${item.user ? " : " + item.user : ""}`,
-          [childrenKey]: [],
+          [childrenKey]: []
         })
       );
 
@@ -262,8 +258,8 @@ export default {
         this.$message.success("删除成功");
         this.getTableData();
       });
-    },
-  },
+    }
+  }
 };
 </script>
 <style scoped lang="scss">

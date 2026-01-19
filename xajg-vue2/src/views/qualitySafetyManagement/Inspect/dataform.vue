@@ -75,17 +75,6 @@
           </el-form-item>
         </el-col>
         <el-col :span="24">
-          <el-form-item label="附件照片" prop="beforeFileToken">
-            <uploadFile
-              v-model="formData.beforeFileToken"
-              accept=".png,.jpg,.jpeg"
-              :limit="5"
-              :max-size="50"
-              :readonly="readonly"
-            />
-          </el-form-item>
-        </el-col>
-        <el-col :span="24">
           <el-form-item label="整改要求及处理意见" prop="rectifyComment">
             <el-input
               v-model="formData.rectifyComment"
@@ -98,6 +87,19 @@
             />
           </el-form-item>
         </el-col>
+      </el-row>
+      <el-col :span="24">
+        <el-form-item label="整改前照片" prop="beforeFileToken">
+          <uploadFile
+            v-model="formData.beforeFileToken"
+            accept=".png,.jpg,.jpeg"
+            :limit="5"
+            :max-size="50"
+            :readonly="readonly"
+          />
+        </el-form-item>
+      </el-col>
+      <el-row>
         <el-col v-if="flowShow('rectifyMeasures')" :span="24">
           <el-form-item label="整改措施" prop="rectifyMeasures">
             <el-input
@@ -125,7 +127,7 @@
           </el-form-item>
         </el-col>
         <el-col v-if="flowShow('afterFileToken')" :span="24">
-          <el-form-item label="附件照片" prop="afterFileToken">
+          <el-form-item label="整改后照片" prop="afterFileToken">
             <uploadFile
               v-model="formData.afterFileToken"
               accept=".png,.jpg,.jpeg"
@@ -135,6 +137,7 @@
             />
           </el-form-item>
         </el-col>
+
         <el-col :span="12">
           <el-form-item label="问题上报人" prop="problemReportorFullname">
             <el-input v-model="formData.problemReportorFullname" disabled />
@@ -168,13 +171,13 @@
 </template>
 
 <script>
-import { save, getSection } from './api'
-import { FlowFormMixin } from '@/mixins/FlowFormMixin'
-import { fromApp } from '@/utils/index'
-import { dateFormat } from '@/utils'
-import bimPoint from '@/components/Bim/Point/index'
+import { save, getSection } from "./api";
+import { FlowFormMixin } from "@/mixins/FlowFormMixin";
+import { fromApp } from "@/utils/index";
+import { dateFormat } from "@/utils";
+import bimPoint from "@/components/Bim/Point/index";
 export default {
-  name: 'DataForm',
+  name: "DataForm",
   components: { bimPoint },
   mixins: [FlowFormMixin],
   data() {
@@ -183,125 +186,131 @@ export default {
       //合同信息字典
       formData: {},
       formDataRules: {
-        name: [{ required: true, message: '请输入', trigger: 'blur' }],
-        pbsCode: [{ required: true, message: '请选择', trigger: 'change' }],
-        rectifyDate: [{ required: true, message: '请选择', trigger: 'change' }],
-        locationDesc: [{ required: true, message: '请输入', trigger: 'blur' }],
+        name: [{ required: true, message: "请输入", trigger: "blur" }],
+        pbsCode: [{ required: true, message: "请选择", trigger: "change" }],
+        rectifyDate: [{ required: true, message: "请选择", trigger: "change" }],
+        locationDesc: [{ required: true, message: "请输入", trigger: "blur" }],
         problemContent: [
-          { required: true, message: '请输入', trigger: 'blur' }
+          { required: true, message: "请输入", trigger: "blur" },
         ],
         constructionQuality: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
         cualitySupervision: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
         // problemChecker: [{ required: true, message: "请选择", trigger: "change" }],
         // problemRectifier: [{ required: true, message: "请选择", trigger: "change" }],
         // problemRectifyApprover: [
         //   { required: true, message: "请选择", trigger: "change" }
         // ],
-        sectionId: [{ required: true, message: '请选择', trigger: 'change' }]
+        sectionId: [{ required: true, message: "请选择", trigger: "change" }],
       },
       //正在加载
       loading: false,
       url: {
-        list: '/api/quality/Inspect/page'
+        list: "/api/quality/Inspect/page",
       },
-      sectionList: []
-    }
+      sectionList: [],
+    };
   },
   computed: {
     // 审批字段的禁用
     flowDisabled() {
       return (field) => {
-        let disabled = true
+        let disabled = true;
         switch (field) {
-          case 'constructionQuality':
+          case "constructionQuality":
             disabled =
               !(
                 this.formData.id &&
-                this.formData.matterTaskTodo?.procTaskName == '质量监理工程师'
-              ) && !(!this.formData.id && this.formData.corpType == 'jldw')
-            break
-          case 'cualitySupervision':
+                this.formData.matterTaskTodo?.procTaskName == "质量监理工程师"
+              ) && !(!this.formData.id && this.formData.corpType == "jldw");
+            break;
+          case "cualitySupervision":
             disabled =
-              !(this.formData.corpType == 'yzdw' && !this.formData.id) &&
+              !(this.formData.corpType == "yzdw" && !this.formData.id) &&
               !(
                 this.formData.id &&
-                this.formData.matterTaskTodo?.procTaskName == '施工质量负责人'
-              )
-            break
-          case 'rectifyMeasures':
+                this.formData.matterTaskTodo?.procTaskName == "施工质量负责人"
+              );
+            break;
+          case "rectifyMeasures":
             disabled =
-              this.flowInfo?.page != 'todo' ||
-              this.formData.matterTaskTodo?.procTaskName != '施工质量负责人'
-            break
-          case 'rectifySituation':
+              this.flowInfo?.page != "todo" ||
+              this.formData.matterTaskTodo?.procTaskName != "施工质量负责人";
+            break;
+          case "rectifySituation":
             disabled =
-              this.flowInfo?.page != 'todo' ||
-              this.formData.matterTaskTodo?.procTaskName != '施工质量负责人'
-            break
-          case 'afterFileToken':
+              this.flowInfo?.page != "todo" ||
+              this.formData.matterTaskTodo?.procTaskName != "施工质量负责人";
+            break;
+          case "afterFileToken":
             disabled =
-              this.flowInfo?.page != 'todo' ||
-              this.formData.matterTaskTodo?.procTaskName != '施工质量负责人'
-            break
+              this.flowInfo?.page != "todo" ||
+              this.formData.matterTaskTodo?.procTaskName != "施工质量负责人";
+            break;
         }
-        return Boolean(disabled)
-      }
+        return Boolean(disabled);
+      };
     },
     // 审批字段的显示
     flowShow() {
       return (field) => {
-        let show = true
+        let show = true;
+        console.log("needShow", this.formData);
+        let procTaskName = this.formData.matterTaskTodo?.procTaskName;
         switch (field) {
-          case 'constructionQuality':
+          case "constructionQuality":
             show =
-              (this.formData.corpType == 'jldw' && !this.formData.id) ||
-              this.formData.matterTaskTodo?.procTaskName
-            break
-          case 'cualitySupervision':
+              (this.formData.corpType == "jldw" && !this.formData.id) ||
+              procTaskName;
+            break;
+          case "cualitySupervision":
             show =
-              this.formData.matterTaskTodo?.procTaskName ||
-              (!this.formData.id && this.formData.corpType == 'yzdw')
-            break
-          case 'rectifyMeasures':
+              procTaskName ||
+              (!this.formData.id && this.formData.corpType == "yzdw");
+            break;
+          case "rectifyMeasures":
             show =
-              this.formData.matterTaskTodo?.procTaskName &&
-              this.formData.matterTaskTodo?.procTaskName != '质量监理工程师'
-            break
-          case 'rectifySituation':
+              this.formData.flowStatus == 2 ||
+              (this.formData.matterTaskTodo &&
+                this.formData.matterTaskTodo?.procTaskName != "质量监理工程师");
+            break;
+          case "rectifySituation":
             show =
-              this.formData.matterTaskTodo?.procTaskName &&
-              this.formData.matterTaskTodo?.procTaskName != '质量监理工程师'
-            break
-          case 'afterFileToken':
+              this.formData.flowStatus == 2 ||
+              (this.formData.matterTaskTodo &&
+                this.formData.matterTaskTodo?.procTaskName != "质量监理工程师");
+            break;
+          case "afterFileToken":
             show =
-              this.formData.matterTaskTodo?.procTaskName &&
-              this.formData.matterTaskTodo?.procTaskName != '质量监理工程师'
-            break
+              this.formData.flowStatus == 2 ||
+              (this.formData.id &&
+                this.formData.matterTaskTodo &&
+                this.formData.matterTaskTodo?.procTaskName != "质量监理工程师");
+            break;
         }
-        return Boolean(show)
-      }
+        return Boolean(show);
+      };
     },
     /**当前登录用户 */
     userInfo() {
-      return this.$getStorage('userInfo')
-    }
+      return this.$getStorage("userInfo");
+    },
   },
   created() {
-    this.isFormApp = fromApp()
+    this.isFormApp = fromApp();
     //接收控件页面的值，点击 保存到服务器 执行
-    this.getSectionList()
+    this.getSectionList();
   },
   mounted() {},
   // 页面离开时触发
   beforeDestroy() {
     if (this.fromapp) {
-      const titleElement = document.getElementById('dynamicTitle')
+      const titleElement = document.getElementById("dynamicTitle");
       // 设置动态标题
-      titleElement.textContent = '雄安调蓄工程建设管理系统'
+      titleElement.textContent = "雄安调蓄工程建设管理系统";
     }
   },
   methods: {
@@ -312,119 +321,119 @@ export default {
      * @param record
      */
     handlerUserChange(filed, value, record) {
-      this.$set(this.formData, filed, record.departName)
+      this.$set(this.formData, filed, record.departName);
     },
     //发送前事件,mixin中进行调用:发送前转pdf并上传文件
     async beforeSend(eventData) {
-      let btnKey = eventData?.btnKey
-      if (btnKey === 'submit') return
-      let extData = {}
-      extData['constructionQuality'] = {
-        type: 'user',
-        value: this.formData.constructionQuality
-      }
-      extData['corpType'] = {
-        type: 'user',
-        value: this.userInfo.corpDesc
-      }
-      if (this.userInfo.corpDesc == 'yzdw') {
-        extData['createUser'] = {
-          type: 'user',
-          value: this.formData.createUser
-        }
-        extData['cualitySupervision'] = {
-          type: 'user',
-          value: this.formData.cualitySupervision
-        }
+      let btnKey = eventData?.btnKey;
+      if (btnKey === "submit") return;
+      let extData = {};
+      extData["constructionQuality"] = {
+        type: "user",
+        value: this.formData.constructionQuality,
+      };
+      extData["corpType"] = {
+        type: "user",
+        value: this.userInfo.corpDesc,
+      };
+      if (this.userInfo.corpDesc == "yzdw") {
+        extData["createUser"] = {
+          type: "user",
+          value: this.formData.createUser,
+        };
+        extData["cualitySupervision"] = {
+          type: "user",
+          value: this.formData.cualitySupervision,
+        };
       }
 
-      this.sendFlowJson = extData
-      console.log('this.sendFlowJson', this.sendFlowJson)
+      this.sendFlowJson = extData;
+      console.log("this.sendFlowJson", this.sendFlowJson);
     },
     async beforeSubmitButton() {
-      let extData = {}
-      extData['cualitySupervision'] = {
-        type: 'user',
-        value: this.formData.cualitySupervision
-      }
-      this.sendFlowJson = extData
+      let extData = {};
+      extData["cualitySupervision"] = {
+        type: "user",
+        value: this.formData.cualitySupervision,
+      };
+      this.sendFlowJson = extData;
     },
     save(fields, callback, event) {
       this.formData.rectifyDate = dateFormat(
         this.formData.rectifyDate,
-        'YYYY-MM-DD'
-      )
-      const isMaintenance = event.data.btnKey === 'maintenance'
+        "YYYY-MM-DD"
+      );
+      const isMaintenance = event.data.btnKey === "maintenance";
       if (isMaintenance) {
         this.sendMessage(
           {
             btnKey: event.data.btnKey,
             data: fields,
-            type: 'maintenance'
+            type: "maintenance",
           },
           event.origin
-        )
-        return
+        );
+        return;
       }
       save(fields)
         .then((res) => {
-          const { success, message } = res
+          const { success, message } = res;
           if (!success) {
-            return this.$message.error('新增失败：' + message)
+            return this.$message.error("新增失败：" + message);
           } else {
-            callback && callback()
+            callback && callback();
           }
         })
         .catch((err) => {
-          console.error(err)
-          this.$message.error('新增失败')
-        })
+          console.error(err);
+          this.$message.error("新增失败");
+        });
     },
     /**
      * 获取表单数据
      */
     async getFormData() {
-      const row = await this.getFlowRow()
+      const row = await this.getFlowRow();
       if (row) {
-        this.formData = row
+        this.formData = row;
       } else {
         // this.$set(this.formData, "cualitySupervision", this.userInfo.userId);
         // this.$set(this.formData, "corpType", "yzdw");
-        this.$set(this.formData, 'corpType', this.userInfo.corpDesc)
-        this.$set(this.formData, 'problemReportor', this.userInfo.userId)
+        this.$set(this.formData, "corpType", this.userInfo.corpDesc);
+        this.$set(this.formData, "problemReportor", this.userInfo.userId);
         this.$set(
           this.formData,
-          'problemReportorFullname',
+          "problemReportorFullname",
           this.userInfo.realName
-        )
+        );
         this.$set(
           this.formData,
-          'problemReportorDeptName',
+          "problemReportorDeptName",
           this.userInfo.departName
-        )
-        console.log(this.formData)
+        );
+        console.log(this.formData);
       }
     },
     async getSectionList(corporateId) {
       try {
         const { data, success, message } = await getSection({
-          corpId: corporateId
-        })
+          corpId: corporateId,
+        });
 
         if (!success) {
-          this.$message.error('查询标段失败：' + message)
-          return false
+          this.$message.error("查询标段失败：" + message);
+          return false;
         }
-        this.sectionList = data
-        return data
+        this.sectionList = data;
+        return data;
       } catch (err) {
-        console.error(err)
-        this.$message.error('查询标段失败')
-        return false
+        console.error(err);
+        this.$message.error("查询标段失败");
+        return false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -460,7 +469,7 @@ export default {
 /deep/ .el-table {
   th.required.taskname {
     .cell::before {
-      content: '*';
+      content: "*";
       width: 5px;
       height: 0px;
       margin-top: 2px;

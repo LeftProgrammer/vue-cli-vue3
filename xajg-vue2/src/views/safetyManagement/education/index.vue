@@ -132,8 +132,8 @@
             <template slot-scope="scope">
               <flow-status
                 :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -145,10 +145,10 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deleteHandle"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -156,10 +156,10 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
@@ -171,9 +171,9 @@ import enums from "@/config/enums";
 import { dateFormat } from "@/utils";
 import moment from "moment";
 export default {
-  name: "education",
-  mixins: [FlowListMixin],
+  name: "Education",
   components: { TableLayout },
+  mixins: [FlowListMixin],
   data() {
     return {
       pageParams: {
@@ -204,6 +204,10 @@ export default {
   methods: {
     dateFormat,
     moment,
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     isRowSelectable(row) {
       if (row.flowStatus == 2) {
         return Boolean(true);

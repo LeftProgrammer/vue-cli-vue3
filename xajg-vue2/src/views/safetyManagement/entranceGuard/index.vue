@@ -361,7 +361,6 @@ export default {
         await this.$confirm("确认从第三方系统同步门禁设备数据吗？", "提示", {
           confirmButtonText: "确定",
           cancelButtonText: "取消",
-          type: "info",
         });
         this.syncLoading = true;
         const res = await sync();

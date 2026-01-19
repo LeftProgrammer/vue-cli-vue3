@@ -1,10 +1,11 @@
 <template>
-  <div id="gantt_plan"></div>
+  <div id="gantt_plan" />
 </template>
 <script>
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import { dateFormat } from "@/utils";
+import { getDictItemList } from "@/api/dict";
 
 export default {
   data() {
@@ -15,6 +16,7 @@ export default {
         current: 1,
         pageSize: 20,
       },
+      taskTypes: [],
     };
   },
   created() {
@@ -24,6 +26,7 @@ export default {
 
   mounted() {
     this.setGanttConfig();
+    this.getTaskTypes();
   },
   destroyed() {
     // 销毁gantt
@@ -59,6 +62,10 @@ export default {
         ],
       });
       gantt.render();
+      // 免费版不支持列宽调整，需要自定义实现
+      this.$nextTick(() => {
+        this.initColumnResize();
+      });
     },
     setGanttConfig() {
       // gantt.config["scales"] = [
@@ -273,7 +280,6 @@ export default {
           label: "编码",
           tree: true,
           min_width: 120,
-          max_width: 120,
           align: "left",
         },
         {
@@ -284,22 +290,53 @@ export default {
           template: nameContent,
         },
         {
-          name: "planDay",
-          label: "原定工期",
-          max_width: 100,
+          name: "associationCode",
+          label: "关联序号",
+          min_width: 150,
+          align: "left",
+        },
+        {
+          name: "taskType",
+          label: "任务类型",
+          min_width: 200,
+          align: "left",
+          template: (task) => {
+            const type = this.taskTypes.find(
+              (item) => item.dictCode === task.taskType
+            );
+            return type ? type.dictName : task.taskType;
+          },
+        },
+        {
+          name: "units",
+          label: "单位",
           min_width: 100,
           align: "center",
         },
         {
-          name: "pbsName",
-          label: "工程部位",
-          max_width: 180,
-          min_width: 180,
-          align: "left",
+          name: "planNum",
+          label: "计划完成量",
+          min_width: 150,
+          align: "right",
         },
         {
+          name: "planDay",
+          label: "计划工期",
+          max_width: 100,
+          min_width: 100,
+          align: "right",
+        },
+
+        // {
+        //   name: "pbsName",
+        //   label: "工程部位",
+        //   max_width: 180,
+        //   min_width: 180,
+        //   align: "left",
+        // },
+        {
           name: "startDate",
-          label: "计划开始",
+          label: "计划开始日期",
           min_width: 120,
           max_width: 120,
           align: "center",
@@ -309,7 +346,7 @@ export default {
         },
         {
           name: "endDate",
-          label: "计划结束",
+          label: "计划结束日期",
           min_width: 120,
           max_width: 120,
           align: "center",
@@ -319,10 +356,19 @@ export default {
         },
         {
           name: "weight",
-          label: "权重",
+          label: "相对权重",
           max_width: 100,
           min_width: 100,
           align: "center",
+        },
+        {
+          name: "weight",
+          label: "是否为重点工作/关键工作",
+          min_width: 200,
+          align: "center",
+          template: (task) => {
+            return task.weight == 1 ? "是" : "否";
+          },
         },
         {
           name: "buttons",
@@ -334,6 +380,90 @@ export default {
           resize: true,
         },
       ];
+    },
+    /**获取字典 */
+    async getTaskTypes() {
+      const { data } = await getDictItemList("task_type");
+      this.taskTypes = data;
+      console.log("taskTypes", data);
+    },
+    /**
+     * 自定义实现列宽调整功能（免费版不支持此功能）
+     */
+    initColumnResize() {
+      const gridHeader = document.querySelector(".gantt_grid_scale");
+      if (!gridHeader) return;
+
+      // 先清除已有的调整手柄，避免重复添加
+      const existingResizers = gridHeader.querySelectorAll(".custom-column-resizer");
+      existingResizers.forEach((resizer) => resizer.remove());
+
+      const headerCells = gridHeader.querySelectorAll(".gantt_grid_head_cell");
+
+      headerCells.forEach((cell, index) => {
+        // 跳过最后一列（操作列）
+        if (index >= headerCells.length - 1) return;
+
+        // 创建调整手柄
+        const resizer = document.createElement("div");
+        resizer.className = "custom-column-resizer";
+        resizer.style.cssText = `
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 6px;
+          height: 100%;
+          cursor: col-resize;
+          z-index: 10;
+        `;
+        cell.style.position = "relative";
+        cell.appendChild(resizer);
+
+        let startX, startWidth, columnIndex;
+
+        resizer.addEventListener("mousedown", (e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          startX = e.pageX;
+          startWidth = cell.offsetWidth;
+          columnIndex = index;
+
+          const onMouseMove = (e) => {
+            const diff = e.pageX - startX;
+            const newWidth = Math.max(60, startWidth + diff);
+
+            // 更新表头宽度
+            cell.style.width = newWidth + "px";
+
+            // 更新 gantt 配置
+            if (gantt.config.columns[columnIndex]) {
+              gantt.config.columns[columnIndex].width = newWidth;
+            }
+
+            // 更新数据行对应列的宽度
+            const dataCells = document.querySelectorAll(
+              `.gantt_row .gantt_cell:nth-child(${columnIndex + 1})`
+            );
+            dataCells.forEach((dataCell) => {
+              dataCell.style.width = newWidth + "px";
+            });
+          };
+
+          const onMouseUp = () => {
+            document.removeEventListener("mousemove", onMouseMove);
+            document.removeEventListener("mouseup", onMouseUp);
+            // 重新渲染甘特图以应用新宽度
+            gantt.render();
+            // 重新初始化调整手柄（因为 render 会清除 DOM）
+            this.$nextTick(() => {
+              this.initColumnResize();
+            });
+          };
+
+          document.addEventListener("mousemove", onMouseMove);
+          document.addEventListener("mouseup", onMouseUp);
+        });
+      });
     },
   },
 };
@@ -388,6 +518,14 @@ export default {
 /deep/ .gantt_task .gantt_task_scale .gantt_scale_cell {
   color: #000 !important;
   font-weight: 550 !important;
+}
+/* 自定义列宽调整手柄样式 */
+/deep/ .custom-column-resizer {
+  background: transparent;
+  transition: background-color 0.2s;
+}
+/deep/ .custom-column-resizer:hover {
+  background-color: rgba(0, 123, 255, 0.3);
 }
 </style>
 

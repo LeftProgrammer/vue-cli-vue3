@@ -58,7 +58,7 @@
             </template>
           </el-table-column>
           <el-table-column
-            label="本月完成总额(元)"
+            label="本月完成总额(万元)"
             prop="totalInvestmentAmount"
             align="right"
           />
@@ -66,9 +66,7 @@
           <el-table-column label="发起部门" prop="startDept" align="right" />
           <el-table-column label="操作" width="200" align="center">
             <template #default="{ row }">
-              <el-link type="primary" @click="handleShowDialog(row, 'edit')"
-                >编辑</el-link
-              >
+              <el-link type="primary" @click="handleShowDialog(row, 'edit')">编辑</el-link>
               <el-divider direction="vertical" />
               <el-link type="danger" @click="deletedata(row)">删除</el-link>
             </template>
@@ -77,11 +75,11 @@
       </template>
     </table-layout>
     <data-form
+      v-if="oprateRow.dialogShow"
       :type="type"
       :title="title"
-      v-if="oprateRow.dialogShow"
       :visible="oprateRow.dialogShow"
-      :oprateRow="oprateRow"
+      :oprate-row="oprateRow"
       :readonly="oprateRow.isView"
       @closed="closedDialog"
       @ok="handleSaveSuccess"
@@ -98,8 +96,8 @@ import { dateFormat } from '@/utils'
 import moment from 'moment'
 export default {
   name: 'InvestmentReal',
-  mixins: [FlowListMixin],
   components: { TableLayout, DataForm },
+  mixins: [FlowListMixin],
   data() {
     return {
       currentRow: {},

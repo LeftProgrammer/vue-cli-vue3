@@ -20,13 +20,13 @@
           </el-form-item>
           <el-form-item label="报告类型:">
             <el-select
-              @visible-change="$visibleChange($event, 'el-popper')"
               v-model="pageParams.entity.type"
               placeholder="请选择"
               clearable
+              @visible-change="$visibleChange($event, 'el-popper')"
             >
-              <el-option label="快报" value="kb"></el-option>
-              <el-option label="后续报告" value="hxbg"></el-option>
+              <el-option label="快报" value="kb" />
+              <el-option label="后续报告" value="hxbg" />
             </el-select>
           </el-form-item>
         </el-form>
@@ -99,8 +99,7 @@
             prop="name"
             align="left"
             show-overflow-tooltip
-          >
-          </el-table-column>
+          />
           <el-table-column
             label="报告类型"
             prop="type"
@@ -108,7 +107,7 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="{ row }">
-              {{ row.type === 'kb' ? '快报' : '后续报告' }}
+              {{ row.type === "kb" ? "快报" : "后续报告" }}
             </template>
           </el-table-column>
           <el-table-column
@@ -124,7 +123,7 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="{ row }">
-              {{ row.emergencyDate ? row.emergencyDate.slice(0, 10) : '' }}
+              {{ row.emergencyDate ? row.emergencyDate.slice(0, 10) : "" }}
             </template>
           </el-table-column>
           <el-table-column
@@ -137,8 +136,8 @@
             <template slot-scope="scope">
               <flow-status
                 :row="scope.row"
-                :flowName="scope.row.flowName"
-              ></flow-status>
+                :flow-name="scope.row.flowName"
+              />
             </template>
           </el-table-column>
           <el-table-column
@@ -150,10 +149,10 @@
             <template #default="{ row }">
               <flow-button
                 :row="row"
-                :flowName="row.flowName"
+                :flow-name="row.flowName"
                 @click="handelShowDialog"
                 @delete="deleteHandle"
-              ></flow-button>
+              />
             </template>
           </el-table-column>
         </el-table>
@@ -161,164 +160,168 @@
     </table-layout>
     <flow-dialog
       :visible="flowShow"
-      :flowInfo="flowInfo"
+      :flow-info="flowInfo"
       @childEvt="childEvtHandle"
       @closed="flowShow = false"
-    ></flow-dialog>
+    />
   </div>
 </template>
 
 <script>
-import { page, remove, exportDoc } from './api'
-import { FlowListMixin } from '@/mixins/FlowListMixin'
-import TableLayout from '@/components/ContentLayout/Table'
-import enums from '@/config/enums'
-import { dateFormat } from '@/utils'
-import moment from 'moment'
+import { page, remove, exportDoc } from "./api";
+import { FlowListMixin } from "@/mixins/FlowListMixin";
+import TableLayout from "@/components/ContentLayout/Table";
+import enums from "@/config/enums";
+import { dateFormat } from "@/utils";
+import moment from "moment";
 export default {
-  name: 'emergencyEvent',
-  mixins: [FlowListMixin],
+  name: "EmergencyEvent",
   components: { TableLayout },
+  mixins: [FlowListMixin],
   data() {
     return {
       pageParams: {
         orderProperties: [
           {
-            property: 'createDate',
-            asc: false
-          }
+            property: "createDate",
+            asc: false,
+          },
         ],
         pageSize: 20,
         size: 20,
         current: 1,
         total: 0,
         entity: {
-          params: {}
-        }
+          params: {},
+        },
       },
       ids: [],
-      fileName: '',
-      showExportBtn: false
-    }
+      fileName: "",
+      showExportBtn: false,
+    };
   },
   computed: {},
   created() {},
   methods: {
     dateFormat,
     moment,
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     isRowSelectable(row) {
       if (row.flowStatus == 2) {
-        return Boolean(true)
+        return Boolean(true);
       } else {
-        return Boolean(false)
+        return Boolean(false);
       }
     },
     handleExport() {
       let data = {
-        ids: this.ids
-      }
+        ids: this.ids,
+      };
       exportDoc(data).then((res) => {
         // 创建一个对象 URL
-        const url = window.URL.createObjectURL(res)
+        const url = window.URL.createObjectURL(res);
 
         // 创建一个 <a> 标签
-        const a = document.createElement('a')
-        a.href = url
-        a.download = this.fileName // 设置下载文件名
-        document.body.appendChild(a)
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = this.fileName; // 设置下载文件名
+        document.body.appendChild(a);
 
         // 触发点击事件
-        a.click()
+        a.click();
 
         // 移除 <a> 标签
-        document.body.removeChild(a)
+        document.body.removeChild(a);
 
         // 释放对象 URL
-        URL.revokeObjectURL(url)
-      })
+        URL.revokeObjectURL(url);
+      });
     },
     handleSelectionChange(val) {
-      this.ids = val.map((item) => item.id)
+      this.ids = val.map((item) => item.id);
       if (this.ids.length > 0) {
         if (this.ids.length == 1) {
-          this.fileName = val[0].name.replace(' ', '') + '.docx'
+          this.fileName = val[0].name.replace(" ", "") + ".docx";
         } else {
-          this.fileName = '突发事件.zip'
+          this.fileName = "突发事件.zip";
         }
-        this.showExportBtn = true
+        this.showExportBtn = true;
       } else {
-        this.showExportBtn = false
+        this.showExportBtn = false;
       }
       //在这里调用后端导入接口
     },
     handleHeaderDragEnd() {
       this.$nextTick(() => {
-        this.$refs.multipleTable.doLayout()
-      })
+        this.$refs.multipleTable.doLayout();
+      });
     },
     //表格序号
     getIndex(index) {
-      let curpage = this.pageParams.current //单前页码，具体看组件取值
-      let limitpage = this.pageParams.pageSize //每页条数，具体是组件取值
-      return index + 1 + (curpage - 1) * limitpage
+      let curpage = this.pageParams.current; //单前页码，具体看组件取值
+      let limitpage = this.pageParams.pageSize; //每页条数，具体是组件取值
+      return index + 1 + (curpage - 1) * limitpage;
     },
     reset() {
       this.pageParams = {
         orderProperties: [
           {
-            property: 'createDate',
-            asc: false
-          }
+            property: "createDate",
+            asc: false,
+          },
         ],
         pageSize: 20,
         size: 20,
         current: 1,
         total: 0,
         entity: {
-          params: {}
-        }
-      }
-      this.startTimeAndEndTime = []
-      this.getTableData()
+          params: {},
+        },
+      };
+      this.startTimeAndEndTime = [];
+      this.getTableData();
     },
     getTableData(pageInfo) {
-      const pageParams = Object.assign(this.pageParams, pageInfo)
+      const pageParams = Object.assign(this.pageParams, pageInfo);
       if (pageParams.entity.date?.length > 0) {
-        pageParams.entity.startTime = pageParams.entity.date[0] + ' 00:00:00'
-        pageParams.entity.endTime = pageParams.entity.date[1] + ' 23:59:59'
+        pageParams.entity.startTime = pageParams.entity.date[0] + " 00:00:00";
+        pageParams.entity.endTime = pageParams.entity.date[1] + " 23:59:59";
         // delete pageParams.entity.date;
       }
       page(pageParams).then((res) => {
         if (res.success) {
-          this.tableData = res.data.records
-          console.log('pageParams', this.pageParams, res)
-          this.pageParams.total = res.data.total
+          this.tableData = res.data.records;
+          console.log("pageParams", this.pageParams, res);
+          this.pageParams.total = res.data.total;
         }
-      })
+      });
     },
     /**获取流程状态字典 */
     getFlowStatus() {
-      let data = []
-      let options = enums.FLOW_STATUS_ENUM
+      let data = [];
+      let options = enums.FLOW_STATUS_ENUM;
       for (const key in options) {
         data.push({
           id: options[key].value,
           dictCode: options[key].value,
-          dictName: options[key].name
-        })
+          dictName: options[key].name,
+        });
       }
-      this.flowStatusOptions = data
+      this.flowStatusOptions = data;
     },
     deleteHandle(row) {
       remove({ id: row.id }).then((res) => {
         if (res.success) {
-          this.$message.success('删除成功')
-          this.getTableData()
+          this.$message.success("删除成功");
+          this.getTableData();
         }
-      })
-    }
-  }
-}
+      });
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss"></style>

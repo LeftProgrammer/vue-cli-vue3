@@ -47,12 +47,12 @@ const route = {
       component: () => import("@/views/project/userSign/index.vue"),
       meta: { title: "用户签名", auth: "project" },
     },
-    {
-      path: "monitorManagement",
-      component: () => import("@/views/project/monitorManagement/index.vue"),
-      name: "monitorManagement",
-      meta: { title: "监控设备管理", auth: "video" },
-    },
+    // {
+    //   path: "monitorManagement",
+    //   component: () => import("@/views/project/monitorManagement/index.vue"),
+    //   name: "monitorManagement",
+    //   meta: { title: "监控设备管理", auth: "video" },
+    // },
   ],
 };
 export default route;

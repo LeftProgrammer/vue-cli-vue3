@@ -79,13 +79,11 @@
                   edit(
                     row,
                     'fine',
-                    row.procMatterTaskDone ||
-                      row.matterTaskTodo ||
-                      row.procMatterRun,
+                    row.procMatterTaskDone || row.matterTaskTodo || row.procMatterRun,
                     'view'
                   )
                 "
-              >{{ row.name }}
+                >{{ row.name }}
               </el-link>
             </template>
           </el-table-column>
@@ -99,7 +97,7 @@
           >
             <template slot-scope="{ row }">
               <div class="text-ellipsis">
-                {{ getText(sectionOptions, getCodeName(row, 'sectionId')) }}
+                {{ getText(sectionOptions, getCodeName(row, "sectionId")) }}
               </div>
             </template>
           </el-table-column>
@@ -111,14 +109,14 @@
             width="180"
           />
           <el-table-column
-            label="发起日期"
+            label="进场日期"
             prop="startDate"
             align="center"
             width="120"
             excel.dateFormat="yyyy-MM-dd"
           >
             <template slot-scope="{ row }">
-              {{ row.startDate ? timeFormat(row.startDate, 'yyyy-MM-DD') : '' }}
+              {{ row.startDate ? timeFormat(row.startDate, "yyyy-MM-DD") : "" }}
             </template>
           </el-table-column>
           <el-table-column
@@ -148,11 +146,11 @@
                 <el-button
                   v-if="
                     (row.flowStatus == 1 || row.flowStatus == 2) &&
-                      row.createUser == userId
+                    row.createUser == userId
                   "
                   type="text"
                   @click="editForm(row)"
-                >编辑
+                  >编辑
                 </el-button>
                 <flow-button
                   :row="row"
@@ -184,16 +182,16 @@
 </template>
 
 <script>
-import { remove, page } from './api'
-import { dateFormat } from '@/utils'
-import { FlowListMixin } from '@/mixins/FlowListMixin'
-import TableLayout from '@/components/ContentLayout/TreeTable'
-import enums from '@/config/enums'
-import { getSectionByCorpId } from '@/api/measure'
-import dataform1 from './dataform1.vue'
+import { remove, page } from "./api";
+import { dateFormat } from "@/utils";
+import { FlowListMixin } from "@/mixins/FlowListMixin";
+import TableLayout from "@/components/ContentLayout/TreeTable";
+import enums from "@/config/enums";
+import { getSectionByCorpId } from "@/api/measure";
+import dataform1 from "./dataform1.vue";
 
 export default {
-  name: 'IngressCheck',
+  name: "IngressCheck",
   components: {
     TableLayout,
     dataform1
@@ -204,12 +202,12 @@ export default {
       sectionOptions: [],
       startTimeAndEndTime: [],
       treeNode: {}, //点击树节点传递给子组件使用
-      type: '',
-      title: '监测点列表',
+      type: "",
+      title: "监测点列表",
       DitSpeciality: [],
       defaultProps: {
-        children: 'children',
-        label: 'dictName'
+        children: "children",
+        label: "dictName"
       },
       pageParams: {
         size: 20,
@@ -226,7 +224,7 @@ export default {
       /**流程状态 */
       flowStatusOptions: [],
       oprateRow: {}
-    }
+    };
   },
   computed: {
     exportParams() {
@@ -235,158 +233,157 @@ export default {
         entity: {
           ...this.query
         }
-      }
-      return params
+      };
+      return params;
     },
     userId() {
-      return this.$getStorage('userInfo').userId
+      return this.$getStorage("userInfo").userId;
     }
   },
   created() {
-    this.getCurrent()
-    this.getTableData()
-    this.getFlowStatus()
+    this.getCurrent();
+    this.getTableData();
+    this.getFlowStatus();
   },
   methods: {
     getCodeName(row, type) {
-      let name = row[type] || row.designSupply?.[type] || ''
-      return name
+      let name = row[type] || row.designSupply?.[type] || "";
+      return name;
     },
     getText(options, value) {
-      let a = []
+      let a = [];
       if (value) {
-        value = value.split(',')
+        value = value.split(",");
         a = value.map((x) => {
-          let item = options.find((y) => y.id == x)
+          let item = options.find((y) => y.id == x);
           if (item) {
-            return item.name
+            return item.name;
           }
-        })
+        });
       }
-      return a.toString()
+      return a.toString();
     },
     //翻译列表所属标段 id=>name
     sectionIdFormatter(row, column) {
-      var value = ''
+      var value = "";
       for (var i = 0; i < this.sectionOptions.length; i++) {
-        var item = this.sectionOptions[i]
+        var item = this.sectionOptions[i];
         if (row.sectionId == item.id) {
-          value = item.name
-          break
+          value = item.name;
+          break;
         }
       }
-      return value
+      return value;
     },
     /**获取施工标段 */
     async getSectionList(corporateId) {
       try {
         const { data, success, message } = await getSectionByCorpId({
           corpId: corporateId
-        })
+        });
 
         if (!success) {
-          this.$message.error('查询标段失败：' + message)
-          return false
+          this.$message.error("查询标段失败：" + message);
+          return false;
         }
-        this.sectionOptions = data
-        return data
+        this.sectionOptions = data;
+        return data;
       } catch (err) {
-        console.error(err)
-        this.$message.error('查询标段失败')
-        return false
+        console.error(err);
+        this.$message.error("查询标段失败");
+        return false;
       }
     },
     /**初始化导出Excel参数 */
     initExportParams(exportParams) {
-      exportParams.url = '/api/quality/check/export'
+      exportParams.url = "/api/quality/check/export";
       exportParams.filename =
-        '进场报验' +
-        (this.query.dictNamePath ? '-' + this.query.dictNamePath : '')
-      exportParams.params = this.exportParams
-      exportParams.params.entity.columns = exportParams.columns
+        "进场报验" + (this.query.dictNamePath ? "-" + this.query.dictNamePath : "");
+      exportParams.params = this.exportParams;
+      exportParams.params.entity.columns = exportParams.columns;
     },
     edit(row, status, task, type) {
-      this.handelShowDialog(row, status, task)
+      this.handelShowDialog(row, status, task);
     },
     deleteRow(row) {
       remove(row).then((res) => {
         if (res.success) {
-          this.$message.success('删除数据成功')
-          this.getTableData()
+          this.$message.success("删除数据成功");
+          this.getTableData();
         } else {
-          this.$message.error('删除数据失败' + res.message ? res.message : '')
+          this.$message.error("删除数据失败" + res.message ? res.message : "");
         }
-      })
+      });
     },
     reset() {
-      this.query = {}
-      this.query.current = 1
-      this.query.pageSize = 20
-      this.getTableData()
+      this.query = {};
+      this.query.current = 1;
+      this.query.pageSize = 20;
+      this.getTableData();
     },
     async getCurrent() {
-      console.log('this.currentSection', this.$getStorage('userInfo'))
-      this.current = this.$getStorage('userInfo')
-      console.log('获取当前登陆人的单位', this.current)
-      await this.getSectionList(this.current.corpId)
+      console.log("this.currentSection", this.$getStorage("userInfo"));
+      this.current = this.$getStorage("userInfo");
+      console.log("获取当前登陆人的单位", this.current);
+      await this.getSectionList(this.current.corpId);
       if (this.sectionOptions.length === 0) {
-        this.$message.error('查询标段失败')
+        this.$message.error("查询标段失败");
       }
     },
     // 查询表格数据
     getTableData() {
-      this.pageParams.entity = this.query
-      const params = JSON.parse(JSON.stringify(this.pageParams))
+      this.pageParams.entity = this.query;
+      const params = JSON.parse(JSON.stringify(this.pageParams));
       page(params).then((data) => {
-        this.tableData = data.data.records
-        this.pageParams.total = data.data.total
-      })
+        this.tableData = data.data.records;
+        this.pageParams.total = data.data.total;
+      });
     },
     /**新增 */
     addHandle() {
-      this.handelShowDialog(null, 'mine')
+      this.handelShowDialog(null, "mine");
     },
 
     timeFormat(time, type) {
-      return dateFormat(time, type || 'YYYY-MM-DD HH:mm:ss')
+      return dateFormat(time, type || "YYYY-MM-DD HH:mm:ss");
     },
 
     handleSizeChange(val) {
-      this.pageParams = val
-      this.getTableData()
+      this.pageParams = val;
+      this.getTableData();
     },
     handleCurrentChange(val) {
-      this.pageParams = val
-      this.getTableData()
+      this.pageParams = val;
+      this.getTableData();
     },
     /**获取流程状态字典 */
     async getFlowStatus() {
-      let data = []
-      let options = enums.FLOW_STATUS_ENUM
+      let data = [];
+      let options = enums.FLOW_STATUS_ENUM;
       for (const key in options) {
         data.push({
           id: options[key].value,
           dictCode: options[key].value,
           dictName: options[key].name
-        })
+        });
       }
-      this.flowStatusOptions = data
+      this.flowStatusOptions = data;
     },
     handleQuery() {
       this.pageParams.current = 1;
       this.getTableData();
     },
     editForm(val) {
-      this.oprateRow.dialogShow = true
-      this.oprateRow.data = val
-      this.oprateRow.isView = false
+      this.oprateRow.dialogShow = true;
+      this.oprateRow.data = val;
+      this.oprateRow.isView = false;
     },
     sureson() {
-      this.oprateRow.dialogShow = false
-      this.getTableData()
+      this.oprateRow.dialogShow = false;
+      this.getTableData();
     }
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

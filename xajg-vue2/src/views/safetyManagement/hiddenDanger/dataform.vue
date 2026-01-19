@@ -161,10 +161,11 @@
           </el-col>
           <el-col
             v-if="
-              formData.id &&
-                formData.hiddenDangerLevel == 'zdsgyh' &&
-                formData.matterTaskTodo?.procTaskName &&
-                formData.matterTaskTodo?.procTaskName != '确认安全隐患'
+              formData.flowStatus == 2 ||
+                (formData.id &&
+                  formData.hiddenDangerLevel == 'zdsgyh' &&
+                  formData.matterTaskTodo?.procTaskName &&
+                  formData.matterTaskTodo?.procTaskName != '确认安全隐患')
             "
             :span="24"
           >
@@ -183,9 +184,10 @@
           </el-col>
           <el-col
             v-show="
-              formData.id &&
-                formData.matterTaskTodo?.procTaskName == '提交整改证明材料' &&
-                formData.hiddenDangerLevel == 'zdsgyh'
+              formData.flowStatus == 2 ||
+                (formData.id &&
+                  formData.matterTaskTodo?.procTaskName == '提交整改证明材料' &&
+                  formData.hiddenDangerLevel == 'zdsgyh')
             "
             :span="24"
           >
@@ -205,8 +207,9 @@
           </el-col>
           <el-col
             v-show="
-              formData.id &&
-                formData.matterTaskTodo?.procTaskName == '提交整改证明材料'
+              formData.flowStatus == 2 ||
+                (formData.id &&
+                  formData.matterTaskTodo?.procTaskName == '提交整改证明材料')
             "
             :span="24"
           >
@@ -226,8 +229,9 @@
           </el-col>
           <el-col
             v-show="
-              formData.id &&
-                formData.matterTaskTodo?.procTaskName == '提交整改证明材料'
+              formData.flowStatus == 2 ||
+                (formData.id &&
+                  formData.matterTaskTodo?.procTaskName == '提交整改证明材料')
             "
             :span="24"
           >
@@ -330,15 +334,15 @@
 </template>
 
 <script>
-import { save, getSection } from './api'
-import { FlowFormMixin } from '@/mixins/FlowFormMixin'
-import { fromApp } from '@/utils/index'
-import { getDictItemList } from '@/api/dict'
-import bimPoint from '@/components/Bim/Point/index'
+import { save, getSection } from "./api";
+import { FlowFormMixin } from "@/mixins/FlowFormMixin";
+import { fromApp } from "@/utils/index";
+import { getDictItemList } from "@/api/dict";
+import bimPoint from "@/components/Bim/Point/index";
 
-import { dateFormat } from '@/utils'
+import { dateFormat } from "@/utils";
 export default {
-  name: 'DataForm',
+  name: "DataForm",
   components: { bimPoint },
   mixins: [FlowFormMixin],
   data() {
@@ -347,98 +351,98 @@ export default {
       showHiddenDangerRectifier: false,
       formData: {},
       formDataRules: {
-        pbsCode: [{ required: true, message: '请选择', trigger: 'change' }],
+        pbsCode: [{ required: true, message: "请选择", trigger: "change" }],
         hiddenDangerLevel: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
-        rectifyDate: [{ required: true, message: '请选择', trigger: 'change' }],
+        rectifyDate: [{ required: true, message: "请选择", trigger: "change" }],
         hiddenDangerCategory: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
         locationDesc: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
         hiddenDangerChecker: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
         hiddenDangerContent: [
-          { required: true, message: '请输入', trigger: 'blur' }
+          { required: true, message: "请输入", trigger: "blur" },
         ],
         reportApprovalPlan: [
-          { required: true, message: '请输入', trigger: 'blur' }
+          { required: true, message: "请输入", trigger: "blur" },
         ],
         hiddenDangerName: [
-          { required: true, message: '请输入', trigger: 'blur' }
+          { required: true, message: "请输入", trigger: "blur" },
         ],
         reportApprovalAttachment: [
-          { required: true, message: '请选择', trigger: 'blur' }
+          { required: true, message: "请选择", trigger: "blur" },
         ],
         // locationDesc: [{ required: true, message: "请输入", trigger: "change" }],
         safetySupervisionEngineer: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
         constructionSafetyManager: [
-          { required: true, message: '请选择', trigger: 'change' }
+          { required: true, message: "请选择", trigger: "change" },
         ],
         sectionId: [
-          { required: true, message: '请选择标段', trigger: 'change' }
-        ]
+          { required: true, message: "请选择标段", trigger: "change" },
+        ],
       },
       //正在加载
       loading: false,
       url: {
-        list: '/api/safe/hiddenDanger/page'
+        list: "/api/safe/hiddenDanger/page",
       },
       yhjbList: [], //隐患级别
       yhflList: [], //隐患分类
-      sectionList: []
-    }
+      sectionList: [],
+    };
   },
   computed: {
     // 是否展示审批人
     freeFlowInputShow() {
-      let show = false
-      if (this.formData?.flowInfo?.page != 'fine') {
+      let show = false;
+      if (this.formData?.flowInfo?.page != "fine") {
         if (
           Object.keys(this.formData).length === 0 ||
           !this.formData?.flowStatus
         ) {
-          show = true
+          show = true;
         }
       }
-      return show
+      return show;
     },
     /**当前登录用户 */
     userInfo() {
-      return this.$getStorage('userInfo')
+      return this.$getStorage("userInfo");
     },
     showHiddenDangerSupervisor() {
-      return this.formData.supervision
-    }
+      return this.formData.supervision;
+    },
   },
   created() {
-    this.isFormApp = fromApp()
+    this.isFormApp = fromApp();
     //接收控件页面的值，点击 保存到服务器 执行
-    this.getSectionList()
+    this.getSectionList();
   },
   mounted() {
-    this.getDictItemList()
+    this.getDictItemList();
   },
   // 页面离开时触发
   beforeDestroy() {
     if (this.fromapp) {
-      const titleElement = document.getElementById('dynamicTitle')
+      const titleElement = document.getElementById("dynamicTitle");
       // 设置动态标题
-      titleElement.textContent = '雄安调蓄工程建设管理系统'
+      titleElement.textContent = "雄安调蓄工程建设管理系统";
     }
   },
   methods: {
     /**获取字典 */
     async getDictItemList() {
-      const hiddenDangerCategory = await getDictItemList('yhfl')
-      const hiddenDangerLevel = await getDictItemList('yhjb')
-      this.yhflList = hiddenDangerCategory.data
-      this.yhjbList = hiddenDangerLevel.data
+      const hiddenDangerCategory = await getDictItemList("yhfl");
+      const hiddenDangerLevel = await getDictItemList("yhjb");
+      this.yhflList = hiddenDangerCategory.data;
+      this.yhjbList = hiddenDangerLevel.data;
     },
     /**
      * @description 选中用户 回显部门
@@ -447,116 +451,116 @@ export default {
      * @param record
      */
     handlerUserChange(filed, value, record) {
-      this.$set(this.formData, filed, record.departName)
+      this.$set(this.formData, filed, record.departName);
     },
     //发送前事件,mixin中进行调用:发送前转pdf并上传文件
     async beforeSend(eventData) {
-      let btnKey = eventData?.btnKey
-      if (btnKey === 'submit') return
-      let extData = {}
-      extData['safetySupervisionEngineer'] = {
-        type: 'user',
-        value: this.formData.safetySupervisionEngineer
-      }
+      let btnKey = eventData?.btnKey;
+      if (btnKey === "submit") return;
+      let extData = {};
+      extData["safetySupervisionEngineer"] = {
+        type: "user",
+        value: this.formData.safetySupervisionEngineer,
+      };
       // extData["constructionSafetyManager"] = {
       //   type: "user",
       //   value: this.formData.constructionSafetyManager
       // };
-      extData['hiddenDangerLevel'] = {
-        type: 'string',
-        value: this.formData.hiddenDangerLevel
-      }
-      this.sendFlowJson = extData
-      console.log('this.sendFlowJson', this.sendFlowJson)
+      extData["hiddenDangerLevel"] = {
+        type: "string",
+        value: this.formData.hiddenDangerLevel,
+      };
+      this.sendFlowJson = extData;
+      console.log("this.sendFlowJson", this.sendFlowJson);
     },
     async beforeSubmitButton() {
       // if (this.formData.matterTaskTodo.procTaskName == "隐患整改") {
-      let extData = {}
+      let extData = {};
       //   extData["supervision"] = {
       //     type: "boolean",
       //     value: Boolean(this.formData.supervision)
       //   };
-      extData['constructionSafetyManager'] = {
-        type: 'user',
-        value: this.formData.constructionSafetyManager
-      }
-      this.sendFlowJson = extData
+      extData["constructionSafetyManager"] = {
+        type: "user",
+        value: this.formData.constructionSafetyManager,
+      };
+      this.sendFlowJson = extData;
       // }
     },
     save(fields, callback, event) {
       this.formData.rectifyDate = dateFormat(
         this.formData.rectifyDate,
-        'YYYY-MM-DD'
-      )
-      this.formData.rectifyState = this.formData.rectifyState || 1
-      const isMaintenance = event.data.btnKey === 'maintenance'
+        "YYYY-MM-DD"
+      );
+      this.formData.rectifyState = this.formData.rectifyState || 1;
+      const isMaintenance = event.data.btnKey === "maintenance";
       if (isMaintenance) {
         this.sendMessage(
           {
             btnKey: event.data.btnKey,
             data: fields,
-            type: 'maintenance'
+            type: "maintenance",
           },
           event.origin
-        )
-        return
+        );
+        return;
       }
       save(fields)
         .then((res) => {
-          const { success, message } = res
+          const { success, message } = res;
           if (!success) {
-            return this.$message.error('新增失败：' + message)
+            return this.$message.error("新增失败：" + message);
           } else {
-            callback && callback()
+            callback && callback();
           }
         })
         .catch((err) => {
-          console.error(err)
-          this.$message.error('新增失败')
-        })
+          console.error(err);
+          this.$message.error("新增失败");
+        });
     },
     /**
      * 获取表单数据
      */
     async getFormData() {
-      const row = await this.getFlowRow()
+      const row = await this.getFlowRow();
       if (row) {
         // Object.assign(this.formData, row);
-        this.formData = row
+        this.formData = row;
       } else {
-        this.$set(this.formData, 'hiddenDangerReportor', this.userInfo.userId)
+        this.$set(this.formData, "hiddenDangerReportor", this.userInfo.userId);
         this.$set(
           this.formData,
-          'hiddenDangerReportorFullname',
+          "hiddenDangerReportorFullname",
           this.userInfo.realName
-        )
+        );
         this.$set(
           this.formData,
-          'hiddenDangerReportorDeptName',
+          "hiddenDangerReportorDeptName",
           this.userInfo.departName
-        )
+        );
       }
     },
     async getSectionList(corporateId) {
       try {
         const { data, success, message } = await getSection({
-          corpId: corporateId
-        })
+          corpId: corporateId,
+        });
 
         if (!success) {
-          this.$message.error('查询标段失败：' + message)
-          return false
+          this.$message.error("查询标段失败：" + message);
+          return false;
         }
-        this.sectionList = data
-        return data
+        this.sectionList = data;
+        return data;
       } catch (err) {
-        console.error(err)
-        this.$message.error('查询标段失败')
-        return false
+        console.error(err);
+        this.$message.error("查询标段失败");
+        return false;
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -592,7 +596,7 @@ export default {
 /deep/ .el-table {
   th.required.taskname {
     .cell::before {
-      content: '*';
+      content: "*";
       width: 5px;
       height: 0px;
       margin-top: 2px;

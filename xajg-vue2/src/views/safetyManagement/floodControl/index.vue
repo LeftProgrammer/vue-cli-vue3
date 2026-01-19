@@ -106,10 +106,7 @@
             :width="$calculateWidth(120)"
           >
             <template slot-scope="scope">
-              <flow-status
-                :row="scope.row"
-                :flow-name="scope.row.flowName"
-              />
+              <flow-status :row="scope.row" :flow-name="scope.row.flowName" />
             </template>
           </el-table-column>
           <el-table-column
@@ -177,6 +174,10 @@ export default {
   methods: {
     dateFormat,
     moment,
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     isRowSelectable(row) {
       if (row.flowStatus == 2) {
         return Boolean(true);

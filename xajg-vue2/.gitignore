@@ -21,6 +21,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+.claude
 #/config/proxy.config.js
 /public/app/css
 /public/app/js

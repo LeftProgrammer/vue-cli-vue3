@@ -10,7 +10,12 @@
         <el-row :gutter="20">
           <el-col :span="12">
             <el-form-item label="结算编号" prop="code">
-              <el-input v-model="formData.code" :disabled="readonly" maxlength="50" show-word-limit />
+              <el-input
+                v-model="formData.code"
+                :disabled="readonly"
+                maxlength="50"
+                show-word-limit
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -58,6 +63,24 @@
                 style="width: 100%"
                 placeholder="选择日期"
               />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="结算类型" prop="settleType">
+              <el-select
+                v-model="formData.settleType"
+                style="width: 100%"
+                placeholder="请选择"
+                :disabled="readonly"
+                @visible-change="$visibleChange($event, 'el-popper')"
+              >
+                <el-option
+                  v-for="item in settleTypeOptions"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -152,13 +175,13 @@
               <tr>
                 <td>小计(一)</td>
                 <td>
-                  {{ computedMoney(['工程预付款', '材料预付款'], 'lastPrice') }}
+                  {{ computedMoney(["工程预付款", "材料预付款"], "lastPrice") }}
                 </td>
                 <td>
-                  {{ computedMoney(['工程预付款', '材料预付款'], 'thisPrice') }}
+                  {{ computedMoney(["工程预付款", "材料预付款"], "thisPrice") }}
                 </td>
                 <td>
-                  {{ computedMoney(['工程预付款', '材料预付款'], 'endPrice') }}
+                  {{ computedMoney(["工程预付款", "材料预付款"], "endPrice") }}
                 </td>
                 <td />
                 <td />
@@ -175,7 +198,7 @@
                   />
                 </td>
                 <td>
-                  {{ tableData['工程量清单项目'].thisPrice }}
+                  {{ tableData["工程量清单项目"].thisPrice }}
                 </td>
                 <td>
                   <el-input-number
@@ -210,7 +233,7 @@
                   />
                 </td>
                 <td>
-                  {{ tableData['变更项目'].thisPrice }}
+                  {{ tableData["变更项目"].thisPrice }}
                 </td>
                 <td>
                   <el-input-number
@@ -391,14 +414,14 @@
                   {{
                     computedMoney(
                       [
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'lastPrice'
+                      "lastPrice"
                     )
                   }}
                 </td>
@@ -406,14 +429,14 @@
                   {{
                     computedMoney(
                       [
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'thisPrice'
+                      "thisPrice"
                     )
                   }}
                 </td>
@@ -421,14 +444,14 @@
                   {{
                     computedMoney(
                       [
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'endPrice'
+                      "endPrice"
                     )
                   }}
                 </td>
@@ -441,16 +464,16 @@
                   {{
                     computedMoney(
                       [
-                        '工程预付款',
-                        '材料预付款',
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程预付款",
+                        "材料预付款",
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'lastPrice'
+                      "lastPrice"
                     )
                   }}
                 </td>
@@ -458,16 +481,16 @@
                   {{
                     computedMoney(
                       [
-                        '工程预付款',
-                        '材料预付款',
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程预付款",
+                        "材料预付款",
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'thisPrice'
+                      "thisPrice"
                     )
                   }}
                 </td>
@@ -475,16 +498,16 @@
                   {{
                     computedMoney(
                       [
-                        '工程预付款',
-                        '材料预付款',
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程预付款",
+                        "材料预付款",
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'endPrice'
+                      "endPrice"
                     )
                   }}
                 </td>
@@ -571,9 +594,9 @@
               </tr>
               <tr>
                 <td>扣留项目合计（四）</td>
-                <td>-{{ computedMoney(['进度款', '其他1'], 'lastPrice') }}</td>
-                <td>-{{ computedMoney(['进度款', '其他1'], 'thisPrice') }}</td>
-                <td>-{{ computedMoney(['进度款', '其他1'], 'endPrice') }}</td>
+                <td>-{{ computedMoney(["进度款", "其他1"], "lastPrice") }}</td>
+                <td>-{{ computedMoney(["进度款", "其他1"], "thisPrice") }}</td>
+                <td>-{{ computedMoney(["进度款", "其他1"], "endPrice") }}</td>
                 <td />
                 <td />
               </tr>
@@ -659,17 +682,17 @@
                 <td>小计（五）</td>
                 <td>
                   -{{
-                    computedMoney(['工程预付款1', '材料预付款1'], 'lastPrice')
+                    computedMoney(["工程预付款1", "材料预付款1"], "lastPrice")
                   }}
                 </td>
                 <td>
                   -{{
-                    computedMoney(['工程预付款1', '材料预付款1'], 'thisPrice')
+                    computedMoney(["工程预付款1", "材料预付款1"], "thisPrice")
                   }}
                 </td>
                 <td>
                   -{{
-                    computedMoney(['工程预付款1', '材料预付款1'], 'endPrice')
+                    computedMoney(["工程预付款1", "材料预付款1"], "endPrice")
                   }}
                 </td>
                 <td />
@@ -755,17 +778,17 @@
                 <td>小计（六）</td>
                 <td>
                   -{{
-                    computedMoney(['违约赔偿扣款', '质量安全扣款'], 'lastPrice')
+                    computedMoney(["违约赔偿扣款", "质量安全扣款"], "lastPrice")
                   }}
                 </td>
                 <td>
                   -{{
-                    computedMoney(['违约赔偿扣款', '质量安全扣款'], 'thisPrice')
+                    computedMoney(["违约赔偿扣款", "质量安全扣款"], "thisPrice")
                   }}
                 </td>
                 <td>
                   -{{
-                    computedMoney(['违约赔偿扣款', '质量安全扣款'], 'endPrice')
+                    computedMoney(["违约赔偿扣款", "质量安全扣款"], "endPrice")
                   }}
                 </td>
                 <td />
@@ -815,13 +838,13 @@
                   -{{
                     computedMoney(
                       [
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
+                        "工程预付款1",
+                        "材料预付款1",
+                        "违约赔偿扣款",
+                        "其他2",
+                        "质量安全扣款",
                       ],
-                      'lastPrice'
+                      "lastPrice"
                     )
                   }}
                 </td>
@@ -829,13 +852,13 @@
                   -{{
                     computedMoney(
                       [
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
+                        "工程预付款1",
+                        "材料预付款1",
+                        "违约赔偿扣款",
+                        "其他2",
+                        "质量安全扣款",
                       ],
-                      'thisPrice'
+                      "thisPrice"
                     )
                   }}
                 </td>
@@ -843,13 +866,13 @@
                   -{{
                     computedMoney(
                       [
-                        '工程预付款1',
-                        '材料预付款1',
-                        '违约赔偿扣款',
-                        '其他2',
-                        '质量安全扣款'
+                        "工程预付款1",
+                        "材料预付款1",
+                        "违约赔偿扣款",
+                        "其他2",
+                        "质量安全扣款",
                       ],
-                      'endPrice'
+                      "endPrice"
                     )
                   }}
                 </td>
@@ -863,28 +886,28 @@
                   {{
                     computedMoney(
                       [
-                        '工程预付款',
-                        '材料预付款',
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程预付款",
+                        "材料预付款",
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'lastPrice'
+                      "lastPrice"
                     ) -
                       computedMoney(
                         [
-                          '进度款',
-                          '其他1',
-                          '工程预付款1',
-                          '材料预付款1',
-                          '违约赔偿扣款',
-                          '其他2',
-                          '质量安全扣款'
+                          "进度款",
+                          "其他1",
+                          "工程预付款1",
+                          "材料预付款1",
+                          "违约赔偿扣款",
+                          "其他2",
+                          "质量安全扣款",
                         ],
-                        'lastPrice'
+                        "lastPrice"
                       )
                   }}
                 </td>
@@ -892,28 +915,28 @@
                   {{
                     computedMoney(
                       [
-                        '工程预付款',
-                        '材料预付款',
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程预付款",
+                        "材料预付款",
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'thisPrice'
+                      "thisPrice"
                     ) -
                       computedMoney(
                         [
-                          '进度款',
-                          '其他1',
-                          '工程预付款1',
-                          '材料预付款1',
-                          '违约赔偿扣款',
-                          '其他2',
-                          '质量安全扣款'
+                          "进度款",
+                          "其他1",
+                          "工程预付款1",
+                          "材料预付款1",
+                          "违约赔偿扣款",
+                          "其他2",
+                          "质量安全扣款",
                         ],
-                        'thisPrice'
+                        "thisPrice"
                       )
                   }}
                 </td>
@@ -921,28 +944,28 @@
                   {{
                     computedMoney(
                       [
-                        '工程预付款',
-                        '材料预付款',
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程预付款",
+                        "材料预付款",
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'endPrice'
+                      "endPrice"
                     ) -
                       computedMoney(
                         [
-                          '进度款',
-                          '其他1',
-                          '工程预付款1',
-                          '材料预付款1',
-                          '违约赔偿扣款',
-                          '其他2',
-                          '质量安全扣款'
+                          "进度款",
+                          "其他1",
+                          "工程预付款1",
+                          "材料预付款1",
+                          "违约赔偿扣款",
+                          "其他2",
+                          "质量安全扣款",
                         ],
-                        'endPrice'
+                        "endPrice"
                       )
                   }}
                 </td>
@@ -1031,28 +1054,28 @@
                   小写:{{
                     computedMoney(
                       [
-                        '工程预付款',
-                        '材料预付款',
-                        '工程量清单项目',
-                        '变更项目',
-                        '计日工项目',
-                        '索赔项目',
-                        '价格调整',
-                        '其他'
+                        "工程预付款",
+                        "材料预付款",
+                        "工程量清单项目",
+                        "变更项目",
+                        "计日工项目",
+                        "索赔项目",
+                        "价格调整",
+                        "其他",
                       ],
-                      'thisPrice'
+                      "thisPrice"
                     ) -
                       computedMoney(
                         [
-                          '进度款',
-                          '其他1',
-                          '工程预付款1',
-                          '材料预付款1',
-                          '违约赔偿扣款',
-                          '其他2',
-                          '质量安全扣款'
+                          "进度款",
+                          "其他1",
+                          "工程预付款1",
+                          "材料预付款1",
+                          "违约赔偿扣款",
+                          "其他2",
+                          "质量安全扣款",
                         ],
-                        'thisPrice'
+                        "thisPrice"
                       )
                   }}
                 </td>
@@ -1061,28 +1084,28 @@
                     digitUppercase(
                       computedMoney(
                         [
-                          '工程预付款',
-                          '材料预付款',
-                          '工程量清单项目',
-                          '变更项目',
-                          '计日工项目',
-                          '索赔项目',
-                          '价格调整',
-                          '其他'
+                          "工程预付款",
+                          "材料预付款",
+                          "工程量清单项目",
+                          "变更项目",
+                          "计日工项目",
+                          "索赔项目",
+                          "价格调整",
+                          "其他",
                         ],
-                        'thisPrice'
+                        "thisPrice"
                       ) -
                         computedMoney(
                           [
-                            '进度款',
-                            '其他1',
-                            '工程预付款1',
-                            '材料预付款1',
-                            '违约赔偿扣款',
-                            '其他2',
-                            '质量安全扣款'
+                            "进度款",
+                            "其他1",
+                            "工程预付款1",
+                            "材料预付款1",
+                            "违约赔偿扣款",
+                            "其他2",
+                            "质量安全扣款",
                           ],
-                          'thisPrice'
+                          "thisPrice"
                         )
                     )
                   }}
@@ -1193,161 +1216,168 @@
 </template>
 
 <script>
-import { save, getCount } from './api'
-import { FlowFormMixin } from '@/mixins/FlowFormMixin'
-import { fromApp } from '@/utils/index'
-import { page as contractPage } from '../contractSign/api'
-import { dateFormat } from '@/utils'
-import detailTable from './detailTable.vue'
-import moment from 'moment'
+import { save, getCount } from "./api";
+import { FlowFormMixin } from "@/mixins/FlowFormMixin";
+import { fromApp } from "@/utils/index";
+import { page as contractPage } from "../contractSign/api";
+import detailTable from "./detailTable.vue";
+import moment from "moment";
+import { getDictItemList } from "@/api/dict";
 export default {
-  name: 'DataForm',
+  name: "DataForm",
   components: { detailTable },
   mixins: [FlowFormMixin],
   data() {
     return {
+      settleTypeOptions: [],
       isFormApp: false,
       showHiddenDangerRectifier: false,
       formData: {},
       formDataRules: {
         code: {
           required: true,
-          message: '请输入',
-          trigger: 'blur'
+          message: "请输入",
+          trigger: "blur",
         },
         settleDate: {
           required: true,
-          message: '请选择',
-          trigger: 'change'
+          message: "请选择",
+          trigger: "change",
         },
         thisPayNum: {
           required: true,
-          message: '请输入',
-          trigger: 'blur'
+          message: "请输入",
+          trigger: "blur",
         },
         contractName: {
           required: true,
-          message: '请选择',
-          trigger: 'blur'
+          message: "请选择",
+          trigger: "blur",
         },
         supervisionDirector: {
           required: true,
-          message: '请选择',
-          trigger: 'blur'
+          message: "请选择",
+          trigger: "blur",
         },
         engineeringDepartment: {
           required: true,
-          message: '请选择',
-          trigger: 'blur'
+          message: "请选择",
+          trigger: "blur",
         },
         contractDepartment: {
           required: true,
-          message: '请选择',
-          trigger: 'blur'
+          message: "请选择",
+          trigger: "blur",
         },
         contractDepartmentManage: {
           required: true,
-          message: '请选择',
-          trigger: 'blur'
+          message: "请选择",
+          trigger: "blur",
         },
         contractCode: {
           required: true,
-          message: '请输入',
-          trigger: 'blur'
+          message: "请输入",
+          trigger: "blur",
         },
         contractMoney: {
           required: true,
-          message: '请输入',
-          trigger: 'blur'
+          message: "请输入",
+          trigger: "blur",
+        },
+        settleType: {
+          required: true,
+          message: "请选择",
+          trigger: "change",
         },
         remark: {
           required: true,
-          message: '请输入',
-          trigger: 'blur'
-        }
+          message: "请输入",
+          trigger: "blur",
+        },
       },
       //正在加载
       loading: false,
       url: {
-        list: '/api/contract/investGeneralPay/page'
+        list: "/api/contract/investGeneralPay/page",
       },
       htxxOptions: [], //合同列表
       contractList: [], //合同清单
       oprateRow: { dialogShow: false },
-      tableData: {}
-    }
+      tableData: {},
+    };
   },
   computed: {
     // 审批字段的禁用
     flowDisabled() {
       return (field) => {
-        if (this.flowInfo?.page == 'fine') return true
-        let disabled = false
+        if (this.flowInfo?.page == "fine") return true;
+        let disabled = false;
         switch (field) {
-          case 'supervisionDirector':
-            disabled = this.formData.id
-            break
-          case 'engineeringDepartment':
-            disabled = this.formData.matterTaskTodo?.procTaskName != '监理总监'
+          case "supervisionDirector":
+            disabled = this.formData.id;
+            break;
+          case "engineeringDepartment":
+            disabled = this.formData.matterTaskTodo?.procTaskName != "监理总监";
 
-            break
-          case 'contractDepartment':
+            break;
+          case "contractDepartment":
             disabled =
-              this.formData.matterTaskTodo?.procTaskName != '工程处负责人'
+              this.formData.matterTaskTodo?.procTaskName != "工程处负责人";
 
-            break
-          case 'contractDepartmentManage':
+            break;
+          case "contractDepartmentManage":
             disabled =
-              this.formData.matterTaskTodo?.procTaskName != '合同处经办人'
-            break
+              this.formData.matterTaskTodo?.procTaskName != "合同处经办人";
+            break;
         }
-        return Boolean(disabled)
-      }
+        return Boolean(disabled);
+      };
     },
     // 审批字段的显示
     flowShow() {
       return (field) => {
-        if (this.formData.flowStatus == 2) return true
-        let show = false
+        if (this.formData.flowStatus == 2) return true;
+        let show = false;
         switch (field) {
-          case 'supervisionDirector':
-            show = true
-            break
-          case 'engineeringDepartment':
-            show = this.formData.id
-            break
-          case 'contractDepartment':
+          case "supervisionDirector":
+            show = true;
+            break;
+          case "engineeringDepartment":
+            show = this.formData.id;
+            break;
+          case "contractDepartment":
             show =
-              this.formData.matterTaskTodo?.procTaskName == '合同处经办人' ||
-              this.formData.matterTaskTodo?.procTaskName == '合同处负责人' ||
-              this.formData.matterTaskTodo?.procTaskName == '工程处负责人'
-            break
-          case 'contractDepartmentManage':
+              this.formData.matterTaskTodo?.procTaskName == "合同处经办人" ||
+              this.formData.matterTaskTodo?.procTaskName == "合同处负责人" ||
+              this.formData.matterTaskTodo?.procTaskName == "工程处负责人";
+            break;
+          case "contractDepartmentManage":
             show =
-              this.formData.matterTaskTodo?.procTaskName == '合同处经办人' ||
-              this.formData.matterTaskTodo?.procTaskName == '合同处负责人'
-            break
+              this.formData.matterTaskTodo?.procTaskName == "合同处经办人" ||
+              this.formData.matterTaskTodo?.procTaskName == "合同处负责人";
+            break;
         }
-        return Boolean(show)
-      }
+        return Boolean(show);
+      };
     },
     /**当前登录用户 */
     userInfo() {
-      return this.$getStorage('userInfo')
+      return this.$getStorage("userInfo");
     },
     computedMoney() {
       return (name, field) => {
-        return name.reduce((a, b) => a + (this.tableData[b][field] || 0), 0)
-      }
-    }
+        return name.reduce((a, b) => a + (this.tableData[b][field] || 0), 0);
+      };
+    },
   },
   created() {
-    this.isFormApp = fromApp()
-    this.initTableData()
+    this.isFormApp = fromApp();
+    this.initTableData();
+    this.fetchSettleTypeOptions();
     //接收控件页面的值，点击 保存到服务器 执行
   },
   mounted() {
-    this.getContractPage()
+    this.getContractPage();
   },
   methods: {
     moment,
@@ -1360,33 +1390,46 @@ export default {
         entity: {},
         pageSize: 20,
         size: 999,
-        total: 3
-      })
+        total: 3,
+      });
       if (!success) {
-        this.$message.error('获取合同失败')
-        return
+        this.$message.error("获取合同失败");
+        return;
       }
-      this.htxxOptions = data.records
+      this.htxxOptions = data.records;
+    },
+    async fetchSettleTypeOptions() {
+      try {
+        const { data, success } = await getDictItemList("SETTLE_TYPE");
+        if (success) {
+          this.settleTypeOptions = (data || []).map((item) => ({
+            label: item.dictName,
+            value: item.dictCode,
+          }));
+        }
+      } catch (error) {
+        console.error("获取结算类型失败", error);
+      }
     },
     /**
      * @description 合同切换
      * @param val
      */
     contractIdChangeHandle(val) {
-      this.detailData = []
+      this.detailData = [];
       if (val) {
-        let contract = this.htxxOptions.find((x) => x.code === val)
+        let contract = this.htxxOptions.find((x) => x.code === val);
         this.contractList = (contract.detailVos || []).map((x) => {
-          delete x.id
-          return x
-        })
-        this.$set(this.formData, 'contractName', contract.name)
-        this.$set(this.formData, 'contractCode', contract.code)
-        this.$set(this.formData, 'contractId', contract.id)
-        this.$set(this.formData, 'contractMoney', contract.amount)
+          delete x.id;
+          return x;
+        });
+        this.$set(this.formData, "contractName", contract.name);
+        this.$set(this.formData, "contractCode", contract.code);
+        this.$set(this.formData, "contractId", contract.id);
+        this.$set(this.formData, "contractMoney", contract.amount);
         getCount({ contractCode: contract.code }).then((res) => {
-          this.$set(this.formData, 'thisPayNum', res.data++)
-        })
+          this.$set(this.formData, "thisPayNum", res.data++);
+        });
       }
     },
     /**
@@ -1395,129 +1438,142 @@ export default {
      * @returns {string}         中文大写金额
      */
     digitUppercase(n) {
-      if (isNaN(n) || n === '') return ''
-      let head = n < 0 ? '负' : ''
-      n = Math.abs(n) // 去掉负号
-      const fraction = ['角', '分']
-      const digit = ['零', '壹', '贰', '叁', '肆', '伍', '陆', '柒', '捌', '玖']
+      if (isNaN(n) || n === "") return "";
+      let head = n < 0 ? "负" : "";
+      n = Math.abs(n); // 去掉负号
+      const fraction = ["角", "分"];
+      const digit = [
+        "零",
+        "壹",
+        "贰",
+        "叁",
+        "肆",
+        "伍",
+        "陆",
+        "柒",
+        "捌",
+        "玖",
+      ];
       const unit = [
-        ['元', '万', '亿'],
-        ['', '拾', '佰', '仟']
-      ]
-      let s = ''
+        ["元", "万", "亿"],
+        ["", "拾", "佰", "仟"],
+      ];
+      let s = "";
       for (let i = 0; i < fraction.length; i++) {
         s += (
           digit[Math.floor(n * 10 * Math.pow(10, i)) % 10] + fraction[i]
-        ).replace(/零./, '')
+        ).replace(/零./, "");
       }
-      s = s || '整'
-      n = Math.floor(n)
+      s = s || "整";
+      n = Math.floor(n);
       for (let i = 0; i < unit[0].length && n > 0; i++) {
-        let p = ''
+        let p = "";
         for (let j = 0; j < unit[1].length && n > 0; j++) {
-          p = digit[n % 10] + unit[1][j] + p
-          n = Math.floor(n / 10)
+          p = digit[n % 10] + unit[1][j] + p;
+          n = Math.floor(n / 10);
         }
-        s = p.replace(/(零.)*零$/, '').replace(/^$/, '零') + unit[0][i] + s
+        s = p.replace(/(零.)*零$/, "").replace(/^$/, "零") + unit[0][i] + s;
       }
       return (
         head +
         s
-          .replace(/(零.)*零元/, '元')
-          .replace(/(零.)+/g, '零')
-          .replace(/^整$/, '零元整')
-      )
+          .replace(/(零.)*零元/, "元")
+          .replace(/(零.)+/g, "零")
+          .replace(/^整$/, "零元整")
+      );
     },
     initTableData() {
       this.tableData = {
-        工程预付款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        材料预付款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
+        工程预付款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        材料预付款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
         工程量清单项目: {
           lastPrice: 0,
           thisPrice: 0,
           endPrice: 0,
-          remark: '',
-          subList: []
+          remark: "",
+          subList: [],
         },
 
         变更项目: {
           lastPrice: 0,
           thisPrice: 0,
           endPrice: 0,
-          remark: '',
-          subList: []
+          remark: "",
+          subList: [],
         },
-        计日工项目: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        索赔项目: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        价格调整: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        其他: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        进度款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        其他1: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        工程预付款1: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        材料预付款1: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        违约赔偿扣款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        质量安全扣款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
-        其他2: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: '' },
+        计日工项目: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        索赔项目: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        价格调整: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        其他: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        进度款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        其他1: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        工程预付款1: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        材料预付款1: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        违约赔偿扣款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        质量安全扣款: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
+        其他2: { lastPrice: 0, thisPrice: 0, endPrice: 0, remark: "" },
         其中农民工工资: {
           lastPrice: 0,
           thisPrice: 0,
           endPrice: 0,
-          remark: ''
+          remark: "",
         },
         其中安全生产经费: {
           lastPrice: 0,
           thisPrice: 0,
           endPrice: 0,
-          remark: ''
-        }
-      }
+          remark: "",
+        },
+      };
     },
     /**
      * @description 添加明细
      */
     addDetailBtn(type) {
-      this.oprateRow.type = 'add'
-      this.oprateRow.title = type == 1 ? '工程量清单项目汇总表' : '变更清单明细'
-      this.oprateRow.tableType = type == 1 ? 'inventory' : 'change'
+      this.oprateRow.type = "add";
+      this.oprateRow.title =
+        type == 1 ? "工程量清单项目汇总表" : "变更清单明细";
+      this.oprateRow.tableType = type == 1 ? "inventory" : "change";
       const subList =
         type == 1
-          ? this.tableData['工程量清单项目'].subList
-          : this.tableData['变更项目'].subList
-      this.oprateRow.data = subList || []
-      this.oprateRow.contractId = this.formData.contractId
-      this.oprateRow.dialogShow = true
+          ? this.tableData["工程量清单项目"].subList
+          : this.tableData["变更项目"].subList;
+      this.oprateRow.data = subList || [];
+      this.oprateRow.contractId = this.formData.contractId;
+      this.oprateRow.dialogShow = true;
     },
     view(type) {
-      this.oprateRow.type = 'view'
-      this.oprateRow.isView = true
-      this.oprateRow.title = type == 1 ? '工程量清单项目汇总表' : '变更清单明细'
-      this.oprateRow.tableType = type == 1 ? 'inventory' : 'change'
+      this.oprateRow.type = "view";
+      this.oprateRow.isView = true;
+      this.oprateRow.title =
+        type == 1 ? "工程量清单项目汇总表" : "变更清单明细";
+      this.oprateRow.tableType = type == 1 ? "inventory" : "change";
       const subList =
         type == 1
-          ? this.tableData['工程量清单项目'].subList
-          : this.tableData['变更项目'].subList
-      this.oprateRow.data = subList || []
-      this.oprateRow.dialogShow = true
+          ? this.tableData["工程量清单项目"].subList
+          : this.tableData["变更项目"].subList;
+      this.oprateRow.data = subList || [];
+      this.oprateRow.dialogShow = true;
     },
     closedDialog() {
-      this.oprateRow.dialogShow = false
+      this.oprateRow.dialogShow = false;
     },
     detailTableOk(data, tableType) {
-      console.log(data, tableType)
-      if (tableType == 'inventory') {
-        this.tableData['工程量清单项目'].subList = data
-        this.tableData['工程量清单项目'].thisPrice = this.tableData[
-          '工程量清单项目'
+      console.log(data, tableType);
+      if (tableType == "inventory") {
+        this.tableData["工程量清单项目"].subList = data;
+        this.tableData["工程量清单项目"].thisPrice = this.tableData[
+          "工程量清单项目"
         ].subList.reduce((pre, cur) => {
-          return pre + Number(cur.thisPrice || 0)
-        }, 0)
+          return pre + Number(cur.thisPrice || 0);
+        }, 0);
       } else {
-        this.tableData['变更项目'].subList = data
-        this.tableData['变更项目'].thisPrice = this.tableData[
-          '变更项目'
+        this.tableData["变更项目"].subList = data;
+        this.tableData["变更项目"].thisPrice = this.tableData[
+          "变更项目"
         ].subList.reduce((pre, cur) => {
-          return pre + Number(cur.totalPrice || 0)
-        }, 0)
+          return pre + Number(cur.totalPrice || 0);
+        }, 0);
       }
     },
     /**
@@ -1527,117 +1583,117 @@ export default {
      * @param record
      */
     handlerUserChange(filed, value, record) {
-      this.$set(this.formData, filed, record.departName)
+      this.$set(this.formData, filed, record.departName);
     },
     //发送前事件,mixin中进行调用:发送前转pdf并上传文件
     async beforeSend(eventData) {
-      let btnKey = eventData?.btnKey
-      if (btnKey === 'submit') return
-      let extData = {}
-      extData['jlzj'] = {
-        type: 'user',
-        value: this.formData.supervisionDirector
-      }
-      this.sendFlowJson = extData
-      console.log('this.sendFlowJson', this.sendFlowJson)
+      let btnKey = eventData?.btnKey;
+      if (btnKey === "submit") return;
+      let extData = {};
+      extData["jlzj"] = {
+        type: "user",
+        value: this.formData.supervisionDirector,
+      };
+      this.sendFlowJson = extData;
+      console.log("this.sendFlowJson", this.sendFlowJson);
     },
     async beforeSubmitButton() {
-      let extData = {}
-      extData['gcczz'] = {
-        type: 'user',
-        value: this.formData.engineeringDepartment
-      }
-      extData['htcjbr'] = {
-        type: 'user',
-        value: this.formData.contractDepartment
-      }
-      extData['htcfzr'] = {
-        type: 'user',
-        value: this.formData.contractDepartmentManage
-      }
-      this.sendFlowJson = extData
+      let extData = {};
+      extData["gcczz"] = {
+        type: "user",
+        value: this.formData.engineeringDepartment,
+      };
+      extData["htcjbr"] = {
+        type: "user",
+        value: this.formData.contractDepartment,
+      };
+      extData["htcfzr"] = {
+        type: "user",
+        value: this.formData.contractDepartmentManage,
+      };
+      this.sendFlowJson = extData;
     },
     save(fields, callback, event) {
       this.formData.thisSettlementSmallMoney =
         this.computedMoney(
           [
-            '工程预付款',
-            '材料预付款',
-            '工程量清单项目',
-            '变更项目',
-            '计日工项目',
-            '索赔项目',
-            '价格调整',
-            '其他'
+            "工程预付款",
+            "材料预付款",
+            "工程量清单项目",
+            "变更项目",
+            "计日工项目",
+            "索赔项目",
+            "价格调整",
+            "其他",
           ],
-          'thisPrice'
+          "thisPrice"
         ) -
         this.computedMoney(
           [
-            '进度款',
-            '其他1',
-            '工程预付款1',
-            '材料预付款1',
-            '违约赔偿扣款',
-            '其他2',
-            '质量安全扣款'
+            "进度款",
+            "其他1",
+            "工程预付款1",
+            "材料预付款1",
+            "违约赔偿扣款",
+            "其他2",
+            "质量安全扣款",
           ],
-          'thisPrice'
-        )
+          "thisPrice"
+        );
       this.formData.thisSettlementLargeMoney = this.digitUppercase(
         this.formData.thisSettlementSmallMoney
-      )
+      );
       this.formData.cumulativeSettlement = this.computedMoney(
         [
-          '工程预付款',
-          '材料预付款',
-          '工程量清单项目',
-          '变更项目',
-          '计日工项目',
-          '索赔项目',
-          '价格调整',
-          '其他'
+          "工程预付款",
+          "材料预付款",
+          "工程量清单项目",
+          "变更项目",
+          "计日工项目",
+          "索赔项目",
+          "价格调整",
+          "其他",
         ],
-        'thisPrice'
-      ) //累计应结算
+        "thisPrice"
+      ); //累计应结算
       this.formData.cumulativeDetention = this.computedMoney(
-        ['进度款', '其他1'],
-        'thisPrice'
-      ) //累计扣留金额
+        ["进度款", "其他1"],
+        "thisPrice"
+      ); //累计扣留金额
       this.formData.cumulativeDivision = this.computedMoney(
-        ['工程预付款1', '材料预付款1', '违约赔偿扣款', '其他2', '质量安全扣款'],
-        'thisPrice'
-      ) //累计扣除金额
+        ["工程预付款1", "材料预付款1", "违约赔偿扣款", "其他2", "质量安全扣款"],
+        "thisPrice"
+      ); //累计扣除金额
       this.formData.cumulativeActualPayment =
         this.computedMoney(
           [
-            '工程预付款',
-            '材料预付款',
-            '工程量清单项目',
-            '变更项目',
-            '计日工项目',
-            '索赔项目',
-            '价格调整',
-            '其他'
+            "工程预付款",
+            "材料预付款",
+            "工程量清单项目",
+            "变更项目",
+            "计日工项目",
+            "索赔项目",
+            "价格调整",
+            "其他",
           ],
-          'thisPrice'
+          "thisPrice"
         ) -
         this.computedMoney(
           [
-            '进度款',
-            '其他1',
-            '工程预付款1',
-            '材料预付款1',
-            '违约赔偿扣款',
-            '其他2',
-            '质量安全扣款'
+            "进度款",
+            "其他1",
+            "工程预付款1",
+            "材料预付款1",
+            "违约赔偿扣款",
+            "其他2",
+            "质量安全扣款",
           ],
-          'thisPrice'
-        ) //累计实际支付金额
+          "thisPrice"
+        ); //累计实际支付金额
       this.formData.cumulativePaymentOfFarmers =
-        this.tableData['其中农民工工资'].thisPrice //累计实际支付农民工工资
+        this.tableData["其中农民工工资"].thisPrice; //累计实际支付农民工工资
       this.formData.cumulativeSafetyProductionExpense =
-        this.tableData['其中安全生产经费'].thisPrice //累计安全生产经费
+        this.tableData["其中安全生产经费"].thisPrice; //累计安全生产经费
       const data = Object.keys(this.tableData).map((x) => {
         return {
           name: x,
@@ -1645,45 +1701,45 @@ export default {
           lastPrice: this.tableData[x].lastPrice,
           thisPrice: this.tableData[x].thisPrice,
           remark: this.tableData[x].remark,
-          subList: this.tableData[x].subList
-        }
-      })
-      this.formData.detailList = data
-      const isMaintenance = event.data.btnKey === 'maintenance'
+          subList: this.tableData[x].subList,
+        };
+      });
+      this.formData.detailList = data;
+      const isMaintenance = event.data.btnKey === "maintenance";
       if (isMaintenance) {
         this.sendMessage(
           {
             btnKey: event.data.btnKey,
             data: fields,
-            type: 'maintenance'
+            type: "maintenance",
           },
           event.origin
-        )
-        return
+        );
+        return;
       }
-      console.log(fields, 'fields')
-      fields.type = 1
+      console.log(fields, "fields");
+      fields.type = 1;
       save(fields)
         .then((res) => {
-          const { success, message } = res
+          const { success, message } = res;
           if (!success) {
-            return this.$message.error('新增失败：' + message)
+            return this.$message.error("新增失败：" + message);
           } else {
-            callback && callback()
+            callback && callback();
           }
         })
         .catch((err) => {
-          console.error(err)
-          this.$message.error('新增失败')
-        })
+          console.error(err);
+          this.$message.error("新增失败");
+        });
     },
     /**
      * 获取表单数据
      */
     async getFormData() {
-      const row = await this.getFlowRow()
-      console.log(row, 'row')
-      this.initTableData()
+      const row = await this.getFlowRow();
+      console.log(row, "row");
+      this.initTableData();
       if (row) {
         // Object.assign(this.formData, row);
         row.detailList.forEach((x) => {
@@ -1692,24 +1748,24 @@ export default {
             endPrice: Number(x.endPrice),
             lastPrice: Number(x.lastPrice),
             thisPrice: Number(x.thisPrice),
-            remark: x.remark
-          }
-        })
-        console.log(this.tableData, 'this.tableData')
-        this.formData = row
+            remark: x.remark,
+          };
+        });
+        console.log(this.tableData, "this.tableData");
+        this.formData = row;
       } else {
-        this.$set(this.formData, 'createUsername', this.userInfo.realName)
-        this.$set(this.formData, 'unit', this.userInfo.corpName)
-        this.$set(this.formData, 'initiateDate', new Date())
+        this.$set(this.formData, "createUsername", this.userInfo.realName);
+        this.$set(this.formData, "unit", this.userInfo.corpName);
+        this.$set(this.formData, "initiateDate", new Date());
         // this.$set(
         //   this.formData,
         //   'initiateDate',
         //   moment().format('YYYY-MM-DD HH:mm:ss')
         // )
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
@@ -1802,7 +1858,7 @@ table {
 /deep/ .el-table {
   th.required.taskname {
     .cell::before {
-      content: '*';
+      content: "*";
       width: 5px;
       height: 0px;
       margin-top: 2px;

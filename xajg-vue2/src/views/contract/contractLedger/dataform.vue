@@ -19,6 +19,17 @@
           :rules="formDataRules"
           label-width="160px"
         >
+          <div class="base-info-toolbar">
+            <div class="base-info-toolbar__title">合同基础信息</div>
+            <div>
+              <el-button type="primary" @click="downloadBaseTemplate">
+                模板下载
+              </el-button>
+              <el-button :disabled="readonly" @click="triggerBaseFileInput">
+                导入
+              </el-button>
+            </div>
+          </div>
           <el-row>
             <el-col :span="12">
               <el-form-item label="合同名称:" prop="name">
@@ -405,7 +416,7 @@
               <el-form-item label="合同状态:" prop="status">
                 <el-select
                   v-model="formData.status"
-                  :disabled="readonly"
+                  disabled
                   class="w-100pre"
                   placeholder="请选择"
                   @visible-change="$visibleChange($event, 'el-popper')"
@@ -585,14 +596,7 @@
         </el-form>
       </el-tab-pane>
       <el-tab-pane label="合同清单明细" name="contractDetail">
-        <div
-          style="
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-          "
-        >
+        <div class="base-info-toolbar">
           <div style="width: 50%; color: #000">合同清单明细</div>
           <div style="width: 50%; text-align: right; height: 100%">
             <el-button
@@ -602,18 +606,10 @@
             >
               模板下载
             </el-button>
-            <el-button
-              type="primary"
-              :disabled="readonly"
-              @click="triggerFileInput()"
-            >
+            <el-button :disabled="readonly" @click="triggerFileInput()">
               导入清单
             </el-button>
-            <el-button
-              type="primary"
-              :disabled="readonly"
-              @click="addDetailBtn()"
-            >
+            <el-button :disabled="readonly" @click="addDetailBtn()">
               添加
             </el-button>
           </div>
@@ -763,7 +759,7 @@
     </el-tabs>
     <div slot="footer" class="dialog-footer">
       <el-button @click="dialogShow = false">
-        {{ oprateRow.isView ? '关闭' : '取消' }}
+        {{ oprateRow.isView ? "关闭" : "取消" }}
       </el-button>
       <el-button
         v-if="!oprateRow.isView"
@@ -778,6 +774,12 @@
       type="file"
       style="display: none"
       @change="handleFileUpload"
+    >
+    <input
+      ref="baseFileInput"
+      type="file"
+      style="display: none"
+      @change="handleBaseFileUpload"
     >
     <el-dialog
       title="结算台账清单"
@@ -831,28 +833,28 @@
         </tr>
         <tr v-for="(item, index) in settlementList" :key="item.id">
           <td>第{{ index + 1 }}次结算</td>
-          <td>{{ moment(item.updateDate).format('YYYY-MM-DD') }}</td>
-          <td>{{ settlementItemMoney('工程预付款', item) }}</td>
-          <td>{{ settlementItemMoney('材料预付款', item) }}</td>
+          <td>{{ moment(item.updateDate).format("YYYY-MM-DD") }}</td>
+          <td>{{ settlementItemMoney("工程预付款", item) }}</td>
+          <td>{{ settlementItemMoney("材料预付款", item) }}</td>
           <td>
-            {{ settlementItemMoney(['工程预付款', '材料预付款'], item) }}
+            {{ settlementItemMoney(["工程预付款", "材料预付款"], item) }}
           </td>
-          <td>{{ settlementItemMoney('工程量清单项目', item) }}</td>
-          <td>{{ settlementItemMoney('变更项目', item) }}</td>
-          <td>{{ settlementItemMoney('计日工项目', item) }}</td>
-          <td>{{ settlementItemMoney('索赔项目', item) }}</td>
-          <td>{{ settlementItemMoney('价格调整', item) }}</td>
-          <td>{{ settlementItemMoney('其他', item) }}</td>
+          <td>{{ settlementItemMoney("工程量清单项目", item) }}</td>
+          <td>{{ settlementItemMoney("变更项目", item) }}</td>
+          <td>{{ settlementItemMoney("计日工项目", item) }}</td>
+          <td>{{ settlementItemMoney("索赔项目", item) }}</td>
+          <td>{{ settlementItemMoney("价格调整", item) }}</td>
+          <td>{{ settlementItemMoney("其他", item) }}</td>
           <td>
             {{
               settlementItemMoney(
                 [
-                  '工程量清单项目',
-                  '变更项目',
-                  '计日工项目',
-                  '索赔项目',
-                  '价格调整',
-                  '其他'
+                  "工程量清单项目",
+                  "变更项目",
+                  "计日工项目",
+                  "索赔项目",
+                  "价格调整",
+                  "其他",
                 ],
                 item
               )
@@ -862,42 +864,42 @@
             {{
               settlementItemMoney(
                 [
-                  '工程预付款',
-                  '材料预付款',
-                  '工程量清单项目',
-                  '变更项目',
-                  '计日工项目',
-                  '索赔项目',
-                  '价格调整',
-                  '其他'
+                  "工程预付款",
+                  "材料预付款",
+                  "工程量清单项目",
+                  "变更项目",
+                  "计日工项目",
+                  "索赔项目",
+                  "价格调整",
+                  "其他",
                 ],
                 item
               )
             }}
           </td>
-          <td>{{ settlementItemMoney('进度款', item) }}</td>
-          <td>{{ settlementItemMoney('其他1', item) }}</td>
-          <td>{{ settlementItemMoney(['进度款', '其他1'], item) }}</td>
-          <td>{{ settlementItemMoney('工程预付款1', item) }}</td>
-          <td>{{ settlementItemMoney('材料预付款1', item) }}</td>
+          <td>{{ settlementItemMoney("进度款", item) }}</td>
+          <td>{{ settlementItemMoney("其他1", item) }}</td>
+          <td>{{ settlementItemMoney(["进度款", "其他1"], item) }}</td>
+          <td>{{ settlementItemMoney("工程预付款1", item) }}</td>
+          <td>{{ settlementItemMoney("材料预付款1", item) }}</td>
           <td>
-            {{ settlementItemMoney(['工程预付款1', '材料预付款1'], item) }}
+            {{ settlementItemMoney(["工程预付款1", "材料预付款1"], item) }}
           </td>
-          <td>{{ settlementItemMoney('违约赔偿扣款', item) }}</td>
-          <td>{{ settlementItemMoney('质量安全扣款', item) }}</td>
+          <td>{{ settlementItemMoney("违约赔偿扣款", item) }}</td>
+          <td>{{ settlementItemMoney("质量安全扣款", item) }}</td>
           <td>
-            {{ settlementItemMoney(['违约赔偿扣款', '质量安全扣款'], item) }}
+            {{ settlementItemMoney(["违约赔偿扣款", "质量安全扣款"], item) }}
           </td>
-          <td>{{ settlementItemMoney('其他2', item) }}</td>
+          <td>{{ settlementItemMoney("其他2", item) }}</td>
           <td>
             {{
               settlementItemMoney(
                 [
-                  '工程预付款1',
-                  '材料预付款1',
-                  '违约赔偿扣款',
-                  '其他2',
-                  '质量安全扣款'
+                  "工程预付款1",
+                  "材料预付款1",
+                  "违约赔偿扣款",
+                  "其他2",
+                  "质量安全扣款",
                 ],
                 item
               )
@@ -907,33 +909,33 @@
             {{
               settlementItemMoney(
                 [
-                  '工程预付款',
-                  '材料预付款',
-                  '工程量清单项目',
-                  '变更项目',
-                  '计日工项目',
-                  '索赔项目',
-                  '价格调整',
-                  '其他'
+                  "工程预付款",
+                  "材料预付款",
+                  "工程量清单项目",
+                  "变更项目",
+                  "计日工项目",
+                  "索赔项目",
+                  "价格调整",
+                  "其他",
                 ],
                 item
               ) -
                 settlementItemMoney(
                   [
-                    '进度款',
-                    '其他1',
-                    '工程预付款1',
-                    '材料预付款1',
-                    '违约赔偿扣款',
-                    '其他2',
-                    '质量安全扣款'
+                    "进度款",
+                    "其他1",
+                    "工程预付款1",
+                    "材料预付款1",
+                    "违约赔偿扣款",
+                    "其他2",
+                    "质量安全扣款",
                   ],
                   item
                 )
             }}
           </td>
-          <td>{{ settlementItemMoney('其中农民工工资', item) }}</td>
-          <td>{{ settlementItemMoney('其中安全生产经费', item) }}</td>
+          <td>{{ settlementItemMoney("其中农民工工资", item) }}</td>
+          <td>{{ settlementItemMoney("其中安全生产经费", item) }}</td>
         </tr>
         <tr>
           <td>合计</td>
@@ -948,11 +950,11 @@
           <td />
           <td />
           <td />
-          <td>累计应结算合计:{{ settlementItemMoney('累计应结算合计') }}</td>
+          <td>累计应结算合计:{{ settlementItemMoney("累计应结算合计") }}</td>
           <td />
           <td />
           <td>
-            累计扣留项目合计:{{ settlementItemMoney('累计扣留项目合计') }}
+            累计扣留项目合计:{{ settlementItemMoney("累计扣留项目合计") }}
           </td>
           <td />
           <td />
@@ -962,21 +964,21 @@
           <td />
           <td />
           <td>
-            累计扣除项目合计:{{ settlementItemMoney('累计扣除项目合计') }}
+            累计扣除项目合计:{{ settlementItemMoney("累计扣除项目合计") }}
           </td>
           <td>
             累计实际支付金额合计:{{
-              settlementItemMoney('累计实际支付金额合计')
+              settlementItemMoney("累计实际支付金额合计")
             }}
           </td>
           <td>
             累计实际支付农民工工资:{{
-              settlementItemMoney('累计实际支付农民工工资')
+              settlementItemMoney("累计实际支付农民工工资")
             }}
           </td>
           <td>
             累计实际支付安全生产经费:{{
-              settlementItemMoney('累计实际支付安全生产经费')
+              settlementItemMoney("累计实际支付安全生产经费")
             }}
           </td>
         </tr>
@@ -986,95 +988,131 @@
 </template>
 
 <script>
-import { save, update, getDepartList, unitList } from './api'
-import { dateFormat } from '@/utils'
-import { FormMixin } from '@/mixins/FormMixin'
-import { getDictItemList } from '@/api/dict'
-import { page as investGeneralPayPage } from '../investGeneralPay/api'
-import store from '@/store'
-import moment from 'moment'
-import * as XLSX from 'xlsx'
+import { save, update } from "./api";
+import { dateFormat } from "@/utils";
+import { FormMixin } from "@/mixins/FormMixin";
+import { getDictItemList } from "@/api/dict";
+import { page as investGeneralPayPage } from "../investGeneralPay/api";
+import store from "@/store";
+import moment from "moment";
+import * as XLSX from "xlsx";
+
+const BASE_INFO_FIELD_MAP = {
+  name: "*合同名称",
+  code: "*合同编号",
+  amount: "*合同金额",
+  taxationRate: "*税率",
+  contractedUnit: "*签约单位",
+  contractedDate: "*签约日期",
+  type: "*合同类型",
+  pricingMethod: "*计价方式",
+  deadline: "*合同期限",
+  procurementMode: "*采购方式",
+  paymentMethod: "*支付方式",
+  parties: "*甲方签约人",
+  secondParties: "*乙方签约人",
+  otherParties: "其他签约人",
+  projectManagement: "投标时项目负责",
+  partyB: "乙方单位",
+  partyBName: "乙方账户名称",
+  partyBTaxationNumber: "乙方税号",
+  partyBOpeningBank: "乙方开户行",
+  partyBCardNumber: "乙方银行账号",
+  partyBCardAssociatesNumber: "乙方银行联行号",
+  partyC: "丙方单位 （如有）",
+  partyCName: "丙方账户名称",
+  partyCTaxationNumber: "丙方税号",
+  partyCOpeningBank: "丙方开户行",
+  partyCCardNumber: "丙方银行账号",
+  partyCCardAssociatesNumber: "丙方银行联行号",
+  startDate: "合同计划开工日期",
+  endDate: "合同计划完工日期",
+  actualStartDate: "合同实际开工日期",
+  actualEndDate: "合同实际完工日期",
+  sort: "排序",
+  remark: "备注",
+};
 export default {
-  name: 'Dataform',
+  name: "Dataform",
   mixins: [FormMixin],
   props: {
     /**显示弹窗 */
     visible: {
       type: Boolean,
-      default: false
+      default: false,
     },
     type: {
       type: String,
-      default: ''
+      default: "",
     },
     title: {
       type: String,
-      default: ''
+      default: "",
     },
     oprateRow: {
       type: Object,
-      default: () => ({})
-    }
+      default: () => ({}),
+    },
   },
   data() {
     return {
       /**PBS选择 */
       pbsDialog: {
         selection: [],
-        show: false
+        show: false,
       },
-      pbsName: '',
+      pbsName: "",
       /**弹窗显示 */
       dialogShow: false,
       formData: {
-        id: null
+        id: null,
       },
       formDataRules: {
-        name: [{ required: true, message: '请输入合同名称', trigger: 'blur' }],
-        code: [{ required: true, message: '请输入合同编号', trigger: 'blur' }],
+        name: [{ required: true, message: "请输入合同名称", trigger: "blur" }],
+        code: [{ required: true, message: "请输入合同编号", trigger: "blur" }],
         contractedDate: [
-          { required: true, message: '请选择签约日期', trigger: 'change' }
+          { required: true, message: "请选择签约日期", trigger: "change" },
         ],
         taxationRate: [
-          { required: true, message: '请输入税率', trigger: 'change' }
+          { required: true, message: "请输入税率", trigger: "change" },
         ],
         deadline: [
-          { required: true, message: '请输入合同期限', trigger: 'change' }
+          { required: true, message: "请输入合同期限", trigger: "change" },
         ],
         type: [
-          { required: true, message: '请选择合同类型', trigger: 'change' }
+          { required: true, message: "请选择合同类型", trigger: "change" },
         ],
-        pricingMethod: [{ required: true, message: '请选择', trigger: 'blur' }],
+        pricingMethod: [{ required: true, message: "请选择", trigger: "blur" }],
         paymentMethod: [
-          { required: true, message: '请输入', trigger: 'change' }
+          { required: true, message: "请输入", trigger: "change" },
         ],
         parties: [
-          { required: true, message: '请选择采购方式', trigger: 'change' }
+          { required: true, message: "请选择采购方式", trigger: "change" },
         ],
-        isChange: [{ required: true, message: '请选择', trigger: 'change' }],
+        isChange: [{ required: true, message: "请选择", trigger: "change" }],
         changeDetail: [
-          { required: true, message: '请输入', trigger: 'change' }
+          { required: true, message: "请输入", trigger: "change" },
         ],
         secondParties: [
-          { required: true, message: '请选择采购方式', trigger: 'change' }
+          { required: true, message: "请选择采购方式", trigger: "change" },
         ],
         procurementMode: [
-          { required: true, message: '请选择采购方式', trigger: 'change' }
+          { required: true, message: "请选择采购方式", trigger: "change" },
         ],
         amount: [
-          { required: true, message: '请输入合同金额', trigger: 'blur' }
+          { required: true, message: "请输入合同金额", trigger: "blur" },
         ],
 
         contractedUnit: [
-          { required: true, message: '请输入签约单位', trigger: 'blur' }
+          { required: true, message: "请输入签约单位", trigger: "blur" },
         ],
         attachment: [
           {
             required: true,
-            message: '请上传合同附件',
-            trigger: 'change'
-          }
-        ]
+            message: "请上传合同附件",
+            trigger: "change",
+          },
+        ],
       },
       tableData: [],
       statusList: [],
@@ -1084,179 +1122,183 @@ export default {
       pricingMethodList: [],
       procurementMethodList: [],
       contractStatusList: [],
-      downloadPath: '/static/template/合同清单导入模板.xlsx',
-      activeTab: 'baseInfo',
+      baseTemplatePath: "/static/template/合同台账导入模板.xlsx",
+      downloadPath: "/static/template/合同清单导入模板.xlsx",
+      activeTab: "baseInfo",
       corpId: store.getters.loginInfo.corpId,
       departList: [],
       tableTotalMoney: 0,
       // 结算台账清单
       dialogShowTable: false,
-      settlementList: []
-    }
+      settlementList: [],
+    };
   },
   computed: {
     /**当前登录用户 */
     userInfo() {
-      return this.$getStorage('userInfo')
+      return this.$getStorage("userInfo");
     },
     settlementMoney() {
       return (field) => {
         return this.settlementList.reduce(
           (a, b) => a + Number(b[field] || 0),
           0
-        )
-      }
+        );
+      };
     },
     settlementItemMoney() {
       return (field, item) => {
-        if (field == '累计应结算合计') {
+        if (field == "累计应结算合计") {
           return this.settlementList.reduce(
             (a, b) =>
               a +
               this.settlementItemMoney(
                 [
-                  '工程预付款',
-                  '材料预付款',
-                  '工程量清单项目',
-                  '变更项目',
-                  '计日工项目',
-                  '索赔项目',
-                  '价格调整',
-                  '其他'
+                  "工程预付款",
+                  "材料预付款",
+                  "工程量清单项目",
+                  "变更项目",
+                  "计日工项目",
+                  "索赔项目",
+                  "价格调整",
+                  "其他",
                 ],
                 b
               ),
             0
-          )
-        } else if (field == '累计扣留项目合计') {
+          );
+        } else if (field == "累计扣留项目合计") {
           return this.settlementList.reduce(
-            (a, b) => a + this.settlementItemMoney(['进度款', '其他1'], b),
+            (a, b) => a + this.settlementItemMoney(["进度款", "其他1"], b),
             0
-          )
-        } else if (field == '累计扣除项目合计') {
+          );
+        } else if (field == "累计扣除项目合计") {
           return this.settlementList.reduce(
             (a, b) =>
               a +
               this.settlementItemMoney(
                 [
-                  '工程预付款1',
-                  '材料预付款1',
-                  '违约赔偿扣款',
-                  '其他2',
-                  '质量安全扣款'
+                  "工程预付款1",
+                  "材料预付款1",
+                  "违约赔偿扣款",
+                  "其他2",
+                  "质量安全扣款",
                 ],
                 b
               ),
             0
-          )
-        } else if (field == '累计实际支付金额合计') {
+          );
+        } else if (field == "累计实际支付金额合计") {
           return this.settlementList.reduce(
             (a, b) =>
               a +
               (this.settlementItemMoney(
                 [
-                  '工程预付款',
-                  '材料预付款',
-                  '工程量清单项目',
-                  '变更项目',
-                  '计日工项目',
-                  '索赔项目',
-                  '价格调整',
-                  '其他'
+                  "工程预付款",
+                  "材料预付款",
+                  "工程量清单项目",
+                  "变更项目",
+                  "计日工项目",
+                  "索赔项目",
+                  "价格调整",
+                  "其他",
                 ],
                 b
               ) -
                 this.settlementItemMoney(
                   [
-                    '进度款',
-                    '其他1',
-                    '工程预付款1',
-                    '材料预付款1',
-                    '违约赔偿扣款',
-                    '其他2',
-                    '质量安全扣款'
+                    "进度款",
+                    "其他1",
+                    "工程预付款1",
+                    "材料预付款1",
+                    "违约赔偿扣款",
+                    "其他2",
+                    "质量安全扣款",
                   ],
                   b
                 )),
             0
-          )
-        } else if (field == '累计实际支付农民工工资') {
+          );
+        } else if (field == "累计实际支付农民工工资") {
           return this.settlementList.reduce(
             (a, b) =>
               a +
               Number(
-                b.detailList.find((x) => x.name == '其中农民工工资')
+                b.detailList.find((x) => x.name == "其中农民工工资")
                   .thisPrice || 0
               ),
             0
-          )
-        } else if (field == '累计实际支付安全生产经费') {
+          );
+        } else if (field == "累计实际支付安全生产经费") {
           return this.settlementList.reduce(
             (a, b) =>
               a +
               Number(
-                b.detailList.find((x) => x.name == '其中安全生产经费')
+                b.detailList.find((x) => x.name == "其中安全生产经费")
                   .thisPrice || 0
               ),
             0
-          )
-        } else if (typeof field == 'string') {
-          return Number(item.detailList.find((x) => x.name == field).thisPrice)
+          );
+        } else if (typeof field == "string") {
+          return Number(item.detailList.find((x) => x.name == field).thisPrice);
         } else {
           return field.reduce((a, b) => {
-            const data = item.detailList.find((x) => x.name == b)
-            return a + Number(data.thisPrice)
-          }, 0)
+            const data = item.detailList.find((x) => x.name == b);
+            return a + Number(data.thisPrice);
+          }, 0);
         }
-      }
-    }
+      };
+    },
   },
   watch: {
     visible: {
       handler(newValue) {
         if (newValue) {
-          const newData = { ...this.oprateRow.data }
-          this.formData = newData
-          this.$set(this.formData, 'isChange', this.formData.isChange == 1)
+          const newData = { ...this.oprateRow.data };
+          this.formData = newData;
+          this.$set(this.formData, "isChange", this.formData.isChange == 1);
+          if (this.type === "add" && !this.formData.status) {
+            this.$set(this.formData, "status", "zxz");
+          }
           // 检查并赋值
           if (!this.formData.createUsername) {
-            this.$set(this.formData, 'createUsername', this.userInfo.realName)
+            this.$set(this.formData, "createUsername", this.userInfo.realName);
           }
           if (!this.formData.editUser) {
-            this.$set(this.formData, 'editUser', this.userInfo.userId)
+            this.$set(this.formData, "editUser", this.userInfo.userId);
           }
           if (!this.formData.unitName) {
-            this.$set(this.formData, 'unitName', this.userInfo.departName)
+            this.$set(this.formData, "unitName", this.userInfo.departName);
           }
           if (!this.formData.initiationDate) {
-            this.$set(this.formData, 'initiationDate', new Date())
+            this.$set(this.formData, "initiationDate", new Date());
           }
           if (newData.detailVos) {
-            this.tableData = newData.detailVos
+            this.tableData = newData.detailVos;
             this.tableTotalMoney = this.tableData.reduce(
               (sum, item) => sum + Number(item.totalPrice || 0),
               0
-            )
+            );
           }
           if (this.formData.id) {
             investGeneralPayPage({
               current: 1,
-              entity: { contractId: this.formData.id, flowStatus: '2' },
-              pageSize: 10
+              entity: { contractId: this.formData.id, flowStatus: "2" },
+              pageSize: 10,
             }).then((res) => {
-              console.log('🚀 ~ handler ~ res:', res.data.records)
-              this.settlementList = res.data.records || []
-            })
+              console.log("🚀 ~ handler ~ res:", res.data.records);
+              this.settlementList = res.data.records || [];
+            });
           }
         }
-        this.dialogShow = newValue
+        this.dialogShow = newValue;
       },
       immediate: true,
-      deep: true
-    }
+      deep: true,
+    },
   },
   created() {
-    this.getDictItemList()
+    this.getDictItemList();
     // this.getDepartList()
   },
   mounted() {},
@@ -1268,14 +1310,14 @@ export default {
     handleChange(index) {
       this.$set(
         this.tableData[index],
-        'totalPrice',
+        "totalPrice",
         (this.tableData[index].price || 0) *
           (this.tableData[index].quantity || 0)
-      )
+      );
       this.tableTotalMoney = this.tableData.reduce(
         (sum, item) => sum + Number(item.totalPrice || 0),
         0
-      )
+      );
       // this.$set(
       //   this.formData,
       //   'amount',
@@ -1286,203 +1328,221 @@ export default {
       // )
     },
     closedHandle() {
-      this.dialogShow = false
-      this.$emit('closed')
+      this.dialogShow = false;
+      this.$emit("closed");
     },
     childEvtHandle() {
       // 做业务数据的保存,修改。
-      this.$refs['dataFormRef'].validate((valid) => {
+      this.$refs["dataFormRef"].validate((valid) => {
         if (valid) {
           // view   false  return
-          if (this.type === 'view') {
-            this.dialogShow = false
-            return
+          if (this.type === "view") {
+            this.dialogShow = false;
+            return;
           }
-          this.formData.detailVos = this.tableData
+          this.formData.detailVos = this.tableData;
           const fields = {
-            ...this.formData
-          }
+            ...this.formData,
+          };
           if (
             this.tableData.length > 0 &&
             this.tableTotalMoney != this.formData.amount
           ) {
             this.$message.info(
               `基本信息合同金额为:${this.formData.amount},清单明细总价为:${this.tableTotalMoney}；数据不一致，请检查！`
-            )
-            return
+            );
+            return;
           }
-          if (this.isLevelOrdered() !== 'ok') {
-            this.$message.info(this.isLevelOrdered())
-            return
+          if (this.isLevelOrdered() !== "ok") {
+            this.$message.info(this.isLevelOrdered());
+            return;
           }
-          fields.isChange = fields.isChange ? 1 : 0
-          if (this.type === 'add') {
+          fields.isChange = fields.isChange ? 1 : 0;
+          if (this.type === "add") {
             save(fields)
               .then((res) => {
-                const { success, message } = res
+                const { success, message } = res;
                 if (!success) {
-                  return this.$message.error('保存数据失败：' + message)
+                  return this.$message.error("保存数据失败：" + message);
                 } else {
-                  this.$message.success('保存数据成功')
-                  this.$emit('ok')
+                  this.$message.success("保存数据成功");
+                  this.$emit("ok");
                 }
-                this.closedHandle()
+                this.closedHandle();
               })
               .catch((err) => {
-                console.error(err)
-                this.$message.error(err.message)
-              })
+                console.error(err);
+                this.$message.error(err.message);
+              });
           } else {
             update(fields)
               .then((res) => {
-                const { success, message } = res
+                const { success, message } = res;
                 if (!success) {
-                  return this.$message.error('更新数据失败：' + message)
+                  return this.$message.error("更新数据失败：" + message);
                 } else {
-                  this.$message.success('更新数据成功')
-                  this.$emit('ok')
+                  this.$message.success("更新数据成功");
+                  this.$emit("ok");
                 }
-                this.closedHandle()
+                this.closedHandle();
               })
               .catch((err) => {
-                console.error(err)
-                this.$message.error(err.message)
-              })
+                console.error(err);
+                this.$message.error(err.message);
+              });
           }
         } else {
-          this.$message.info('请填写完整基本信息')
-          return false
+          this.$message.info("请填写完整基本信息");
+          return false;
         }
-      })
+      });
     },
     // 判断清单编号方法-------------------------
     isLevelOrdered() {
-      const list = this.tableData
-      const seen = new Set() // 已出现的 level
-      const nextNo = new Map() // Map<parent, expectedChildNo>
+      const list = this.tableData;
+      const seen = new Set(); // 已出现的 level
+      const nextNo = new Map(); // Map<parent, expectedChildNo>
 
       for (let i = 0; i < list.length; i++) {
-        const lv = String(list[i].orderNo)
-        const parts = lv.split('.').map(Number)
+        const lv = String(list[i].orderNo);
+        const parts = lv.split(".").map(Number);
 
         /* 1. 整体顺序检查 */
-        if (i && compare(lv, list[i - 1].orderNo) <= 0) { return '清单编号整体顺序错误' }
+        if (i && compare(lv, list[i - 1].orderNo) <= 0) {
+          return "清单编号整体顺序错误";
+        }
 
         /* 2. 父级必须已出现（根节点除外） */
-        const parent = parts.slice(0, -1).join('.')
-        if (parts.length > 1 && !seen.has(parent)) return '清单编号父级节点缺失'
+        const parent = parts.slice(0, -1).join(".");
+        if (parts.length > 1 && !seen.has(parent)) {
+          return "清单编号父级节点缺失";
+        }
 
         /* 3. 子序号必须连续 */
-        const key = parent || 'root' // 根节点用 'root' 统一
-        const exp = nextNo.get(key) || 1 // 期望序号
-        const cur = parts.at(-1)
-        if (cur !== exp) return '清单编号子节点序号必须连续'
+        const key = parent || "root"; // 根节点用 'root' 统一
+        const exp = nextNo.get(key) || 1; // 期望序号
+        const cur = parts.at(-1);
+        if (cur !== exp) return "清单编号子节点序号必须连续";
 
         /* 4. 更新状态 */
-        seen.add(lv)
-        nextNo.set(key, exp + 1)
+        seen.add(lv);
+        nextNo.set(key, exp + 1);
       }
-      return 'ok'
+      return "ok";
       /* 自然比较：点分数字 */
       function compare(a, b) {
-        const pa = a.split('.').map(Number)
-        const pb = b.split('.').map(Number)
-        const len = Math.max(pa.length, pb.length)
+        const pa = a.split(".").map(Number);
+        const pb = b.split(".").map(Number);
+        const len = Math.max(pa.length, pb.length);
         for (let i = 0; i < len; i++) {
-          const na = pa[i] ?? 0
-          const nb = pb[i] ?? 0
-          if (na !== nb) return na - nb
+          const na = pa[i] ?? 0;
+          const nb = pb[i] ?? 0;
+          if (na !== nb) return na - nb;
         }
-        return 0
+        return 0;
       }
     },
 
     // ---------------------------------
 
     timeFormat(time, type) {
-      return dateFormat(time, type || 'YYYY-MM-DD HH:mm:ss')
+      return dateFormat(time, type || "YYYY-MM-DD HH:mm:ss");
     },
     /**获取字典 */
     async getDictItemList() {
-      const contractType = await getDictItemList('CONTRACT_TYPE')
-      const procurementMethod = await getDictItemList('procurement_method')
-      const contractStatus = await getDictItemList('contract_status')
-      const pricingMethod = await getDictItemList('jjfs')
-      const depart = await getDictItemList('yzdwzzjg')
-      this.departList = depart.data
-      this.contractTypeList = contractType.data
-      this.pricingMethodList = pricingMethod.data
-      this.procurementMethodList = procurementMethod.data
-      this.contractStatusList = contractStatus.data
+      const contractType = await getDictItemList("CONTRACT_TYPE");
+      const procurementMethod = await getDictItemList("procurement_method");
+      const contractStatus = await getDictItemList("contract_status");
+      const pricingMethod = await getDictItemList("jjfs");
+      const depart = await getDictItemList("yzdwzzjg");
+      this.departList = depart.data;
+      this.contractTypeList = contractType.data;
+      this.pricingMethodList = pricingMethod.data;
+      this.procurementMethodList = procurementMethod.data;
+      this.contractStatusList = contractStatus.data;
     },
     contractManagerChange(id, data) {
-      this.$set(this.formData, 'contractManagerName', data.realName || '')
+      this.$set(this.formData, "contractManagerName", data.realName || "");
     },
 
     handleFileChange(value) {
       if (value) {
-        this.$refs.dataFormRef?.clearValidate('attachment')
+        this.$refs.dataFormRef?.clearValidate("attachment");
       }
     },
     handleSelectionChange(val) {
-      this.multipleSelection = val
+      this.multipleSelection = val;
     },
     addDetailBtn() {
-      this.tableData.push({})
+      this.tableData.push({});
     },
     async deleteDetailBtn(index, row) {
-      await this.$confirm(`确认删除数据?`, '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
+      await this.$confirm(`确认删除数据?`, "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
         closeOnClickModal: false,
-        type: 'warning'
-      })
+        type: "warning",
+      });
       // 删除选中的数据
-      this.tableData.splice(index, 1)
+      this.tableData.splice(index, 1);
     },
     downloadTemplate() {
-      console.log('下载模板')
-      let fileName = '合同清单导入模板.xlsx'
-      var link = document.createElement('a')
-      link.href = this.downloadPath
-      link.download = fileName
-      link.style.display = 'none'
-      document.body.appendChild(link)
-      link.click()
-      document.body.removeChild(link)
+      console.log("下载模板");
+      let fileName = "合同清单导入模板.xlsx";
+      var link = document.createElement("a");
+      link.href = this.downloadPath;
+      link.download = fileName;
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    },
+    downloadBaseTemplate() {
+      const link = document.createElement("a");
+      link.href = this.baseTemplatePath;
+      link.download = "合同台账导入模板.xlsx";
+      link.style.display = "none";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     },
     triggerFileInput() {
       this.$nextTick(() => {
-        this.$refs.fileInput.click()
-      })
+        this.$refs.fileInput.click();
+      });
+    },
+    triggerBaseFileInput() {
+      this.$nextTick(() => {
+        this.$refs.baseFileInput && this.$refs.baseFileInput.click();
+      });
     },
     handleFileUpload(event) {
-      console.log('开始读取文件')
-      const files = event.target.files
-      console.log(files.length)
-      if (files.length === 0) return
-      const file = files[0]
-      const reader = new FileReader()
+      console.log("开始读取文件");
+      const files = event.target.files;
+      console.log(files.length);
+      if (files.length === 0) return;
+      const file = files[0];
+      const reader = new FileReader();
       const fieldMap = {
-        code: '系统编码',
-        orderNo: '清单编号',
-        name: '名称',
-        unit: '单位',
-        quantity: '工程量',
-        price: '单价(元)',
-        totalPrice: '合价(元)'
-      }
+        code: "系统编码",
+        orderNo: "清单编号",
+        name: "名称",
+        unit: "单位",
+        quantity: "工程量",
+        price: "单价(元)",
+        totalPrice: "合价(元)",
+      };
 
       reader.onload = (e) => {
-        let that = this
-        const data = new Uint8Array(e.target.result)
-        console.log(XLSX)
-        const workbook = XLSX.read(data, { type: 'array' })
-        const sheetName = workbook.SheetNames[0]
-        const sheet = workbook.Sheets[sheetName]
-        const jsonData = XLSX.utils.sheet_to_json(sheet) //加上{header:1}会把第一行作为表头
-        console.log('表格原始数据', jsonData)
-        let newArr = []
+        let that = this;
+        const data = new Uint8Array(e.target.result);
+        console.log(XLSX);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet); //加上{header:1}会把第一行作为表头
+        console.log("表格原始数据", jsonData);
+        let newArr = [];
         jsonData &&
           jsonData.length &&
           jsonData.forEach((item) => {
@@ -1493,77 +1553,169 @@ export default {
               unit: item[fieldMap.unit],
               quantity: item[fieldMap.quantity],
               price: item[fieldMap.price],
-              totalPrice: item[fieldMap.totalPrice]
-            })
-          })
-        console.log('表格处理后的数据', newArr)
-        let dataToAdd = []
+              totalPrice: item[fieldMap.totalPrice],
+            });
+          });
+        console.log("表格处理后的数据", newArr);
+        let dataToAdd = [];
         for (let index = 0; index < newArr.length; index++) {
-          const element = newArr[index]
+          const element = newArr[index];
           let targetIndex = this.tableData.findIndex(
             (i) => i.code === element.code
-          )
+          );
           if (targetIndex > -1) {
             // 更新
-            Object.assign(this.tableData[targetIndex], element)
+            Object.assign(this.tableData[targetIndex], element);
           } else {
             // 增加
-            dataToAdd.push(element)
+            dataToAdd.push(element);
           }
         }
         if (dataToAdd.length > 0) {
-          that.tableData = that.tableData.concat(dataToAdd)
+          that.tableData = that.tableData.concat(dataToAdd);
         }
-        console.log('表格数据', that.tableData)
-        that.calcTotal()
-        console.log('合同总价', that.formData.amount)
-        that.$refs.fileInput.value = '' // 清空input方便下次继续上传
+        console.log("表格数据", that.tableData);
+        that.calcTotal();
+        console.log("合同总价", that.formData.amount);
+        that.$refs.fileInput.value = ""; // 清空input方便下次继续上传
+      };
+      reader.readAsArrayBuffer(file);
+    },
+    handleBaseFileUpload(event) {
+      const files = event.target.files;
+      if (!files || !files.length) return;
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: "array" });
+        const sheetName = workbook.SheetNames[0];
+        const sheet = workbook.Sheets[sheetName];
+        const jsonData = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+        if (!jsonData || !jsonData.length) {
+          this.$message.warning("未读取到有效数据");
+          this.resetBaseFileInput();
+          return;
+        }
+        const row = jsonData[0];
+        this.fillBaseInfoFromRow(row);
+        this.$message.success("合同基础信息导入成功");
+        this.resetBaseFileInput();
+      };
+      reader.readAsArrayBuffer(file);
+    },
+    fillBaseInfoFromRow(row) {
+      const selectFieldMap = {
+        type: this.contractTypeList,
+        pricingMethod: this.pricingMethodList,
+        procurementMode: this.procurementMethodList,
+      };
+      Object.keys(BASE_INFO_FIELD_MAP).forEach((field) => {
+        const header = BASE_INFO_FIELD_MAP[field];
+        if (!Object.prototype.hasOwnProperty.call(row, header)) return;
+        let value = row[header];
+        if (value === undefined || value === null || value === "") return;
+        if (selectFieldMap[field]) {
+          value = this.matchDictValue(selectFieldMap[field], value);
+        }
+        if (
+          [
+            "contractedDate",
+            "startDate",
+            "endDate",
+            "actualStartDate",
+            "actualEndDate",
+          ].includes(field)
+        ) {
+          value = this.parseExcelDate(value);
+        }
+        this.$set(this.formData, field, value);
+      });
+    },
+    /**
+     * 根据字典列表匹配code
+     * @param dictList
+     * @param text
+     */
+    matchDictValue(dictList, text) {
+      if (!text) return "";
+      const target = dictList.find(
+        (item) => item.dictName === text || item.dictCode === text
+      );
+      return target ? target.dictCode : text;
+    },
+    parseExcelDate(value) {
+      if (!value) return "";
+      if (value instanceof Date) {
+        return dateFormat(value, "YYYY-MM-DD");
       }
-      reader.readAsArrayBuffer(file)
+      if (typeof value === "number") {
+        const parsed = XLSX.SSF.parse_date_code(value);
+        if (parsed) {
+          const date = new Date(parsed.y, parsed.m - 1, parsed.d);
+          return dateFormat(date, "YYYY-MM-DD");
+        }
+      }
+      const date = new Date(value);
+      if (!isNaN(date.getTime())) {
+        return dateFormat(date, "YYYY-MM-DD");
+      }
+      return value;
+    },
+    resetBaseFileInput() {
+      if (this.$refs.baseFileInput) {
+        this.$refs.baseFileInput.value = "";
+      }
     },
     calcTotal() {
       //统计末端节点的金额
-      let total = 0
+      let total = 0;
       for (let index = 0; index < this.tableData.length; index++) {
-        const item1 = this.tableData[index]
+        const item1 = this.tableData[index];
         if (!item1.code) {
-          total += item1.totalPrice
-          continue
+          total += item1.totalPrice;
+          continue;
         }
-        let ok = true //检查item1 是否是某个节点的父级
+        let ok = true; //检查item1 是否是某个节点的父级
         for (let index1 = 0; index1 < this.tableData.length; index1++) {
-          const item2 = this.tableData[index1]
-          if (!item2.code) continue
+          const item2 = this.tableData[index1];
+          if (!item2.code) continue;
           if (
-            item2.code.toString().indexOf(item1.code.toString() + '.') === 0
+            item2.code.toString().indexOf(item1.code.toString() + ".") === 0
           ) {
-            ok = false
-            break
+            ok = false;
+            break;
           }
         }
         if (ok) {
           //ok 表示item1是叶子结点
-          total += item1.totalPrice
+          total += item1.totalPrice;
         }
       }
       if (isNaN(total)) {
-        this.$message.warn('合同总价内容必须是数字且不能为空')
+        this.$message.warn("合同总价内容必须是数字且不能为空");
       }
-      total = total.toFixed(2)
-      this.$set(this.formData, 'amount', total)
+      total = total.toFixed(2);
+      this.$set(this.formData, "amount", total);
       this.tableTotalMoney = this.tableData.reduce(
         (sum, item) => sum + Number(item.totalPrice || 0),
         0
-      )
+      );
     },
     viewTable() {
-      this.dialogShowTable = true
-    }
-  }
-}
+      this.dialogShowTable = true;
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">
+.base-info-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
 :deep(.el-tabs) {
   height: 100%;
   .el-tabs__content {

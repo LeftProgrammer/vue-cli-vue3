@@ -176,7 +176,10 @@ export default {
   methods: {
     dateFormat,
     moment,
-
+    handleQuery() {
+      this.pageParams.current = 1;
+      this.getTableData();
+    },
     isRowSelectable(row) {
       if (row.flowStatus == 2) {
         return Boolean(true);

@@ -48,9 +48,10 @@ export function getInvestmentPlanDetailList(data) {
   });
 }
 
-export function getInvestmentCategoryTree() {
+export function getInvestmentCategoryTree(data) {
   return request({
     url: prefix + "/investment/category/tree",
     method: "get",
+    params: data,
   });
 }

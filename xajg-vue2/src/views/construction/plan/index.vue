@@ -101,6 +101,7 @@
           :data="tableData"
           height="100%"
           border
+          :resizable="true"
           @header-dragend="handleHeaderDragEnd"
         >
           <el-table-column
@@ -109,11 +110,13 @@
             :width="$calculateWidth(54)"
             align="center"
             :index="getIndex"
+            :resizable="true"
           />
           <el-table-column
             label="计划名称"
             prop="name"
             :min-width="$calculateWidth(190)"
+            :resizable="true"
           >
             <template slot-scope="{ row }">
               <el-link
@@ -140,6 +143,7 @@
             prop="type"
             align="center"
             :width="$calculateWidth(120)"
+            :resizable="true"
           >
             <template slot-scope="scope">
               <span>{{ $DictionaryParsing(jdjhlxList, scope.row.type) }}</span>
@@ -150,6 +154,7 @@
             align="center"
             prop="organizerFullname"
             :width="$calculateWidth(120)"
+            :resizable="true"
           />
           <el-table-column
             label="所属标段"
@@ -158,6 +163,7 @@
             excel.args="section"
             align="center"
             width="180"
+            :resizable="true"
           >
             <template slot-scope="{ row }">
               <div class="text-ellipsis">
@@ -172,6 +178,7 @@
             align="center"
             excel.readConverterExp="0=未提交,1=流转中,2=已完成"
             :width="$calculateWidth(120)"
+            :resizable="true"
           >
             <template slot-scope="scope">
               <flow-status :row="scope.row" :flow-name="scope.row.flowName" />
@@ -182,12 +189,14 @@
             prop="personsFullname"
             align="center"
             :width="$calculateWidth(120)"
+            :resizable="true"
           />
           <el-table-column
             label="录入时间"
             prop="inputDate"
             align="center"
             :width="$calculateWidth(180)"
+            :resizable="true"
           >
             <template slot-scope="{ row }">
               {{
@@ -202,6 +211,7 @@
             label="操作"
             width="215"
             align="center"
+            :resizable="true"
           >
             <template #default="{ row }">
               <flow-button
@@ -371,7 +381,7 @@ export default {
       const jdjhlx = await getDictItemList("jdjhlx");
       this.jdjhlxList = jdjhlx.data;
       // 获取标段
-      const { data } = await this.getCurrent();
+      await this.getCurrent();
     },
     handleHeaderDragEnd() {
       this.$nextTick(() => {
