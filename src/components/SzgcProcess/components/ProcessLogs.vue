@@ -4,17 +4,16 @@
       <el-timeline-item
         v-for="(log, index) in logs"
         :key="index"
-        :timestamp="log.createTime"
-        placement="top"
+        hide-timestamp
       >
-        <el-card shadow="hover">
-          <div class="log-header">
-            <span class="log-user">【{{ log.createUserName }}】</span>
-            <span class="log-action">- {{ log.nodeName }} - {{ log.createTime }}</span>
-          </div>
-          <div class="log-content">{{ log.opinion || log.idea || '' }}</div>
-          <div v-if="signMap[log.createUserId]" class="log-sign">
-            <img :src="getSignUrl(signMap[log.createUserId])" width="100" height="45" />
+        <div class="log-header">
+          <span class="log-user">【{{ log.createUserName }}】</span>
+          <span class="log-action">-{{ formatBtnKey(log.btnKey, log.optionKey) }}-{{ formatTime(log.createTime) }}</span>
+        </div>
+        <el-card shadow="hover" class="log-card">
+          <div class="log-content">{{ log.logMsg || log.idea || '' }}</div>
+          <div v-if="getSignSrc(log.createUserId)" class="log-sign">
+            <img :src="getSignSrc(log.createUserId)" />
           </div>
         </el-card>
       </el-timeline-item>
@@ -24,7 +23,28 @@
 </template>
 
 <script>
+import dayjs from "dayjs";
 import { alllogs, getSignMapByIdList } from "@/api/flow";
+
+// btnKey 操作类型映射
+const BTN_KEY_MAP = {
+  send: "发送",
+  initial: "启动",
+  submit: "提交",
+  save: "保存",
+  reject: "退回",
+  transfer: "转办",
+  cc: "抄送",
+  recall: "撤回",
+  terminate: "终止",
+};
+
+// optionKey 选项映射
+const OPTION_KEY_MAP = {
+  agree: "同意",
+  reject: "拒绝",
+  disagree: "不同意",
+};
 
 export default {
   name: "ProcessLogs",
@@ -81,7 +101,24 @@ export default {
         console.error("加载签名失败", e);
       }
     },
-    getSignUrl(url) {
+    // 格式化操作类型
+    formatBtnKey(btnKey, optionKey) {
+      let action = BTN_KEY_MAP[btnKey] || btnKey || "";
+      if (optionKey && OPTION_KEY_MAP[optionKey]) {
+        action = OPTION_KEY_MAP[optionKey];
+      }
+      return action;
+    },
+    // 格式化时间戳
+    formatTime(timestamp) {
+      if (!timestamp) return "";
+      return dayjs(Number(timestamp)).format("YYYY-MM-DD HH:mm:ss");
+    },
+    // 获取签名图片地址
+    getSignSrc(userId) {
+      if (!userId) return "";
+      const key = String(userId).trim();
+      const url = this.signMap[key] || this.signMap[userId] || "";
       if (!url) return "";
       try {
         const urlObj = new URL(url);
@@ -99,9 +136,25 @@ export default {
 
 <style scoped lang="scss">
 .process-logs {
+  padding: 8px 0;
+
+  :deep(.el-timeline) {
+    padding-left: 0;
+  }
+
+  :deep(.el-timeline-item) {
+    padding-bottom: 12px;
+  }
+
+  :deep(.el-timeline-item__wrapper) {
+    padding-left: 20px;
+  }
+
   .log-header {
-    font-size: 12px;
-    color: #409eff;
+    font-size: 13px;
+    color: var(--el-color-primary);
+    margin-bottom: 6px;
+    line-height: 1.4;
   }
 
   .log-user {
@@ -109,13 +162,21 @@ export default {
   }
 
   .log-action {
-    color: #909399;
+    color: var(--el-color-primary);
+  }
+
+  .log-card {
+    :deep(.el-card__body) {
+      padding: 12px 16px;
+    }
   }
 
   .log-content {
-    margin-top: 8px;
     color: #606266;
+    font-size: 14px;
+    line-height: 1.5;
     min-height: 20px;
+    word-break: break-all;
   }
 
   .log-sign {
@@ -123,7 +184,10 @@ export default {
     margin-top: 8px;
     
     img {
+      width: 100px;
+      height: 45px;
       object-fit: contain;
+      border-radius: 4px;
     }
   }
 }

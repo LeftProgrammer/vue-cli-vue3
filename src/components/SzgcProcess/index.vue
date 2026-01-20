@@ -15,11 +15,21 @@
           <el-tab-pane label="表单" name="form">
             <div class="form-container">
               <slot name="form" :data-all="dataAll" :page="page" :readonly="isReadonly">
-                <!-- 默认通过iframe加载表单 -->
+                <!-- 优先使用动态组件 -->
+                <component
+                  v-if="dynamicFormComponent"
+                  :is="dynamicFormComponent"
+                  ref="dynamicForm"
+                  :data-all="dataAll"
+                  :page="page"
+                  :readonly="isReadonly"
+                  @saved="handleFormSaved"
+                />
+                <!-- iframe兆底 -->
                 <iframe
-                  v-if="formUrl"
+                  v-else-if="resolvedFormUrl"
                   ref="formIframe"
-                  :src="formUrl"
+                  :src="resolvedFormUrl"
                   class="form-iframe"
                   frameborder="0"
                 />
@@ -71,9 +81,11 @@
 </template>
 
 <script>
+import { defineAsyncComponent, markRaw } from "vue";
 import ProcessOpinion from "./components/ProcessOpinion.vue";
 import ProcessLogs from "./components/ProcessLogs.vue";
 import ProcessFlow from "./components/ProcessFlow.vue";
+import { parseIframePath, getFormModule, hasFormModule } from "./formModules";
 
 export default {
   name: "SzgcProcessGetor",
@@ -108,6 +120,8 @@ export default {
   data() {
     return {
       activeTab: "form",
+      dynamicFormComponent: null,
+      formModulePath: "",
     };
   },
   computed: {
@@ -148,6 +162,49 @@ export default {
     },
     showOpinion() {
       return ["todo", "wait", "mine"].includes(this.page);
+    },
+    // 从iframeConfig获取原始路径（用于iframe兜底）
+    resolvedFormUrl() {
+      if (this.formUrl) return this.formUrl;
+      const iframeConfig = this.iframeConfig;
+      if (!iframeConfig) return "";
+      const path = parseIframePath(iframeConfig);
+      // 如果有动态组件映射，不使用iframe
+      if (hasFormModule(path)) return "";
+      // 返回原始路径用于iframe
+      try {
+        if (typeof iframeConfig === "string") return iframeConfig;
+        if (iframeConfig.value) {
+          const parsed = typeof iframeConfig.value === "string" ? JSON.parse(iframeConfig.value) : iframeConfig.value;
+          return parsed.web || parsed.app || "";
+        }
+        return "";
+      } catch (e) {
+        return "";
+      }
+    },
+    // 从dataAll中获取iframe配置
+    // 支持多种数据结构：
+    // 1. dataAll.fields.iframe (fresh-read/finished-read接口返回)
+    // 2. dataAll.iframe (兼容旧格式)
+    // 3. dataAll.procMatterRun.iframe (兼容旧格式)
+    iframeConfig() {
+      return (
+        this.dataAll?.fields?.iframe ||
+        this.dataAll?.iframe ||
+        this.dataAll?.procMatterRun?.iframe ||
+        null
+      );
+    },
+  },
+  watch: {
+    // 监听iframe配置变化，加载动态组件
+    iframeConfig: {
+      handler(config) {
+        this.loadDynamicForm(config);
+      },
+      immediate: true,
+      deep: true,
     },
   },
   mounted() {
@@ -199,6 +256,50 @@ export default {
     },
     resetOpinion() {
       this.$refs.processOpinion?.reset();
+    },
+    // 加载动态表单组件
+    loadDynamicForm(iframeConfig) {
+      if (!iframeConfig) {
+        this.dynamicFormComponent = null;
+        this.formModulePath = "";
+        return;
+      }
+      const path = parseIframePath(iframeConfig);
+      if (!path) {
+        this.dynamicFormComponent = null;
+        return;
+      }
+      // 避免重复加载
+      if (path === this.formModulePath) return;
+      this.formModulePath = path;
+
+      if (hasFormModule(path)) {
+        const loader = getFormModule(path);
+        this.dynamicFormComponent = markRaw(
+          defineAsyncComponent({
+            loader,
+            loadingComponent: {
+              template: '<div style="padding:20px;text-align:center;"><el-skeleton :rows="8" animated /></div>',
+            },
+            errorComponent: {
+              template: '<el-empty description="表单加载失败" />',
+            },
+            delay: 200,
+            timeout: 30000,
+          })
+        );
+        console.log("[流程表单] 加载动态组件:", path);
+      } else {
+        console.warn("[流程表单] 未找到组件映射，将使用iframe:", path);
+        this.dynamicFormComponent = null;
+      }
+    },
+    handleFormSaved(data) {
+      this.$emit("childEvt", { type: "formSaved", data });
+    },
+    // 获取动态表单组件实例
+    getDynamicForm() {
+      return this.$refs.dynamicForm;
     },
   },
 };

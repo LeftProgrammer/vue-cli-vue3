@@ -1,4 +1,5 @@
 import { createRouter, createWebHashHistory } from "vue-router";
+import diyRoute from "./modules/diy";
 
 const Login = () => import("@/views/login/index.vue");
 const Layout = () => import("@/layout/index.vue");
@@ -86,6 +87,8 @@ const routes = [
     path: "/",
     redirect: "/homeIndex/index",
   },
+  // DIY路由 - 流程配置系统加载表单页面
+  diyRoute,
   {
     path: "/:pathMatch(.*)*",
     redirect: "/404",
