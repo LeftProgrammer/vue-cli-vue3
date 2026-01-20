@@ -219,12 +219,12 @@ import TableLayout from "@/components/ContentLayout/Table";
 import { Plus } from '@element-plus/icons-vue'
 
 export default {
-  name: "designPlan",
-  mixins: [FlowListMixin],
+  name: "DesignPlan",
   components: {
     TableLayout,
     Plus
   },
+  mixins: [FlowListMixin],
   data() {
     return {
       startTimeAndEndTime: [],

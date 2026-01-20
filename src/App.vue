@@ -278,6 +278,5 @@ export default {
 @import "common/css/public.scss";
 @import "common/css/public.css";
 @import "common/css/font.css";
-@import "common/css/element-variables.scss";
 @import "common/iconFont/icon.css";
 </style>

@@ -94,6 +94,16 @@ export function todoread(data) {
   });
 }
 
+// 获取已办/查看属性
+export function finishedRead(data) {
+  return request({
+    url: "/api/process/read/business/finished-read",
+    method: "post",
+    data,
+    showLoading: false,
+  });
+}
+
 // 获取流程日志
 export function alllogs(businessId) {
   return request({

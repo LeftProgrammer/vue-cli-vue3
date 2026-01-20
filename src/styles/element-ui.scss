@@ -70,15 +70,65 @@ button[type="button"].el-carousel__arrow {
   box-sizing: content-box;
 }
 
-.el-table thead {
-  color: var(--el-color-primary);
+.el-table {
+  height: 100%;
 
-  & th {
-    background-color: transparent;
+  .el-table__header {
+    background-color: #ebeff5 !important;
+    overflow: hidden;
+
+    .el-table__cell {
+      background-color: #ebeff5 !important;
+      border-color: #e7e7e7;
+      text-align: center;
+      height: 48px;
+
+      .cell {
+        color: #1d2129;
+      }
+    }
   }
 
-  & tr {
-    background-color: transparent;
+  .el-table__body-wrapper {
+    height: calc(100% - 56px) !important;
+    overflow: hidden;
+    box-sizing: border-box;
+
+    .el-scrollbar__wrap {
+      overflow-x: hidden;
+      box-sizing: border-box;
+    }
+
+    .el-scrollbar__view {
+      overflow-x: hidden;
+    }
+
+    .el-table__body {
+      .el-table__row {
+        .el-table__cell {
+          height: 48px;
+        }
+      }
+
+      tr.hover-row td {
+        background: transparent;
+      }
+
+      tr:hover td {
+        background: #edf3fe;
+      }
+    }
+  }
+
+  .el-table__fixed-body-wrapper {
+    overflow-x: hidden;
+    box-sizing: border-box;
+
+    .el-table__row {
+      .el-table__cell {
+        height: 48px;
+      }
+    }
   }
 }
 
@@ -119,7 +169,7 @@ button[type="button"].el-carousel__arrow {
   }
 
   .el-button {
-    min-width: 120px;
+    min-width: 100px;
   }
 
   .el-form-item {
@@ -151,4 +201,8 @@ button[type="button"].el-carousel__arrow {
 
 .el-picker-panel {
   box-sizing: content-box;
+}
+
+.el-form {
+    width: 100%;
 }

@@ -246,14 +246,15 @@
         <el-table-column
           label="操作"
           prop="name"
-          width="250"
+          width="240"
           align="center"
           fixed="right"
         >
           <template #default="scope">
             <el-button
               v-if="ishowClass(scope.row)"
-              type="text"
+              type="primary"
+              link
               :disabled="readonly"
               @click="handelAdd(scope.$index, scope.row, tableData, 'class')"
             >
@@ -261,14 +262,16 @@
             </el-button>
             <el-button
               v-if="ishowTask(scope.row)"
-              type="text"
+              type="primary"
+              link
               :disabled="readonly"
               @click="handelAdd(scope.$index, scope.row, tableData, 'task')"
             >
               新增下级任务
             </el-button>
             <el-button
-              type="text"
+              type="danger"
+              link
               :class="deleteRed ? '' : 'el-delete'"
               :disabled="
                 readonly ||
@@ -308,6 +311,20 @@ export default {
     PbsSelect,
   },
   mixins: [FlowFormMixin],
+  props: {
+    dataAll: {
+      type: Object,
+      default: () => ({}),
+    },
+    page: {
+      type: String,
+      default: "",
+    },
+    propReadonly: {
+      type: Boolean,
+      default: false,
+    },
+  },
   data() {
     return {
       addAble: true,
@@ -411,7 +428,10 @@ export default {
     this.getDictItemList(this.designClassifyCode);
     this.getDictItemList(this.designProfessionCode);
     this.$nextTick(() => {
-      if (this.fromapp) {
+      // 外部传入的 propReadonly 优先
+      if (this.propReadonly) {
+        this.readonly = true;
+      } else if (this.fromapp) {
         if (this.$route.query.businessId) {
           this.getDataById(this.$route.query.businessId);
           this.readonly = true;

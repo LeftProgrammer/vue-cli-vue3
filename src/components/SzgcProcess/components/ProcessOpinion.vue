@@ -1,35 +1,29 @@
 <template>
   <div class="process-opinion">
-    <div class="node-info">
-      <div class="node-name">{{ nodeName }}</div>
-      <div class="node-user">{{ nodeUser }}</div>
-    </div>
-
-    <el-divider />
-
     <div class="opinion-section">
-      <div class="section-title">相关意见</div>
       <el-radio-group v-model="optionKey" class="opinion-radio">
         <el-radio label="agree">同意</el-radio>
         <el-radio label="disagree">不同意</el-radio>
       </el-radio-group>
 
-      <el-popover placement="bottom" :width="200" trigger="click">
-        <template #reference>
-          <el-button type="primary" size="small">常用语</el-button>
-        </template>
-        <div class="phrases-list">
-          <div
-            v-for="(phrase, index) in phrases"
-            :key="index"
-            class="phrase-item"
-            @click="selectPhrase(phrase)"
-          >
-            {{ phrase.content || phrase }}
+      <div class="phrases-btn">
+        <el-popover placement="bottom" :width="200" trigger="click">
+          <template #reference>
+            <el-button type="primary">常用语</el-button>
+          </template>
+          <div class="phrases-list">
+            <div
+              v-for="(phrase, index) in phrases"
+              :key="index"
+              class="phrase-item"
+              @click="selectPhrase(phrase)"
+            >
+              {{ phrase.content || phrase }}
+            </div>
+            <div v-if="!phrases.length" class="no-phrases">暂无常用语</div>
           </div>
-          <div v-if="!phrases.length" class="no-phrases">暂无常用语</div>
-        </div>
-      </el-popover>
+        </el-popover>
+      </div>
 
       <el-input
         v-model="idea"
@@ -212,38 +206,14 @@ export default {
 
 <style scoped lang="scss">
 .process-opinion {
-  padding: 0 8px;
-
-  .node-info {
-    text-align: center;
-    padding: 12px 0;
-
-    .node-name {
-      font-size: 16px;
-      font-weight: 600;
-      color: #303133;
-    }
-
-    .node-user {
-      font-size: 12px;
-      color: #909399;
-      margin-top: 4px;
-    }
-  }
-
-  .section-title {
-    font-size: 14px;
-    font-weight: 500;
-    color: #606266;
-    margin-bottom: 12px;
-  }
+  padding: 0;
 
   .opinion-radio {
     margin-bottom: 12px;
   }
 
   .opinion-input {
-    margin-top: 12px;
+    margin-top: 10px;
   }
 
   .idea-tip {
@@ -252,13 +222,18 @@ export default {
     margin-top: 4px;
   }
 
+  .phrases-btn {
+    margin-bottom: 12px;
+  }
+
   .action-buttons {
     display: flex;
     gap: 8px;
-    margin-top: 16px;
+    margin-top: 12px;
 
     .el-button {
-      flex: 1;
+      min-width: 70px;
+      padding: 8px 12px;
     }
   }
 }

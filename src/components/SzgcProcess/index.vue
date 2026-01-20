@@ -1,20 +1,18 @@
 <template>
   <div class="szgc-process-getor">
-    <!-- 顶部区域 -->
-    <div v-if="topShow" class="process-header">
-      <div class="header-title">{{ title }}</div>
-      <div class="header-actions">
-        <slot name="header-actions" />
-      </div>
-    </div>
-
     <div class="process-body">
       <!-- 左侧：表单区域 -->
       <div class="process-left">
-        <el-tabs v-model="activeTab" class="process-tabs">
+        <!-- 左侧头部 -->
+        <div class="left-header">
+          <div class="business-title">{{ businessTitle }}</div>
+          <div class="business-sub">{{ businessSub }}</div>
+        </div>
+        <!-- 左侧内容：tabs -->
+        <el-tabs v-model="activeTab" type="border-card" class="process-tabs">
           <el-tab-pane label="表单" name="form">
             <div class="form-container">
-              <slot name="form" :data-all="dataAll" :page="page" :readonly="isReadonly">
+              <slot name="form" :data-all="dataAll" :page="page" :readonly="true">
                 <!-- 优先使用动态组件 -->
                 <component
                   v-if="dynamicFormComponent"
@@ -22,7 +20,7 @@
                   ref="dynamicForm"
                   :data-all="dataAll"
                   :page="page"
-                  :readonly="isReadonly"
+                  :prop-readonly="true"
                   @saved="handleFormSaved"
                 />
                 <!-- iframe兆底 -->
@@ -53,28 +51,49 @@
 
       <!-- 右侧：审批区域 -->
       <div class="process-right">
-        <ProcessOpinion
-          v-if="showOpinion"
-          ref="processOpinion"
-          :business-id="businessId"
-          :proc-task-id="procTaskId"
-          :node-name="nodeName"
-          :node-user="nodeUser"
-          :page="page"
-          :save-api="saveApi"
-          :data-all="dataAll"
-          @success="handleOpinionSuccess"
-          @error="handleOpinionError"
-        />
+        <!-- 非只读模式：完整显示 -->
+        <template v-if="!isReadonly">
+          <!-- 右侧头部 -->
+          <div class="right-header">
+            <div class="node-name">{{ nodeName }}</div>
+            <div class="node-user">{{ nodeUser }}</div>
+          </div>
+          <!-- 右侧内容块：模拟tabs样式 -->
+          <div class="right-card">
+            <!-- 相关意见：tabs头部样式 -->
+            <div class="right-card-header">相关意见</div>
+            <!-- 内容区 -->
+            <div class="right-card-body">
+              <ProcessOpinion
+                v-if="showOpinion"
+                ref="processOpinion"
+                :business-id="businessId"
+                :proc-task-id="procTaskId"
+                :node-name="nodeName"
+                :node-user="nodeUser"
+                :page="page"
+                :save-api="saveApi"
+                :data-all="dataAll"
+                @success="handleOpinionSuccess"
+                @error="handleOpinionError"
+              />
+              <!-- 流程日志 -->
+              <div class="logs-section">
+                <ProcessLogs ref="processLogs" :business-id="businessId" />
+              </div>
+            </div>
+          </div>
+        </template>
 
-        <div v-if="isReadonly" class="readonly-tip">
-          <el-tag type="info">当前为只读模式</el-tag>
-        </div>
-
-        <el-divider />
-
-        <!-- 流程日志 -->
-        <ProcessLogs ref="processLogs" :business-id="businessId" />
+        <!-- 只读模式：仅显示流程日志，保持header占位对齐 -->
+        <template v-else>
+          <div class="right-header"></div>
+          <div class="right-card readonly-card">
+            <div class="right-card-body">
+              <ProcessLogs ref="processLogs" :business-id="businessId" />
+            </div>
+          </div>
+        </template>
       </div>
     </div>
   </div>
@@ -95,10 +114,6 @@ export default {
     ProcessFlow,
   },
   props: {
-    topShow: {
-      type: Boolean,
-      default: false,
-    },
     page: {
       type: String,
       default: "todo",
@@ -125,8 +140,25 @@ export default {
     };
   },
   computed: {
-    title() {
-      return this.dataAll?.procMatterRun?.businessName || "流程处理";
+    // 业务标题：直接使用接口返回的businessName
+    businessTitle() {
+      return (
+        this.dataAll?.businessName ||
+        this.dataAll?.run?.businessName ||
+        this.dataAll?.procMatterRun?.businessName ||
+        "流程处理"
+      );
+    },
+    // 业务副标题：创建人 + 时间
+    businessSub() {
+      const createUserName = this.dataAll?.run?.createUserName || "";
+      const createTime = this.dataAll?.run?.createTime;
+      if (createUserName && createTime) {
+        const date = new Date(Number(createTime));
+        const timeStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")} ${String(date.getHours()).padStart(2, "0")}:${String(date.getMinutes()).padStart(2, "0")}`;
+        return `${createUserName} 发起于 ${timeStr}`;
+      }
+      return createUserName;
     },
     businessId() {
       return (
@@ -146,19 +178,30 @@ export default {
     },
     flowConfigId() {
       return (
+        this.dataAll?.run?.flowCfgId ||
+        this.dataAll?.flowCfgId ||
         this.dataAll?.matterTaskTodo?.flowConfigId ||
         this.dataAll?.procMatterRun?.flowConfigId ||
         ""
       );
     },
     nodeName() {
-      return this.dataAll?.matterTaskTodo?.procTaskName || this.dataAll?.flowName || "";
+      return (
+        this.dataAll?.task?.procTaskName ||
+        this.dataAll?.matterTaskTodo?.procTaskName ||
+        this.dataAll?.flowName ||
+        ""
+      );
     },
     nodeUser() {
-      return this.dataAll?.matterTaskTodo?.realName || "";
+      return (
+        this.dataAll?.task?.realName ||
+        this.dataAll?.matterTaskTodo?.realName ||
+        ""
+      );
     },
     isReadonly() {
-      return ["view", "done", "finished"].includes(this.page);
+      return ["view", "done", "finished", "fine", "sent", "cc"].includes(this.page);
     },
     showOpinion() {
       return ["todo", "wait", "mine"].includes(this.page);
@@ -259,6 +302,7 @@ export default {
     },
     // 加载动态表单组件
     loadDynamicForm(iframeConfig) {
+      console.log("[流程表单] iframeConfig:", iframeConfig, "dataAll.fields:", this.dataAll?.fields);
       if (!iframeConfig) {
         this.dynamicFormComponent = null;
         this.formModulePath = "";
@@ -308,45 +352,57 @@ export default {
 <style scoped lang="scss">
 .szgc-process-getor {
   height: 100%;
+  flex: 1;
   display: flex;
   flex-direction: column;
   background: #fff;
 
-  .process-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 16px;
-    border-bottom: 1px solid #e4e7ed;
-
-    .header-title {
-      font-size: 16px;
-      font-weight: 600;
-      color: #303133;
-    }
-  }
-
   .process-body {
     flex: 1;
     display: flex;
-    overflow: hidden;
+    gap: 8px;
+    overflow: visible;
+    min-width: 0;
+    min-height: 0;
   }
 
   .process-left {
     flex: 1;
-    border-right: 1px solid #e4e7ed;
-    overflow: hidden;
+    min-width: 0;
     display: flex;
     flex-direction: column;
 
+    .left-header {
+      height: 46px;
+      min-height: 46px;
+      box-sizing: border-box;
+
+      .business-title {
+        font-size: 16px;
+        font-weight: 600;
+        color: #303133;
+        line-height: 1.4;
+      }
+
+      .business-sub {
+        font-size: 12px;
+        color: #909399;
+        margin-top: 2px;
+      }
+    }
+
     .process-tabs {
-      height: 100%;
+      flex: 1;
       display: flex;
       flex-direction: column;
+      border-radius: 4px;
+      box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
 
       :deep(.el-tabs__content) {
         flex: 1;
         overflow: auto;
+        padding: 12px;
       }
 
       :deep(.el-tab-pane) {
@@ -358,6 +414,7 @@ export default {
       height: 100%;
       padding: 16px;
       overflow: auto;
+      box-sizing: border-box;
     }
 
     .form-iframe {
@@ -369,14 +426,82 @@ export default {
   }
 
   .process-right {
-    width: 320px;
-    overflow-y: auto;
-    padding: 16px 8px;
+    width: 340px;
+    min-width: 280px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+
+    .right-header {
+      height: 46px;
+      min-height:   46px;
+      box-sizing: border-box;
+
+      .node-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: #303133;
+      }
+
+      .node-user {
+        font-size: 12px;
+        color: #909399;
+        margin-top: 2px;
+      }
+    }
+
+    .right-card {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #dcdfe6;
+      border-radius: 4px;
+      box-shadow: 0 0 12px 2px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+
+      .right-card-header {
+        padding: 10px 20px;
+        background: #f5f7fa;
+        border-bottom: 1px solid #e4e7ed;
+        font-size: 14px;
+        font-weight: 500;
+        color: #303133;
+      }
+
+      .right-card-body {
+        flex: 1;
+        padding: 12px;
+        overflow-y: auto;
+        background: #fff;
+      }
+    }
 
     .readonly-tip {
       text-align: center;
       padding: 20px 0;
     }
+
+    .logs-section {
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px dashed #e4e7ed;
+    }
+  }
+}
+</style>
+
+<style lang="scss">
+// 全局样式：让弹窗body撑满
+.el-dialog:has(.szgc-process-getor) {
+  display: flex;
+  flex-direction: column;
+
+  .el-dialog__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+    min-height: 0;
   }
 }
 </style>

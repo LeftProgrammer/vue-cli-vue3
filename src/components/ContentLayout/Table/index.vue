@@ -708,67 +708,67 @@ $height: 32px;
         z-index: 1;
       }
 
-      :deep(.el-table) {
-        height: 100%;
+      // :deep(.el-table) {
+      //   height: 100%;
 
-        .el-table__header {
-          background-color: #ebeff5;
-          overflow: hidden;
+      //   .el-table__header {
+      //     background-color: #ebeff5;
+      //     overflow: hidden;
 
-          .el-table__cell {
-            background-color: #ebeff5;
-            border-color: #e7e7e7;
-            text-align: center;
-            height: 48px;
+      //     .el-table__cell {
+      //       background-color: #ebeff5;
+      //       border-color: #e7e7e7;
+      //       text-align: center;
+      //       height: 48px;
 
-            .cell {
-              color: #1d2129;
-            }
-          }
-        }
+      //       .cell {
+      //         color: #1d2129;
+      //       }
+      //     }
+      //   }
 
-        .el-table__body-wrapper {
-          height: calc(100% - 56px) !important;
-          overflow: hidden;
-          box-sizing: border-box;
+      //   .el-table__body-wrapper {
+      //     height: calc(100% - 56px) !important;
+      //     overflow: hidden;
+      //     box-sizing: border-box;
 
-          .el-scrollbar__wrap {
-            overflow-x: hidden;
-            box-sizing: border-box;
-          }
+      //     .el-scrollbar__wrap {
+      //       overflow-x: hidden;
+      //       box-sizing: border-box;
+      //     }
 
-          .el-scrollbar__view {
-            overflow-x: hidden;
-          }
+      //     .el-scrollbar__view {
+      //       overflow-x: hidden;
+      //     }
 
-          .el-table__body {
-            .el-table__row {
-              .el-table__cell {
-                height: 48px;
-              }
-            }
+      //     .el-table__body {
+      //       .el-table__row {
+      //         .el-table__cell {
+      //           height: 48px;
+      //         }
+      //       }
 
-            tr.hover-row td {
-              background: transparent;
-            }
+      //       tr.hover-row td {
+      //         background: transparent;
+      //       }
 
-            tr:hover td {
-              background: #edf3fe;
-            }
-          }
-        }
+      //       tr:hover td {
+      //         background: #edf3fe;
+      //       }
+      //     }
+      //   }
 
-        .el-table__fixed-body-wrapper {
-          overflow-x: hidden;
-          box-sizing: border-box;
+      //   .el-table__fixed-body-wrapper {
+      //     overflow-x: hidden;
+      //     box-sizing: border-box;
 
-          .el-table__row {
-            .el-table__cell {
-              height: 48px;
-            }
-          }
-        }
-      }
+      //     .el-table__row {
+      //       .el-table__cell {
+      //         height: 48px;
+      //       }
+      //     }
+      //   }
+      // }
 
       overflow-y: auto;
       overflow-x: hidden;

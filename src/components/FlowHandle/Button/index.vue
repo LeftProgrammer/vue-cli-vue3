@@ -174,7 +174,16 @@ export default {
       } else if (method === "deal") {
         this.editHandle(this.row);
       } else if (method == "press") {
-        this.pressHandle(this.row);
+        // 催办二次确认
+        this.$confirm("确认催办？催办会给当前处理人发送提醒，此操作不可撤回。", "提示", {
+          confirmButtonText: "确定",
+          cancelButtonText: "取消",
+          type: "warning"
+        })
+          .then(() => {
+            this.pressHandle(this.row);
+          })
+          .catch(() => {});
       } else if (method == "view") {
         this.viewHandle(this.row);
       } else {
@@ -197,18 +206,13 @@ export default {
       this.$emit("click", row, status, task, "view");
     },
     pressHandle(row) {
-      const task = row.matterTaskTodo || row.procMatterTaskDone;
-      if (!task) {
-        this.$message.warning("无法获取任务信息");
-        return;
-      }
+      // 后端期望接收数组格式，且需要在row末尾添加businessId和pacId
       const data = {
+        ...row,
         businessId: row.id,
-        businessName: this.flowName,
-        procTaskId: task.procTaskId || task.id,
-        userIds: task.userId ? [task.userId] : []
+        pacId: row.procMatterRun?.pacId || ""
       };
-      sendMessage(data).then((res) => {
+      sendMessage([data]).then((res) => {
         if (res && res.success) {
           this.$message.success("催办成功");
         } else {

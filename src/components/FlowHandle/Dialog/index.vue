@@ -45,6 +45,7 @@
 
 <script>
 import SzgcProcessGetor from "@/components/SzgcProcess/index.vue";
+import { todoread, finishedRead } from "@/api/flow";
 
 export default {
   name: "FlowHandleDialog",
@@ -82,14 +83,17 @@ export default {
       showImage: false,
       imageUrl: "",
       imageSrcList: [],
+      fetchedData: null,
+      loading: false,
     };
   },
   computed: {
     mergedDataAll() {
+      const baseData = this.fetchedData || this.dataAll || {};
       return {
-        ...this.dataAll,
+        ...baseData,
         flowInfo: this.flowInfo,
-        businessId: this.flowInfo?.businessId || this.dataAll?.id,
+        businessId: this.flowInfo?.businessId || baseData?.businessId || baseData?.id,
       };
     },
   },
@@ -99,6 +103,9 @@ export default {
         this.visibleInner = !!val;
         if (val) {
           this.$bus?.emit("updateTodoNum");
+          this.fetchBusinessData();
+        } else {
+          this.fetchedData = null;
         }
       },
       immediate: true,
@@ -111,6 +118,40 @@ export default {
     window.removeEventListener("message", this.handleIframeMessage);
   },
   methods: {
+    // 根据 page 类型请求业务数据
+    async fetchBusinessData() {
+      const { businessId, procTaskId, page } = this.flowInfo || {};
+      if (!businessId) return;
+
+      this.loading = true;
+      try {
+        const params = {
+          businessId,
+          clientType: "web",
+        };
+
+        let res;
+        // todo/wait 使用 todo-read 接口
+        if (page === "todo" || page === "wait") {
+          if (procTaskId) params.procTaskId = procTaskId;
+          res = await todoread(params);
+        } else {
+          // done/view/fine/sent/cc 等使用 finished-read 接口
+          res = await finishedRead(params);
+        }
+
+        if (res?.success && res?.data) {
+          this.fetchedData = res.data;
+          console.log("[FlowDialog] 获取业务数据成功:", res.data);
+        } else {
+          console.error("[FlowDialog] 获取业务数据失败:", res?.message);
+        }
+      } catch (e) {
+        console.error("[FlowDialog] 请求异常:", e);
+      } finally {
+        this.loading = false;
+      }
+    },
     handleIframeMessage(event) {
       if (event.data?.action === "moveImage") {
         this.showImage = true;
