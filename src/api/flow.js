@@ -187,6 +187,23 @@ export function getPhrases() {
   });
 }
 
+// 添加常用语
+export function addPhrase(phrase) {
+  return request({
+    url: "/api/process/phrases",
+    method: "post",
+    data: { phrase, phraseType: 1 },
+  });
+}
+
+// 删除常用语
+export function deletePhrase(phraseId) {
+  return request({
+    url: `/api/process/phrases/${phraseId}`,
+    method: "delete",
+  });
+}
+
 // 获取子流程日志
 export function childMatterLogs(businessId) {
   return request({

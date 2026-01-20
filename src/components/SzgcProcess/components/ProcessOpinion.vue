@@ -7,20 +7,32 @@
       </el-radio-group>
 
       <div class="phrases-btn">
-        <el-popover placement="bottom" :width="200" trigger="click">
+        <el-popover v-model:visible="phrasesVisible" placement="bottom" :width="340" trigger="click">
           <template #reference>
             <el-button type="primary">常用语</el-button>
           </template>
-          <div class="phrases-list">
-            <div
-              v-for="(phrase, index) in phrases"
-              :key="index"
-              class="phrase-item"
-              @click="selectPhrase(phrase)"
-            >
-              {{ phrase.content || phrase }}
+          <div class="phrases-panel">
+            <div class="phrases-table">
+              <div v-if="phrases.length" class="phrases-list">
+                <div
+                  v-for="(item, index) in phrases"
+                  :key="item.phraseId || index"
+                  class="phrase-row"
+                >
+                  <span class="phrase-index">{{ index + 1 }}</span>
+                  <span class="phrase-content">{{ item.phrase }}</span>
+                  <span class="phrase-actions">
+                    <el-button type="primary" link @click="selectPhrase(item)">选择</el-button>
+                    <el-button type="danger" link @click="handleDeletePhrase(item)">删除</el-button>
+                  </span>
+                </div>
+              </div>
+              <div v-else class="no-phrases">暂无常用语</div>
             </div>
-            <div v-if="!phrases.length" class="no-phrases">暂无常用语</div>
+            <div class="phrases-add">
+              <el-input v-model="newPhrase" placeholder="添加常用语" size="small" />
+              <el-button type="primary" size="small" @click="handleAddPhrase">添加</el-button>
+            </div>
           </div>
         </el-popover>
       </div>
@@ -33,7 +45,7 @@
         class="opinion-input"
       />
 
-      <div v-if="!idea.trim()" class="idea-tip">处理意见不能为空</div>
+      <div class="idea-tip" :style="{ visibility: !idea.trim() ? 'visible' : 'hidden' }">处理意见不能为空</div>
 
       <div class="action-buttons">
         <el-button
@@ -57,7 +69,7 @@
 
 <script>
 import { Check, Switch, User } from "@element-plus/icons-vue";
-import { getPhrases, submitTodo } from "@/api/flow";
+import { getPhrases, addPhrase, deletePhrase, submitTodo } from "@/api/flow";
 
 export default {
   name: "ProcessOpinion",
@@ -103,6 +115,8 @@ export default {
       idea: "",
       phrases: [],
       submitting: false,
+      newPhrase: "",
+      phrasesVisible: false,
     };
   },
   computed: {
@@ -130,8 +144,40 @@ export default {
         console.error("加载常用语失败", e);
       }
     },
-    selectPhrase(phrase) {
-      this.idea = phrase.content || phrase;
+    selectPhrase(item) {
+      this.idea = item.phrase;
+      this.phrasesVisible = false;
+    },
+    async handleAddPhrase() {
+      if (!this.newPhrase.trim()) {
+        this.$message.warning("请输入常用语内容");
+        return;
+      }
+      try {
+        const res = await addPhrase(this.newPhrase.trim());
+        if (res && res.success) {
+          this.$message.success("添加成功");
+          this.newPhrase = "";
+          this.loadPhrases();
+        } else {
+          this.$message.error(res?.message || "添加失败");
+        }
+      } catch (e) {
+        this.$message.error("添加失败");
+      }
+    },
+    async handleDeletePhrase(item) {
+      try {
+        const res = await deletePhrase(item.phraseId);
+        if (res && res.success) {
+          this.$message.success("删除成功");
+          this.loadPhrases();
+        } else {
+          this.$message.error(res?.message || "删除失败");
+        }
+      } catch (e) {
+        this.$message.error("删除失败");
+      }
     },
     generateReqToken() {
       return Math.random().toString(36).substring(2, 12);
@@ -213,7 +259,7 @@ export default {
   }
 
   .opinion-input {
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .idea-tip {
@@ -238,24 +284,66 @@ export default {
   }
 }
 
-.phrases-list {
-  max-height: 200px;
-  overflow-y: auto;
+.phrases-panel {
+  display: flex;
+  flex-direction: column;
+  max-height: 280px;
 
-  .phrase-item {
-    padding: 8px;
-    cursor: pointer;
-    border-radius: 4px;
+  .phrases-table {
+    flex: 1;
+    min-height: 220px;
+    max-height: 220px;
+    overflow-y: auto;
+    margin-bottom: 10px;
+  }
 
-    &:hover {
-      background: #f5f7fa;
+  .phrases-list {
+    .phrase-row {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #ebeef5;
+
+    }
+
+    .phrase-index {
+      width: 30px;
+      flex-shrink: 0;
+      text-align: center;
+      color: #909399;
+    }
+
+    .phrase-content {
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      padding-right: 8px;
+    }
+
+    .phrase-actions {
+      flex-shrink: 0;
+      display: flex;
+      gap: 4px;
     }
   }
 
   .no-phrases {
     text-align: center;
     color: #909399;
-    padding: 12px;
+    padding: 20px;
+  }
+
+  .phrases-add {
+    flex-shrink: 0;
+    display: flex;
+    gap: 8px;
+    padding-top: 8px;
+
+    .el-input {
+      flex: 1;
+    }
   }
 }
 </style>

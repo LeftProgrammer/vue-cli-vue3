@@ -460,7 +460,7 @@ export default {
       overflow: hidden;
 
       .right-card-header {
-        padding: 10px 20px;
+        padding: 10px 12px;
         background: #f5f7fa;
         border-bottom: 1px solid #e4e7ed;
         font-size: 14px;
