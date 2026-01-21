@@ -1,8 +1,8 @@
 <template>
-  <div class="">
+  <div class="upload-file-wrapper">
     <el-upload
-      class="upload-demo"
       ref="uploadFileRef"
+      class="upload-file-content"
       :action="uploadApi"
       :on-success="handleUploadSuccess"
       :on-error="handleUploadError"
@@ -37,12 +37,12 @@
           </el-tooltip> -->
           <el-tooltip effect="dark" content="预览" placement="top">
             <span class="ml-15 pointer" @click="handlePreview(file)">
-              <i class="el-icon-view" />
+              <el-icon><View /></el-icon>
             </span>
           </el-tooltip>
           <el-tooltip effect="dark" content="下载" placement="top">
             <span class="ml-15 pointer" @click="handleDownload(file)">
-              <i class="el-icon-download" />
+              <el-icon><Download /></el-icon>
             </span>
           </el-tooltip>
           <el-tooltip
@@ -56,7 +56,7 @@
               v-if="!readonly"
               @click="handleRemovePictureCard($event)"
             >
-              <i class="el-icon-delete" />
+              <el-icon><Delete /></el-icon>
             </span>
           </el-tooltip>
         </span>
@@ -65,13 +65,12 @@
       <!-- 上传按钮 -->
       <el-button
         v-if="isShow('picture') || isShow('text')"
-        icon="el-icon-upload"
         type="text"
         :disabled="readonly"
-        >点击上传
+        ><el-icon><UploadFilled /></el-icon> 点击上传
       </el-button>
       <!-- <slot name="uploadBtn" v-if="$slots.uploadBtn" /> -->
-      <i class="el-icon-plus" v-else></i>
+      <el-icon v-else><Plus /></el-icon>
     </el-upload>
     <!--  文本格式的时候 -->
     <div v-if="isShow('text')">
@@ -103,38 +102,38 @@
           >
             <span
               v-if="showNtkoHandleEdit"
-              class="ml-15 pointer"
+              class="ml-15 pointer action-edit"
               @click="$emit('ntkoHandleEdit', file)"
             >
-              <i class="el-icon-edit-outline" />
+              <el-icon><EditPen /></el-icon>
             </span>
           </el-tooltip>
           <el-tooltip effect="dark" content="预览" placement="top">
             <span
-              class="ml-15 pointer"
+              class="ml-15 pointer action-preview"
               @click="
                 $visibleChange($event, 'el-tooltip__popper');
                 handlePreview(file);
               "
             >
-              <i class="el-icon-view" />
+              <el-icon><View /></el-icon>
             </span>
           </el-tooltip>
           <el-tooltip
+            v-if="showDownloadButton"
             class="item"
             effect="dark"
             content="下载"
             placement="top"
-            v-if="showDownloadButton"
           >
             <span
-              class="ml-15 pointer"
+              class="ml-15 pointer action-download"
               @click="
                 $visibleChange($event, 'el-tooltip__popper');
                 handleDownload(file);
               "
             >
-              <i class="el-icon-download" />
+              <el-icon><Download /></el-icon>
             </span>
           </el-tooltip>
           <el-tooltip
@@ -145,13 +144,13 @@
           >
             <span
               v-if="!readonly"
-              class="ml-15 pointer"
+              class="ml-15 pointer action-delete"
               @click="
                 $visibleChange($event, 'el-tooltip__popper');
                 handleRemoveText(index);
               "
             >
-              <i class="el-icon-delete" />
+              <el-icon><Delete /></el-icon>
             </span>
           </el-tooltip>
         </div>
@@ -169,19 +168,19 @@
 
     <el-image
       v-show="false"
+      id="imPre"
+      ref="imageRef"
       style="width: 0; height: 0"
       :src="url"
       :preview-src-list="srcList"
-      ref="imageRef"
-      id="imPre"
       draggable="false"
     >
     </el-image>
     <!-- pdf word excel -->
     <el-dialog
+      v-model="dialogShow"  
       v-draggable
       :title="viewFileName"
-      v-model="dialogShow"
       :destroy-on-close="false"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
@@ -209,25 +208,34 @@
   </div>
 </template>
 <script>
-import { getMinioUrl, getH5PreviewUrl } from '@/utils/ntko'
-import { fromApp, windowOpen } from '@/utils/index'
+import { getMinioUrl } from '@/utils/ntko'
+import { fromApp } from '@/utils/index'
 import { UploadFileMixin } from '@/mixins/UploadFileMixin'
 import VueOfficePdf from '@vue-office/pdf'
 import VueOfficeDocx from '@vue-office/docx'
 import VueOfficeExcel from '@vue-office/excel'
 import '@vue-office/excel/lib/index.css'
+import { View, Download, Delete, EditPen, UploadFilled, Plus } from '@element-plus/icons-vue'
+
 export default {
-  mixins: [UploadFileMixin],
   components: {
     VueOfficePdf,
     VueOfficeDocx,
-    VueOfficeExcel
+    VueOfficeExcel,
+    View,
+    Download,
+    Delete,
+    EditPen,
+    UploadFilled,
+    Plus
   },
-  model: {
-    prop: 'uploadFile',
-    event: 'change'
-  },
+  mixins: [UploadFileMixin],
   props: {
+    // v-model绑定值（Vue3方式）
+    modelValue: {
+      default: '',
+      type: String
+    },
     showDownloadButton: {
       default: true,
       type: Boolean
@@ -269,12 +277,7 @@ export default {
       default: false,
       type: Boolean
     },
-    // 上传文件json
-    uploadFile: {
-      default: '',
-      type: String
-    },
-    // 限制文件数量
+        // 限制文件数量
     limit: {
       type: Number,
       default: 10
@@ -366,14 +369,14 @@ export default {
     }
   },
   watch: {
-    uploadFile: {
+    // Vue3: 监听modelValue代替uloadFile
+    modelValue: {
       handler(val, oldVal) {
         this.uploadFileList = []
         this.uploadedFileList = []
         if (val) {
           this.setFileList(val)
         }
-        // console.log("uploadFile", oldVal, val);
       },
       deep: true,
       immediate: true
@@ -480,7 +483,7 @@ export default {
         this.uploadedFileList = [...filelist]
         // console.log("this.uploadFileList", this.uploadFileList);
         this.uploadFileData = JSON.stringify(this.uploadFileList)
-        // console.log("_uploadFile", this._uploadFile);
+        this.$emit('update:modelValue', this.uploadFileData)
         this.$emit('change', this.uploadFileData)
       }
       this.$message.success('盖章成功！')
@@ -747,7 +750,7 @@ export default {
           if (fileList.length === this.uploadedFileList.length) {
             this.uploadFileList = [...this.uploadedFileList]
             this.uploadFileData = JSON.stringify(this.uploadFileList)
-            // console.log("_uploadFile", this._uploadFile);
+            this.$emit('update:modelValue', this.uploadFileData)
             this.$emit('change', this.uploadFileData)
           }
         } else {
@@ -796,9 +799,8 @@ export default {
       // 从   this.uploadFileList  中删除 index 位置的元素 返回剩余的素组
       this.uploadFileList.splice(index, 1)
       this.uploadedFileList.splice(index, 1)
-      // console.log("删除", this.uploadFileList);
       this.uploadFileData = JSON.stringify(this.uploadFileList)
-
+      this.$emit('update:modelValue', this.uploadFileData)
       this.$emit('change', this.uploadFileData)
     },
     // 删除类型是 text
@@ -809,19 +811,19 @@ export default {
       this.uploadFileList.splice(index, 1)
       this.uploadedFileList.splice(index, 1)
       this.$emit('deleteFile', index)
-      // console.log("删除", this.uploadFileList);
       this.uploadFileData = JSON.stringify(this.uploadFileList)
-      if (!this.uploadFileList || this.uploadFileList.length === 0) {
-        this.$emit('change', '')
-      } else {
-        this.$emit('change', this.uploadFileData)
-      }
+      const emitValue = (!this.uploadFileList || this.uploadFileList.length === 0) ? '' : this.uploadFileData
+      this.$emit('update:modelValue', emitValue)
+      this.$emit('change', emitValue)
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.upload-file-wrapper {
+  width: 100%;
+}
 :deep(.el-upload-list--text.el-upload-list) {
   display: none;
 }
@@ -843,7 +845,7 @@ export default {
   padding: 0 5px;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: var(--el-fill-color-light);
     border-radius: 5px;
   }
 
@@ -851,17 +853,30 @@ export default {
     width: calc(100% - 90px);
 
     &:hover {
-      color: #409eff;
+      color: var(--el-color-primary);
     }
   }
 
   .icon {
     position: absolute;
     right: 0px;
-    background: #fff;
+    background: var(--el-bg-color);
 
-    span:hover {
-      color: #409eff;
+    .action-edit {
+      color: var(--el-color-primary);
+      &:hover { color: var(--el-color-primary-light-3); }
+    }
+    .action-preview {
+      color: var(--el-color-info);
+      &:hover { color: var(--el-color-info-dark-2); }
+    }
+    .action-download {
+      color: var(--el-color-primary);
+      &:hover { color: var(--el-color-primary-light-3); }
+    }
+    .action-delete {
+      color: var(--el-color-danger);
+      &:hover { color: var(--el-color-danger-light-3); }
     }
   }
 }
@@ -901,7 +916,7 @@ export default {
 }
 
 .hideent {
-  :deep(.upload-demo) {
+  :deep(.upload-file-content) {
     display: none;
   }
 }

@@ -216,13 +216,13 @@ import enums from "@/config/enums";
 import { dateFormat } from "@/utils";
 import { FlowListMixin } from "@/mixins/FlowListMixin";
 import TableLayout from "@/components/ContentLayout/Table";
-import { Plus } from '@element-plus/icons-vue'
+import { Plus } from '@element-plus/icons-vue';
 
 export default {
   name: "DesignPlan",
   components: {
     TableLayout,
-    Plus
+    Plus,
   },
   mixins: [FlowListMixin],
   data() {

@@ -104,6 +104,34 @@ export function finishedRead(data) {
   });
 }
 
+// 新建流程 - 获取初始数据
+export function freshRead(data) {
+  return request({
+    url: "/api/process/read/business/fresh-read",
+    method: "post",
+    data,
+    showLoading: false,
+  });
+}
+
+// 发送流程
+export function sendFlow(data) {
+  return request({
+    url: "/api/process/write/send",
+    method: "post",
+    data,
+  });
+}
+
+// 流程初始化保存（保存待发 - 新建流程时使用）
+export function initSave(data) {
+  return request({
+    url: "/api/process/write/init/save",
+    method: "post",
+    data,
+  });
+}
+
 // 获取流程日志
 export function alllogs(businessId) {
   return request({
@@ -160,14 +188,6 @@ export function sendMessage(data) {
   });
 }
 
-// 刷新读取业务流程信息
-export function freshread(data) {
-  return request({
-    url: "/api/process/read/business/fresh-read",
-    method: "post",
-    data,
-  });
-}
 
 // 流程提交
 export function submitTodo(data) {

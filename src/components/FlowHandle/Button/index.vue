@@ -202,6 +202,10 @@ export default {
     },
     editHandle(row) {
       let status = flowPageStatus[row.taskStatus];
+      // TODO:未提交状态(flowStatus=0)点击办理时，传递add状态以和添加效果一致
+      if (row.flowStatus === 0) {
+        status = "add";
+      }
       let task = row.procMatterTaskDone || row.matterTaskTodo || row.procMatterRun;
       this.$emit("click", row, status, task, "view");
     },

@@ -45,7 +45,7 @@
 
 <script>
 import SzgcProcessGetor from "@/components/SzgcProcess/index.vue";
-import { todoread, finishedRead } from "@/api/flow";
+import { todoread, finishedRead, freshRead } from "@/api/flow";
 
 export default {
   name: "FlowHandleDialog",
@@ -65,6 +65,7 @@ export default {
         page: "",
         taskId: "",
         procTaskId: "",
+        flowCfgId: "",
       }),
     },
     dataAll: {
@@ -120,23 +121,39 @@ export default {
   methods: {
     // 根据 page 类型请求业务数据
     async fetchBusinessData() {
-      const { businessId, procTaskId, page } = this.flowInfo || {};
-      if (!businessId) return;
-
+      const { businessId, procTaskId, page, flowCfgId } = this.flowInfo || {};
+      
       this.loading = true;
       try {
-        const params = {
-          businessId,
-          clientType: "web",
-        };
-
         let res;
-        // todo/wait 使用 todo-read 接口
-        if (page === "todo" || page === "wait") {
+        
+        // add/mine 模式使用 fresh-read 接口
+        if (page === "add" || page === "mine") {
+          if (!flowCfgId) {
+            console.error("[FlowDialog] add/mine模式需要flowCfgId");
+            return;
+          }
+          const params = {
+            clientType: "web",
+            flowCfgId,
+          };
+          res = await freshRead(params);
+        } else if (page === "todo" || page === "wait") {
+          // todo/wait 使用 todo-read 接口
+          if (!businessId) return;
+          const params = {
+            businessId,
+            clientType: "web",
+          };
           if (procTaskId) params.procTaskId = procTaskId;
           res = await todoread(params);
         } else {
           // done/view/fine/sent/cc 等使用 finished-read 接口
+          if (!businessId) return;
+          const params = {
+            businessId,
+            clientType: "web",
+          };
           res = await finishedRead(params);
         }
 
@@ -173,7 +190,8 @@ export default {
     },
     childEvtHandle(data) {
       this.$emit("childEvt", data);
-      if (data?.type === "submit" && data?.success) {
+      // 发送/保存待发/提交成功后关闭对话框
+      if (data?.success && ["submit", "send", "saveDraft"].includes(data?.type)) {
         this.visibleInner = false;
       }
     },

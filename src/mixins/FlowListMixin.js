@@ -85,6 +85,9 @@ export const FlowListMixin = {
         this.flowInfo.businessId = this.flowId;
       }
       this.flowInfo.page = page;
+      this.flowInfo.flowName = this.flowName;
+      this.flowInfo.flowCfgId = this.flowId;
+      this.flowInfo.formPath = this.flowPath;
 
       if (row != null) {
         row.flowInfo = this.flowInfo;

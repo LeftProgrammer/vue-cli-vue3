@@ -25,6 +25,17 @@ const formModules = {
 };
 
 /**
+ * 路由路径到表单模块的映射
+ * 用于add模式下根据当前路由路径加载对应的表单组件
+ * key: 路由路径 (如 /design/center/plan)
+ * value: 对应的formModules key
+ */
+const routeToFormMap = {
+  "/design/center/plan": "diy/design/plan/dataform",
+  // 可继续添加其他路由映射...
+};
+
+/**
  * 解析iframe配置中的路径
  * @param {Object|string} iframeConfig - 接口返回的iframe配置
  * @returns {string} 解析后的模块路径key
@@ -74,6 +85,38 @@ export function getFormModule(path) {
  */
 export function hasFormModule(path) {
   return !!formModules[path];
+}
+
+/**
+ * 根据路由路径获取对应的表单模块key
+ * @param {string} routePath - 路由路径
+ * @returns {string} 对应的formModules key
+ */
+export function getFormKeyByRoute(routePath) {
+  if (!routePath) return "";
+  // 标准化路径
+  const normalizedPath = routePath.replace(/^\/+|\/+$/g, "");
+  // 直接匹配
+  if (routeToFormMap["/" + normalizedPath]) {
+    return routeToFormMap["/" + normalizedPath];
+  }
+  // 尝试匹配
+  for (const key in routeToFormMap) {
+    if (normalizedPath.includes(key.replace(/^\/+/, ""))) {
+      return routeToFormMap[key];
+    }
+  }
+  return "";
+}
+
+/**
+ * 根据路由路径获取表单组件加载器
+ * @param {string} routePath - 路由路径
+ * @returns {Function|null} 组件的动态导入函数
+ */
+export function getFormModuleByRoute(routePath) {
+  const formKey = getFormKeyByRoute(routePath);
+  return formKey ? getFormModule(formKey) : null;
 }
 
 export default formModules;

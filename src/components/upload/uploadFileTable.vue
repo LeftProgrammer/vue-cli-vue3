@@ -156,11 +156,13 @@ import { UploadFileMixin } from '@/mixins/UploadFileMixin'
 export default {
   components: {},
   mixins: [UploadFileMixin],
-  model: {
-    prop: 'uploadFile',
-    event: 'change'
-  },
+  emits: ['update:modelValue', 'change', 'changeNtkoFile'],
   props: {
+    // v-model绑定值（Vue3方式）
+    modelValue: {
+      default: () => [],
+      type: Array
+    },
     isSingnForTable: {
       default: false,
       type: Boolean
@@ -192,11 +194,7 @@ export default {
       default: false,
       type: Boolean
     },
-    uploadFile: {
-      default: () => [],
-      type: Array
-    },
-    limit: {
+        limit: {
       type: Number,
       default: 10
     },
@@ -258,9 +256,10 @@ export default {
     }
   },
   watch: {
-    uploadFile: {
+    // Vue3: 监听modelValue代替uloadFile
+    modelValue: {
       handler(value) {
-        this.uploadFileList = value
+        this.uploadFileList = value || []
       },
       immediate: true,
       deep: true
@@ -545,7 +544,7 @@ export default {
 
             // console.log("handleUploadSuccess 2: ", res, file, fileList);
             if (fileList.length === this.uploadFileList.length) {
-              // console.log("_uploadFile", this._uploadFile);
+              this.$emit('update:modelValue', this.uploadFileList)
               this.$emit('change', this.uploadFileList)
             }
           } else {
@@ -589,7 +588,7 @@ export default {
     // 删除类型是 text
     handleRemoveText(index) {
       this.uploadFileList.splice(index, 1)
-      // console.log("删除成功", this.uploadFileList);
+      this.$emit('update:modelValue', this.uploadFileList)
       this.$emit('change', this.uploadFileList)
     },
 

@@ -419,6 +419,23 @@ export default {
       },
       immediate: true,
     },
+    dataAll: {
+      handler(val) {
+        // dataAll有值时初始化表单
+        if (val) {
+          this.initFormData();
+        }
+      },
+      immediate: true,
+    },
+    page: {
+      handler() {
+        // page变化时也需要重新初始化
+        if (this.dataAll) {
+          this.initFormData();
+        }
+      },
+    },
   },
   mounted() {
     this.getYearList();
@@ -565,6 +582,24 @@ export default {
         }
       }
     },
+    initFormData() {
+      // 防止重复初始化
+      if (this._formInitialized) return;
+      
+      // 当作为动态组件加载时，根据page和dataAll初始化表单
+      const isAddMode = this.page === 'add' || this.page === 'mine';
+      if (isAddMode) {
+        // add模式：初始化空表单，加载默认表格数据
+        this.readonly = false;
+        this._formInitialized = true;
+        this.setFormData(null);
+      } else if (this.dataAll && this.dataAll.row) {
+        // 编辑/查看模式：使用传入的数据
+        this.readonly = this.propReadonly;
+        this._formInitialized = true;
+        this.setFormData(this.dataAll.row);
+      }
+    },
     getFormData() {
       this.getFlowRow().then((row) => {
         this.setFormData(row);
@@ -678,18 +713,25 @@ export default {
         );
         return;
       }
-      save(fields)
+      return save(fields)
         .then((res) => {
-          const { success, message } = res;
+          const { success, message, data } = res;
           if (!success) {
-            return this.$message.error("新增失败：" + message);
+            this.$message.error("新增失败：" + message);
+            return false;
           } else {
+            // 更新formData.id，用于后续流程初始化
+            if (data && typeof data === 'string' && data !== '添加成功！') {
+              this.formData.id = data;
+            }
             callback && callback();
+            return true;
           }
         })
         .catch((err) => {
           console.error(err);
           this.$message.error("新增失败");
+          return false;
         });
     },
     getDictItemList(code, callback) {

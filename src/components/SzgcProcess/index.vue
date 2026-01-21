@@ -1,10 +1,26 @@
 <template>
-  <div class="szgc-process-getor">
+  <div class="process-getor">
+    <!-- 添加模式头部：横跨整个页面 -->
+    <div v-if="isAddMode" class="add-mode-header">
+      <el-button type="primary" :loading="sending" @click="handleSend">
+        <el-icon><Promotion /></el-icon>
+        发送
+      </el-button>
+      <div class="header-title-area">
+        <el-input :model-value="addModeTitle" readonly class="title-input">
+          <template #prepend>标题</template>
+        </el-input>
+        <el-button plain :loading="savingDraft" @click="handleSaveDraft">
+          <el-icon><Document /></el-icon> 保存待发
+        </el-button>
+      </div>
+    </div>
+
     <div class="process-body">
       <!-- 左侧：表单区域 -->
       <div class="process-left">
-        <!-- 左侧头部 -->
-        <div class="left-header">
+        <!-- 左侧头部 - 非add模式 -->
+        <div v-if="!isAddMode" class="left-header">
           <div class="business-title">{{ businessTitle }}</div>
           <div class="business-sub">{{ businessSub }}</div>
         </div>
@@ -12,15 +28,15 @@
         <el-tabs v-model="activeTab" type="border-card" class="process-tabs">
           <el-tab-pane label="表单" name="form">
             <div class="form-container">
-              <slot name="form" :data-all="dataAll" :page="page" :readonly="true">
+              <slot name="form" :data-all="dataAll" :page="page" :readonly="isReadonly">
                 <!-- 优先使用动态组件 -->
                 <component
-                  v-if="dynamicFormComponent"
                   :is="dynamicFormComponent"
+                  v-if="dynamicFormComponent"
                   ref="dynamicForm"
                   :data-all="dataAll"
                   :page="page"
-                  :prop-readonly="true"
+                  :prop-readonly="isReadonly"
                   @saved="handleFormSaved"
                 />
                 <!-- iframe兆底 -->
@@ -51,19 +67,21 @@
 
       <!-- 右侧：审批区域 -->
       <div class="process-right">
-        <!-- 非只读模式：完整显示 -->
-        <template v-if="!isReadonly">
-          <!-- 右侧头部 -->
-          <div class="right-header">
+        <!-- 右侧头部：非add模式显示 -->
+        <div v-if="!isAddMode" class="right-header">
+          <template v-if="!isReadonly">
             <div class="node-name">{{ nodeName }}</div>
             <div class="node-user">{{ nodeUser }}</div>
-          </div>
-          <!-- 右侧内容块：模拟tabs样式 -->
-          <div class="right-card">
-            <!-- 相关意见：tabs头部样式 -->
-            <div class="right-card-header">相关意见</div>
-            <!-- 内容区 -->
-            <div class="right-card-body">
+          </template>
+        </div>
+        <!-- 右侧内容卡片 -->
+        <div class="right-card" :class="{ 'readonly-card': isReadonly}">
+          <!-- 卡片头部：待办模式显示 -->
+          <div v-if="!isReadonly && !isAddMode" class="right-card-header">相关意见</div>
+          <!-- 卡片内容 -->
+          <div class="right-card-body">
+            <!-- 可办理模式：审批意见 + 日志 -->
+            <template v-if="!isReadonly && !isAddMode">
               <ProcessOpinion
                 v-if="showOpinion"
                 ref="processOpinion"
@@ -77,23 +95,16 @@
                 @success="handleOpinionSuccess"
                 @error="handleOpinionError"
               />
-              <!-- 流程日志 -->
               <div class="logs-section">
                 <ProcessLogs ref="processLogs" :business-id="businessId" />
               </div>
-            </div>
-          </div>
-        </template>
-
-        <!-- 只读模式：仅显示流程日志，保持header占位对齐 -->
-        <template v-else>
-          <div class="right-header"></div>
-          <div class="right-card readonly-card">
-            <div class="right-card-body">
+            </template>
+            <!-- 其他模式：仅日志 -->
+            <template v-else>
               <ProcessLogs ref="processLogs" :business-id="businessId" />
-            </div>
+            </template>
           </div>
-        </template>
+        </div>
       </div>
     </div>
   </div>
@@ -101,14 +112,18 @@
 
 <script>
 import { defineAsyncComponent, markRaw } from "vue";
+import { Promotion, Document } from "@element-plus/icons-vue";
 import ProcessOpinion from "./components/ProcessOpinion.vue";
 import ProcessLogs from "./components/ProcessLogs.vue";
 import ProcessFlow from "./components/ProcessFlow.vue";
-import { parseIframePath, getFormModule, hasFormModule } from "./formModules";
+import { parseIframePath, getFormModule, hasFormModule, getFormModuleByRoute } from "./formModules";
+import { sendFlow, initSave } from "@/api/flow";
 
 export default {
   name: "SzgcProcessGetor",
   components: {
+    Promotion,
+    Document,
     ProcessOpinion,
     ProcessLogs,
     ProcessFlow,
@@ -137,6 +152,8 @@ export default {
       activeTab: "form",
       dynamicFormComponent: null,
       formModulePath: "",
+      sending: false,
+      savingDraft: false,
     };
   },
   computed: {
@@ -148,6 +165,21 @@ export default {
         this.dataAll?.procMatterRun?.businessName ||
         "流程处理"
       );
+    },
+    // add模式标题：模块名-用户名 (当前时间)
+    addModeTitle() {
+      const flowName = this.dataAll?.flowInfo?.flowName || this.dataAll?.flowName || "";
+      const userName = this.$store?.getters?.realName || this.$store?.getters?.name || "";
+      const now = new Date();
+      const timeStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")} ${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+      if (flowName && userName) {
+        return `${flowName}-${userName} (${timeStr})`;
+      } else if (flowName) {
+        return `${flowName} (${timeStr})`;
+      } else if (userName) {
+        return `${userName} (${timeStr})`;
+      }
+      return `新建流程 (${timeStr})`;
     },
     // 业务副标题：创建人 + 时间
     businessSub() {
@@ -180,6 +212,7 @@ export default {
       return (
         this.dataAll?.run?.flowCfgId ||
         this.dataAll?.flowCfgId ||
+        this.dataAll?.flowInfo?.flowCfgId ||
         this.dataAll?.matterTaskTodo?.flowConfigId ||
         this.dataAll?.procMatterRun?.flowConfigId ||
         ""
@@ -202,6 +235,9 @@ export default {
     },
     isReadonly() {
       return ["view", "done", "finished", "fine", "sent", "cc"].includes(this.page);
+    },
+    isAddMode() {
+      return ["add", "mine"].includes(this.page);
     },
     showOpinion() {
       return ["todo", "wait", "mine"].includes(this.page);
@@ -244,10 +280,30 @@ export default {
     // 监听iframe配置变化，加载动态组件
     iframeConfig: {
       handler(config) {
-        this.loadDynamicForm(config);
+        // 非add模式时，根据iframeConfig加载表单
+        if (!this.isAddMode) {
+          this.loadDynamicForm(config);
+        }
       },
       immediate: true,
       deep: true,
+    },
+    // add模式下，根据formPath加载表单
+    isAddMode: {
+      handler(isAdd) {
+        if (isAdd) {
+          this.loadDynamicFormByRoute();
+        }
+      },
+      immediate: true,
+    },
+    // 监听dataAll变化，add模式下重新加载表单
+    "dataAll.flowInfo.formPath": {
+      handler() {
+        if (this.isAddMode) {
+          this.loadDynamicFormByRoute();
+        }
+      },
     },
   },
   mounted() {
@@ -341,16 +397,151 @@ export default {
     handleFormSaved(data) {
       this.$emit("childEvt", { type: "formSaved", data });
     },
+    // add模式下根据路由路径加载表单组件
+    loadDynamicFormByRoute() {
+      const formPath = this.dataAll?.flowInfo?.formPath || "";
+      console.log("[流程表单] add模式加载表单, formPath:", formPath);
+      
+      if (!formPath) {
+        // 如果没有formPath，尝试从iframeConfig加载
+        if (this.iframeConfig) {
+          this.loadDynamicForm(this.iframeConfig);
+        } else {
+          console.warn("[流程表单] add模式下没有formPath和iframeConfig");
+          this.dynamicFormComponent = null;
+        }
+        return;
+      }
+      
+      // 避免重复加载
+      const routeKey = "route:" + formPath;
+      if (routeKey === this.formModulePath) return;
+      
+      const loader = getFormModuleByRoute(formPath);
+      if (loader) {
+        this.formModulePath = routeKey;
+        this.dynamicFormComponent = markRaw(
+          defineAsyncComponent({
+            loader,
+            loadingComponent: {
+              template: '<div style="padding:20px;text-align:center;"><el-skeleton :rows="8" animated /></div>',
+            },
+            errorComponent: {
+              template: '<el-empty description="表单加载失败" />',
+            },
+            delay: 200,
+            timeout: 30000,
+          })
+        );
+        console.log("[流程表单] add模式加载动态组件:", formPath);
+      } else {
+        // 没有路由映射时，尝试从iframeConfig加载
+        if (this.iframeConfig) {
+          this.loadDynamicForm(this.iframeConfig);
+        } else {
+          console.warn("[流程表单] add模式下未找到路由映射:", formPath);
+          this.dynamicFormComponent = null;
+        }
+      }
+    },
     // 获取动态表单组件实例
     getDynamicForm() {
       return this.$refs.dynamicForm;
+    },
+    // 发送流程
+    async handleSend() {
+      try {
+        this.sending = true;
+        // 先保存表单
+        const formRef = this.$refs.dynamicForm;
+        if (formRef && typeof formRef.save === "function") {
+          const saveResult = await formRef.save();
+          if (!saveResult) {
+            this.$message.warning("请先完善表单信息");
+            return;
+          }
+        }
+        // 构建发送参数
+        const sendData = {
+          clientType: "web",
+          reqToken: this.dataAll?.reqToken,
+          businessId: this.businessId,
+          flowCfgId: this.flowConfigId,
+          btnKey: this.dataAll?.send?.btnKey || "send",
+        };
+        const res = await sendFlow(sendData);
+        if (res?.success) {
+          this.$message.success("发送成功");
+          this.$emit("childEvt", { type: "send", action: "send", success: true, data: res.data });
+        } else {
+          this.$message.error(res?.message || "发送失败");
+          this.$emit("childEvt", { type: "send", action: "send", success: false, error: res?.message });
+        }
+      } catch (e) {
+        console.error("发送失败:", e);
+        this.$message.error("发送失败");
+        this.$emit("childEvt", { type: "send", action: "send", success: false, error: e.message });
+      } finally {
+        this.sending = false;
+      }
+    },
+    // 保存待发
+    async handleSaveDraft() {
+      try {
+        this.savingDraft = true;
+        const formRef = this.$refs.dynamicForm;
+        // 1. 先调用表单的save方法保存业务数据
+        if (formRef && typeof formRef.save === "function") {
+          const saveResult = await formRef.save();
+          if (!saveResult) {
+            this.$message.warning("请先完善表单信息");
+            return;
+          }
+        }
+        
+        // 2. 获取保存后的businessId（从表单组件获取）
+        const businessId = formRef?.formData?.id || this.businessId;
+        if (!businessId) {
+          this.$message.error("业务数据保存异常，未获取到业务ID");
+          return;
+        }
+        
+        // 3. 构建流程初始化保存参数（与原项目保持一致）
+        const pacId = this.dataAll?.pacId || this.dataAll?.flowInfo?.pacId || "";
+        const saveData = {
+          attIds: null,
+          businessId: businessId,
+          businessName: this.addModeTitle,
+          ccs: null,
+          fields: this.dataAll?.sendFlowJson || formRef?.sendFlowJson || {},
+          flowCfgId: this.flowConfigId,
+          pacId: pacId,
+          reqToken: this.dataAll?.reqToken,
+        };
+        
+        // 4. 调用流程初始化保存接口
+        const res = await initSave(saveData);
+        if (res?.success) {
+          this.$message.success("保存成功");
+          this.$emit("childEvt", { type: "saveDraft", action: "saveDraft", success: true, data: res.data });
+        } else {
+          this.$message.error(res?.message || "保存失败");
+          this.$emit("childEvt", { type: "saveDraft", action: "saveDraft", success: false, error: res?.message });
+        }
+      } catch (e) {
+        console.error("保存待发失败:", e);
+        this.$message.error("保存失败");
+        this.$emit("childEvt", { type: "saveDraft", action: "saveDraft", success: false, error: e.message });
+      } finally {
+        this.savingDraft = false;
+      }
     },
   },
 };
 </script>
 
 <style scoped lang="scss">
-.szgc-process-getor {
+.process-getor {
   height: 100%;
   flex: 1;
   display: flex;
@@ -486,13 +677,52 @@ export default {
       padding-top: 20px;
       border-top: 1px dashed #e4e7ed;
     }
+
+    .empty-content {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      .empty-text {
+        font-size: 14px;
+        color: #909399;
+      }
+    }
+  }
+
+  // add模式头部：横跨整个页面
+  .add-mode-header {
+    display: flex;
+    align-items: stretch;
+    background: #fff;
+    margin-bottom: 12px;
+
+    > .el-button {
+      width: 88px;
+      min-width: 88px;
+      height: auto;
+      font-size: 18px;
+    }
+
+    .header-title-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      margin-left: 12px;
+      gap: 6px;
+
+      > .el-button {
+        align-self: flex-start;
+      }
+    }
   }
 }
 </style>
 
 <style lang="scss">
 // 全局样式：让弹窗body撑满
-.el-dialog:has(.szgc-process-getor) {
+.el-dialog:has(.process-getor) {
   display: flex;
   flex-direction: column;
 
