@@ -64,12 +64,54 @@
         </el-button>
       </div>
     </div>
+
+    <!-- 人员选择器 -->
+    <UserSelect
+      :show="userSelectVisible"
+      :multi-enable="false"
+      @update:show="userSelectVisible = $event"
+      @user-checked="onUserChecked"
+    />
+
+    <!-- 转发弹窗 -->
+    <el-dialog
+      v-model="transferVisible"
+      title="流程转发"
+      width="500px"
+      :close-on-click-modal="false"
+    >
+      <div class="transfer-content">
+        <div class="transfer-title">{{ businessTitle }}</div>
+        <el-input
+          v-model="transferUser"
+          placeholder="请选择转发接收人"
+          readonly
+          @click="selectTransferUser"
+        >
+          <template #suffix>
+            <el-icon><User /></el-icon>
+          </template>
+        </el-input>
+        <el-input
+          v-model="transferReason"
+          type="textarea"
+          :rows="4"
+          placeholder="请输入转发意见"
+          class="transfer-reason"
+        />
+      </div>
+      <template #footer>
+        <el-button type="primary" :loading="transferring" @click="confirmTransfer">确定</el-button>
+        <el-button @click="transferVisible = false">取消</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { Check, Switch, User } from "@element-plus/icons-vue";
-import { getPhrases, addPhrase, deletePhrase, submitTodo } from "@/api/flow";
+import { getPhrases, addPhrase, deletePhrase, submitTodo, forwardTask } from "@/api/flow";
+import UserSelect from "@/components/newUserSelect/index.vue";
 
 export default {
   name: "ProcessOpinion",
@@ -77,13 +119,22 @@ export default {
     Check,
     Switch,
     User,
+    UserSelect,
   },
   props: {
     businessId: {
       type: String,
       default: "",
     },
+    businessName: {
+      type: String,
+      default: "",
+    },
     procTaskId: {
+      type: String,
+      default: "",
+    },
+    procTaskName: {
       type: String,
       default: "",
     },
@@ -117,9 +168,18 @@ export default {
       submitting: false,
       newPhrase: "",
       phrasesVisible: false,
+      transferVisible: false,
+      transferUser: "",
+      transferUserId: "",
+      transferReason: "",
+      transferring: false,
+      userSelectVisible: false,
     };
   },
   computed: {
+    businessTitle() {
+      return this.dataAll?.name || this.dataAll?.businessName || "";
+    },
     showSubmit() {
       return ["todo", "wait", "mine"].includes(this.page);
     },
@@ -228,8 +288,55 @@ export default {
       }
     },
     handleTransfer() {
-      this.$emit("transfer");
-      this.$message.info("转发功能待实现");
+      this.transferVisible = true;
+      this.transferUser = "";
+      this.transferUserId = "";
+      this.transferReason = "";
+    },
+    selectTransferUser() {
+      this.userSelectVisible = true;
+    },
+    onUserChecked(data) {
+      this.userSelectVisible = false;
+      if (data && data.source && data.source.length > 0) {
+        this.transferUser = data.source[0].realName;
+        this.transferUserId = data.source[0].userId;
+      }
+    },
+    async confirmTransfer() {
+      if (!this.transferUser) {
+        this.$message.warning("请选择转发接收人");
+        return;
+      }
+      if (!this.transferReason.trim()) {
+        this.$message.warning("请输入转发意见");
+        return;
+      }
+      try {
+        this.transferring = true;
+        const data = {
+          businessName: this.businessName,
+          businessId: this.businessId,
+          ccs: [{ realName: this.transferUser, userId: this.transferUserId }],
+          idea: this.transferReason,
+          proTaskId: this.procTaskId,
+          procTaskName: this.procTaskName,
+          utKey: "UT_default",
+        };
+        const res = await forwardTask(data);
+        if (res && res.success) {
+          this.$message.success("转发成功");
+          this.transferVisible = false;
+          this.$emit("success", { type: "transfer", data: res.data });
+          this.$emit("transfer", res.data);
+        } else {
+          this.$message.error(res?.message || "转发失败");
+        }
+      } catch (e) {
+        this.$message.error("转发失败");
+      } finally {
+        this.transferring = false;
+      }
     },
     handleCountersign() {
       this.$emit("countersign");
@@ -344,6 +451,26 @@ export default {
     .el-input {
       flex: 1;
     }
+  }
+}
+
+.transfer-content {
+  .transfer-title {
+    padding: 10px 12px;
+    background: #f5f7fa;
+    border: 1px solid #e4e7ed;
+    border-radius: 4px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: #303133;
+  }
+
+  .el-input {
+    margin-bottom: 12px;
+  }
+
+  .transfer-reason {
+    margin-bottom: 0;
   }
 }
 </style>

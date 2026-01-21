@@ -204,6 +204,15 @@ export function deletePhrase(phraseId) {
   });
 }
 
+// 转发流程
+export function forwardTask(data) {
+  return request({
+    url: "/api/process/write/transmit",
+    method: "post",
+    data,
+  });
+}
+
 // 获取子流程日志
 export function childMatterLogs(businessId) {
   return request({

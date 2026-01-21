@@ -1,16 +1,18 @@
 <template>
   <el-dialog
+    v-model="visible"
     class="user-select modal-defined"
-    :visible.sync="visible"
     width="820px"
     append-to-body
     :close-on-press-escape="false"
     :close-on-click-modal="false"
   >
-    <div slot="title" class="select-title">
-      <i class="el-icon-s-custom" />
-      <span>人员选择</span>
-    </div>
+    <template #title>
+      <div class="select-title">
+        <el-icon><UserFilled /></el-icon>
+        <span>人员选择</span>
+      </div>
+    </template>
     <div class="select-main">
       <div class="title">
         <el-tabs v-model="group" type="card">
@@ -93,13 +95,16 @@
         </tr>
       </table>
     </div>
-    <div slot="footer" class="dialog-footer">
-      <div class="btn-defined btn-default" @click="visible = false">取消</div>
-      <div class="btn-defined btn-primary" @click="submit">确定</div>
-    </div>
+    <template #footer>
+      <div class="dialog-footer">
+        <div class="btn-defined btn-default" @click="visible = false">取消</div>
+        <div class="btn-defined btn-primary" @click="submit">确定</div>
+      </div>
+    </template>
   </el-dialog>
 </template>
 <script>
+import { UserFilled } from "@element-plus/icons-vue";
 import { getUserListByIds, addRecentUserList } from "./api";
 import DepartUserList from "./UserList/DepartUserList";
 import RecentUserList from "./UserList/RecentUserList";
@@ -108,6 +113,7 @@ import VirtualScroll from "./VirtualScroll";
 export default {
   name: "UserSelect",
   components: {
+    UserFilled,
     depart: DepartUserList,
     recent: RecentUserList,
     manager: ManagerList,
@@ -518,7 +524,7 @@ export default {
         display: inline-block;
         width: 32px;
         height: 32px;
-        background-image: url("./img/icon32.png");
+        background-image: url("./image/icon32.png");
         background-repeat: no-repeat;
         cursor: pointer;
       }

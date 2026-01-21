@@ -2,10 +2,9 @@
   <div class="list-box">
     <div class="box-item">
       <el-popover
-        v-model="visible"
+        v-model:visible="visible"
         popper-class="user-select-pop-box"
         placement="bottom"
-        :visible-arrow="false"
         trigger="click"
       >
         <div class="user-select-corp-tree">
@@ -17,29 +16,29 @@
             icon-class="user-select-custom-tree-icon"
             @node-click="onCorpClick"
           >
-            <span
-              slot-scope="{ data }"
-              class="custom-tree-node"
-              :class="getCorpNodeClass(data)"
-            >
-              <i :class="getTreeIconClass(data)" />
-              <span v-text="data.label" />
-            </span>
+            <template #default="{ data }">
+              <span
+                class="custom-tree-node"
+                :class="getCorpNodeClass(data)"
+              >
+                <el-icon><Folder v-if="data.children && data.children.length" /><Document v-else /></el-icon>
+                <span v-text="data.label" />
+              </span>
+            </template>
           </el-tree>
         </div>
-        <el-input
-          slot="reference"
-          v-model="corpName"
-          class="corp-box"
-          readonly
-          placeholder="请选择单位"
-        >
-          <i
-            slot="suffix"
-            class="el-input__icon el-icon-caret-bottom"
-            style="font-size:20px;"
-          />
-        </el-input>
+        <template #reference>
+          <el-input
+            v-model="corpName"
+            class="corp-box"
+            readonly
+            placeholder="请选择单位"
+          >
+            <template #suffix>
+              <el-icon style="font-size:20px;"><CaretBottom /></el-icon>
+            </template>
+          </el-input>
+        </template>
       </el-popover>
     </div>
     <div class="depart-box user-select-corp-tree">
@@ -51,14 +50,15 @@
         icon-class="user-select-custom-tree-icon"
         @node-click="onDepartClick"
       >
-        <span
-          slot-scope="{ data }"
-          class="custom-tree-node"
-          :class="getDepartNodeClass(data)"
-        >
-          <i :class="getTreeIconClass(data)" />
-          <span v-text="data.label" />
-        </span>
+        <template #default="{ data }">
+          <span
+            class="custom-tree-node"
+            :class="getDepartNodeClass(data)"
+          >
+            <el-icon><Folder v-if="data.children && data.children.length" /><Document v-else /></el-icon>
+            <span v-text="data.label" />
+          </span>
+        </template>
       </el-tree>
     </div>
     <div class="divider">
@@ -118,12 +118,16 @@
   </div>
 </template>
 <script>
+import { Folder, Document, CaretBottom } from '@element-plus/icons-vue'
 import { getCorpList, getDepartList, getUserList } from '../api'
 import VirtualScroll from '../VirtualScroll'
 import store from '@/store'
 export default {
   name: 'DepartUserList',
   components: {
+    Folder,
+    Document,
+    CaretBottom,
     VirtualScroll
   },
   props: {
