@@ -36,7 +36,7 @@
                   ref="dynamicForm"
                   :data-all="dataAll"
                   :page="page"
-                  :prop-readonly="isReadonly"
+                  :readonly="isReadonly"
                   @saved="handleFormSaved"
                 />
                 <!-- iframe兆底 -->
@@ -81,7 +81,7 @@
           <!-- 卡片内容 -->
           <div class="right-card-body">
             <!-- 可办理模式：审批意见 + 日志 -->
-            <template v-if="!isReadonly && !isAddMode">
+            <template v-if="!isAddMode">
               <ProcessOpinion
                 v-if="showOpinion"
                 ref="processOpinion"
@@ -234,7 +234,8 @@ export default {
       );
     },
     isReadonly() {
-      return ["view", "done", "finished", "fine", "sent", "cc"].includes(this.page);
+      // 只读页面：view, done, finished, fine, sent, cc, todo
+      return ["view", "done", "finished", "fine", "sent", "cc", "todo"].includes(this.page);
     },
     isAddMode() {
       return ["add", "mine"].includes(this.page);

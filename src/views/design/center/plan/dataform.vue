@@ -320,7 +320,7 @@ export default {
       type: String,
       default: "",
     },
-    propReadonly: {
+    readonly: {
       type: Boolean,
       default: false,
     },
@@ -370,7 +370,6 @@ export default {
           { required: true, message: "请选择业主单位文秘", trigger: "change" },
         ],
       },
-      readonly: false,
       personDialog: {
         selection: [],
         show: false,
@@ -444,11 +443,12 @@ export default {
   created() {
     this.getDictItemList(this.designClassifyCode);
     this.getDictItemList(this.designProfessionCode);
+    // 来自app
     this.$nextTick(() => {
-      // 外部传入的 propReadonly 优先
-      if (this.propReadonly) {
-        this.readonly = true;
-      } else if (this.fromapp) {
+      // appUrlList 只要是app 就一定会传递这个参数
+      if (this.fromapp) {
+        // // 设置动态标题
+        // titleElement.textContent = "详情";
         if (this.$route.query.businessId) {
           this.getDataById(this.$route.query.businessId);
           this.readonly = true;
@@ -590,14 +590,20 @@ export default {
       const isAddMode = this.page === 'add' || this.page === 'mine';
       if (isAddMode) {
         // add模式：初始化空表单，加载默认表格数据
-        this.readonly = false;
         this._formInitialized = true;
         this.setFormData(null);
-      } else if (this.dataAll && this.dataAll.row) {
+      } else if (this.dataAll) {
         // 编辑/查看模式：使用传入的数据
-        this.readonly = this.propReadonly;
         this._formInitialized = true;
-        this.setFormData(this.dataAll.row);
+        // 流转中状态数据结构不同，直接使用dataAll
+        const rowData = this.dataAll.row || this.dataAll;
+        this.setFormData(rowData);
+      } else if (this.fromapp) {
+        // app模式：根据路由参数处理
+        if (this.$route.query.businessId) {
+          this.getDataById(this.$route.query.businessId);
+        }
+        this._formInitialized = true;
       }
     },
     getFormData() {

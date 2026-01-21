@@ -1,7 +1,7 @@
 <template>
   <div>
     <el-input
-      :model-value="pbsName"
+      v-model="pbsName"
       placeholder="请选择"
       :class="readonly ? 'disabledBtn' : 'defaultBtn'"
       disabled
@@ -331,8 +331,9 @@ export default {
      * 获取disabled
      */
     getIsDisabled() {
-      let formVue = this.getParent();
-      if (formVue && formVue.disabled !== false) {
+      // 修复：直接使用props的readonly，不需要依赖父组件的disabled状态
+      // 因为父组件的disabled属性可能与表单的readonly状态不一致
+      if (this.readonly) {
         this.disabled = true;
       } else {
         this.disabled = false;
