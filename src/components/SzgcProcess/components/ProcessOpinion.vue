@@ -68,7 +68,7 @@
     <!-- 人员选择器 -->
     <UserSelect
       :show="userSelectVisible"
-      :multi-enable="false"
+      :multi-enable="true"
       @update:show="userSelectVisible = $event"
       @user-checked="onUserChecked"
     />

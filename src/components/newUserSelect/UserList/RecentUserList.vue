@@ -1,7 +1,7 @@
 <template>
   <div class="list-box">
     <div class="search">
-      <el-input v-model="searchText" placeholder="请输入搜索内容" size="small" @input="searchEvt">
+      <el-input v-model="searchText" placeholder="请输入搜索内容" @input="searchEvt">
         <template #prefix>
           <el-icon><Search /></el-icon>
         </template>

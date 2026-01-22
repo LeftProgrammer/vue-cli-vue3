@@ -19,7 +19,7 @@
             <el-button type="primary" @click="searchEvt">搜索</el-button>
           </el-form-item>
           <el-form-item style="margin-right: 0;">
-            <el-checkbox v-model="allChecked" @change="allCheckEvt">全项目部搜索</el-checkbox>
+            <el-checkbox :model-value="allChecked" @click="toggleAllCheck">全项目部搜索</el-checkbox>
           </el-form-item>
         </el-form>
       </div>
@@ -110,6 +110,7 @@ export default {
       userList: [],
       checkList: [],
       prefix: "",
+      isTogglingAllCheck: false, // 防止事件冲突的标志
     };
   },
   computed: {
@@ -136,10 +137,28 @@ export default {
       this.getUserList();
     },
 
-    allCheckEvt() {
-      this.$refs.orgTree.setCheckedKeys([]);
-      this.$refs.orgTree.setCurrentKey(null);
+    toggleAllCheck() {
+      const newValue = !this.allChecked;
+      
+      // 设置防冲突标志
+      this.isTogglingAllCheck = true;
+      this.allChecked = newValue;
+      
+      if (newValue) {
+        // 勾选全项目部搜索：清空树的选择
+        this.$refs.orgTree.setCheckedKeys([]);
+        this.$refs.orgTree.setCurrentKey(null);
+        this.nowCheckedKeys = [];
+        this.currentNodeKey = null;
+      }
+      
+      // 重新获取用户列表
       this.getUserList();
+      
+      // 重置防冲突标志（使用 nextTick 确保事件处理完成）
+      this.$nextTick(() => {
+        this.isTogglingAllCheck = false;
+      });
     },
 
     getUserData() {
@@ -168,6 +187,12 @@ export default {
     },
 
     onCheckClick() {
+      // 如果正在切换全项目部搜索，不处理
+      if (this.isTogglingAllCheck) {
+        return;
+      }
+      
+      // 用户手动选择树节点，清空全部搜索状态
       this.allChecked = false;
       this.nowCheckedKeys = this.$refs.orgTree.getCheckedKeys();
       this.getUserList();

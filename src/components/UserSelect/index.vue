@@ -436,12 +436,8 @@ export default {
 
   .select-title {
     font-size: 18px;
-    color: #fff;
     span {
       margin-left: 5px;
-    }
-    i {
-      color: #fff;
     }
   }
   .title {
