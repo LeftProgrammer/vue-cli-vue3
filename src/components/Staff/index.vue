@@ -6,8 +6,8 @@
     }"
   >
     <div class="choose-dev">
-      <div class="tags text" v-if="userNames.length == 0">请选择</div>
-      <div class="tags" v-else>
+      <div v-if="userNames.length == 0" class="tags text">请选择</div>
+      <div v-else class="tags">
         <el-tag v-for="(name, i) in userNames" :key="i" type="info">
           {{ name }}
         </el-tag>
@@ -19,23 +19,23 @@
 
     <!--不要删除，需要将父页面组件进行校验及时刷新-->
     <el-input
-      class="input-hidden"
       v-model="userName"
+      class="input-hidden"
       type="hidden"
       placeholder="请选择"
       :title="userName"
       disabled
     ></el-input>
     <el-dialog
+      v-model="dialogShow"
+      v-draggable
       title="选择人员"
       custom-class="wbench-el-dialog"
-      v-model="dialogShow"
       :destroy-on-close="true"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
       append-to-body
       :width="fromapp?'100vw':'960px'"
-      v-draggable
       @closed="closedHandle"
     >
       <div class="user-main" :class="{ single: !multiple }">
@@ -55,16 +55,16 @@
               >
                 <el-form-item label="姓名:" prop="username">
                   <el-input
-                    size="small"
                     v-model="queryParams.name"
+                    size="small"
                     placeholder="请输入姓名"
                     @keyup.enter="searchUserList"
                   >
                     <template #suffix>
                       <i
-                        @click="searchUserList"
                         class="el-input__icon el-icon-search"
                         style="cursor: pointer"
+                        @click="searchUserList"
                       ></i>
                     </template>
                   </el-input>
@@ -129,7 +129,7 @@
         </div>
       </div>
       <template #footer>
-        <div class="dialog-footer" v-if="!readonly">
+        <div v-if="!readonly" class="dialog-footer">
           <el-form>
             <el-button type="primary"  @click="confirmHandle">
               确 定
@@ -147,11 +147,10 @@ import * as api from './api';
 import { fromApp } from '@/utils/index';
 
 export default {
-  name: 'Staff-Index',
+  name: 'StaffIndex',
   components: {
     ContentLayout
   },
-  emits: ['update:modelValue', 'update:id', 'change', 'closed'],
   props: {
     /** Vue3 默认 v-model */
     modelValue: {
@@ -173,15 +172,16 @@ export default {
       type: Boolean,
       default: false
     },
-    SelectedByDefault: {
+    selectedByDefault: {
       type: Boolean,
       default: false
     },
     /**单位id */
     unitId: {
-      type: [String, Array]
+      type: [String, Array],
+      default: ''
     },
-    // 是否启用 节流
+    /**是否启用节流 */
     enableThrottle: {
       type: Boolean,
       default: false
@@ -191,6 +191,7 @@ export default {
       default: ''
     }
   },
+  emits: ['update:modelValue', 'update:id', 'change', 'closed'],
   data() {
     return {
       //搜索条件

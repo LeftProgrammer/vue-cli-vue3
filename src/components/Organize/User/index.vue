@@ -35,15 +35,15 @@
       disabled
     />
     <el-dialog
+      v-model="dialogShow"
+      v-draggable
       title="选择人员"
       custom-class="wbench-el-dialog"
-      v-model="dialogShow"
       :destroy-on-close="true"
       :close-on-press-escape="false"
       :close-on-click-modal="false"
       append-to-body
       :width="fromapp ? '100vw' : '960px'"
-      v-draggable
       @closed="closedHandle"
     >
       <div class="user-main" :class="{ single: !multiple }">
@@ -60,9 +60,9 @@
                   >
                     <template #suffix>
                       <i
-                        @click="searchUserList"
                         class="el-input__icon el-icon-search"
                         style="cursor: pointer"
+                        @click="searchUserList"
                       ></i>
                     </template>
                   </el-input>
@@ -74,16 +74,16 @@
                 <div class="left-content">
                   <div class="tree-wrapper" :style="{ width: '300px' }">
                     <el-tree
-                      class="tree-dom"
                       ref="userTree"
+                      class="tree-dom"
                       highlight-current
                       node-key="id"
                       :data="treeData"
                       :props="defaultProps"
                       :expand-on-click-node="false"
                       :default-expanded-keys="unitIds"
-                      @node-click="handleTreeNodeClick"
                       default-expand-all
+                      @node-click="handleTreeNodeClick"
                     >
                     </el-tree>
                   </div>
@@ -224,12 +224,11 @@ import { ArrowRight } from "@element-plus/icons-vue";
 /**单位类型 */
 let _CorpTypes = ["yzdw", "sjdw", "jldw", "sgdw", "dsfdw"];
 export default {
-  name: "Organize-User-Index",
+  name: "OrganizeUserIndex",
   components: {
     TreeTableLayout,
     ArrowRight
   },
-  emits: ["update:modelValue", "update:userId", "change", "closed"],
   props: {
     /** Vue3 默认 v-model */
     modelValue: {
@@ -251,7 +250,7 @@ export default {
       type: Boolean,
       default: false
     },
-    SelectedByDefault: {
+    selectedByDefault: {
       type: Boolean,
       default: false
     },
@@ -283,6 +282,7 @@ export default {
       default: ""
     }
   },
+  emits: ["update:modelValue", "update:userId", "change", "closed"],
   data() {
     return {
       //5种单位类型
@@ -329,18 +329,89 @@ export default {
       onlyShowSecretary: false
     };
   },
+  computed: {
+    /**是否来自app */
+    fromapp() {
+      let fromapp = fromApp();
+      return fromapp;
+    },
+    /** 有效的 userId，优先使用 modelValue */
+    effectiveUserId() {
+      return this.modelValue !== undefined && this.modelValue !== null && this.modelValue !== "" ? this.modelValue : this.userId;
+    },
+    userIds() {
+      let users = this.choosedUsers || [];
+      return users.map((x) => x.userId);
+    },
+    userInfo() {
+      return this.$getStorage("userInfo");
+    },
+    userNames() {
+      let names = this.userName.split(",").filter((x) => x);
+      return names;
+    },
+    /**显示值，当有标签时显示空字符串，否则显示用户名 */
+    displayValue() {
+      return this.userNames.length > 0 ? "" : this.userName;
+    }
+  },
+  watch: {
+    dialogShow: {
+      handler(newValue) {
+        if (newValue) {
+          this.getCurrentUser(this.effectiveUserId, newValue);
+          this.getOrganizationTree();
+        }
+      },
+      immediate: true,
+      deep: true
+    },
+    readonly: {
+      handler(newValue) {
+        this.getIsDisabled();
+      },
+      immediate: true,
+      deep: true
+    },
+    userId: {
+      handler(newValue) {
+        if (this.modelValue !== undefined && this.modelValue !== null && this.modelValue !== "") {
+          return;
+        }
+        if (this.effectiveUserId) {
+          this.getCurrentUser(this.effectiveUserId, this.dialogShow);
+        } else {
+          this.choosedUsers = [];
+          // this.userName = "";
+        }
+      },
+      immediate: true,
+      deep: true
+    },
+    modelValue: {
+      handler(newValue) {
+        if (this.effectiveUserId) {
+          this.getCurrentUser(this.effectiveUserId, this.dialogShow);
+        } else {
+          this.choosedUsers = [];
+        }
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   mounted() {
     // this.getOrganizationTree();
   },
   methods: {
     /**设置当前节点 */
     setCurrentUnit() {
-      // 是否 默认选中当前登录人的单位  如果传递  SelectedByDefault
+      // 是否 默认选中当前登录人的单位  如果传递  selectedByDefault
       console.log("this.treeData", this.treeData);
-      if (this.SelectedByDefault) {
+      if (this.selectedByDefault) {
         console.log("this.treeData", this.treeData);
         if (this.treeData && Array.isArray(this.treeData) && this.treeData.length > 0) {
-          //设置 SelectedByDefault  为 true  就表示取 雄安项目参建单位
+          //设置 selectedByDefault  为 true  就表示取 雄安项目参建单位
           this.$nextTick(() => {
             let curData = this.treeData.find((item) => item.pid == 0);
             this.$refs.userTree && this.$refs.userTree.setCurrentKey(curData.id);
@@ -856,77 +927,6 @@ export default {
       } else {
         this.disabled = false;
       }
-    }
-  },
-  watch: {
-    dialogShow: {
-      handler(newValue) {
-        if (newValue) {
-          this.getCurrentUser(this.effectiveUserId, newValue);
-          this.getOrganizationTree();
-        }
-      },
-      immediate: true,
-      deep: true
-    },
-    readonly: {
-      handler(newValue) {
-        this.getIsDisabled();
-      },
-      immediate: true,
-      deep: true
-    },
-    userId: {
-      handler(newValue) {
-        if (this.modelValue !== undefined && this.modelValue !== null && this.modelValue !== "") {
-          return;
-        }
-        if (this.effectiveUserId) {
-          this.getCurrentUser(this.effectiveUserId, this.dialogShow);
-        } else {
-          this.choosedUsers = [];
-          // this.userName = "";
-        }
-      },
-      immediate: true,
-      deep: true
-    },
-    modelValue: {
-      handler(newValue) {
-        if (this.effectiveUserId) {
-          this.getCurrentUser(this.effectiveUserId, this.dialogShow);
-        } else {
-          this.choosedUsers = [];
-        }
-      },
-      immediate: true,
-      deep: true
-    }
-  },
-  computed: {
-    /**是否来自app */
-    fromapp() {
-      let fromapp = fromApp();
-      return fromapp;
-    },
-    /** 有效的 userId，优先使用 modelValue */
-    effectiveUserId() {
-      return this.modelValue !== undefined && this.modelValue !== null && this.modelValue !== "" ? this.modelValue : this.userId;
-    },
-    userIds() {
-      let users = this.choosedUsers || [];
-      return users.map((x) => x.userId);
-    },
-    userInfo() {
-      return this.$getStorage("userInfo");
-    },
-    userNames() {
-      let names = this.userName.split(",").filter((x) => x);
-      return names;
-    },
-    /**显示值，当有标签时显示空字符串，否则显示用户名 */
-    displayValue() {
-      return this.userNames.length > 0 ? "" : this.userName;
     }
   }
 };

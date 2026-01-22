@@ -335,7 +335,6 @@ export default {
 
   .select-title {
     font-size: 16px;
-    color: #fff;
     line-height: 28px;
 
     span {

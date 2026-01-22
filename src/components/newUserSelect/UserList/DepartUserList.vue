@@ -2,18 +2,23 @@
   <div class="list-box">
     <div class="box-item">
       <div class="user-select-corp-tree">
-        <el-form inline size="small">
-          <el-form-item>
-            <el-input v-model="searchText" placeholder="请输入搜索内容" @keydown.enter="searchEvt">
+        <el-form inline>
+          <el-form-item style="margin-right: 8px;">
+            <el-input 
+              v-model="searchText" 
+              placeholder="请输入搜索内容" 
+              style="width: 180px;"
+              @keydown.enter="searchEvt"
+            >
               <template #prefix>
                 <el-icon><Search /></el-icon>
               </template>
             </el-input>
           </el-form-item>
-          <el-form-item>
+          <el-form-item style="margin-right: 8px;">
             <el-button type="primary" @click="searchEvt">搜索</el-button>
           </el-form-item>
-          <el-form-item>
+          <el-form-item style="margin-right: 0;">
             <el-checkbox v-model="allChecked" @change="allCheckEvt">全项目部搜索</el-checkbox>
           </el-form-item>
         </el-form>
@@ -172,78 +177,78 @@ export default {
       this.list = [];
       this.userList = [];
       this.prefix = Cookies.get("plt-api-route") || "";
-      try {
-        const { success, message, data } = await request({
-          url: this.prefix + getOrgList(),
-          method: "get",
-        });
-        if (!success) {
-          return this.$message.error("获取单位部门数据失败:" + message);
+      
+      const response = await request({
+        url: this.prefix + getOrgList(),
+        method: "get",
+      });
+      
+      const { success, message, data } = response;
+      if (!success) {
+        return this.$message.error("获取单位部门数据失败:" + message);
+      }
+      
+      this.list = data;
+      this.$nextTick(() => {
+        const nodes = document.querySelectorAll(".wbench-tree-node-defined");
+        if (this.orgId) {
+          this.currentNodeKey = this.orgId;
+        } else {
+          this.currentNodeKey = this.current.departId || this.current.corpId;
         }
-        this.list = data;
-        this.$nextTick(() => {
-          const nodes = document.querySelectorAll(".wbench-tree-node-defined");
-          if (this.orgId) {
-            this.currentNodeKey = this.orgId;
-          } else {
-            this.currentNodeKey = this.current.departId || this.current.corpId;
-          }
-          let flag = false;
-          if (this.currentNodeKey && nodes && nodes.length) {
-            for (let i = 0; i < nodes.length; i++) {
-              if (nodes[i].getAttribute("data-key") === this.currentNodeKey) {
-                nodes[i].click();
-                flag = true;
-                break;
-              }
+        let flag = false;
+        if (this.currentNodeKey && nodes && nodes.length) {
+          for (let i = 0; i < nodes.length; i++) {
+            if (nodes[i].getAttribute("data-key") === this.currentNodeKey) {
+              nodes[i].click();
+              flag = true;
+              break;
             }
           }
-          if (!flag && nodes && nodes.length) {
-            nodes[0].click();
-          }
-        });
-      } catch (error) {
-        this.$message.error("获取单位部门数据失败:" + error);
-      }
+        }
+        if (!flag && nodes && nodes.length) {
+          nodes[0].click();
+        }
+      });
     },
 
     async getUserList() {
       this.prefix = Cookies.get("plt-api-route") || "";
       const belongIds = this.$refs.orgTree.getCheckedKeys();
-      try {
-        const { success, message, data } = await request({
-          url: this.prefix + systemSearchUser(),
-          method: "post",
-          data: {
-            all: this.allChecked,
-            belongIds: belongIds,
-            fuCondition: trim(this.searchText),
-          },
-        });
-        if (!success) {
-          return this.$message.error("获取成员列表失败:" + message);
-        }
-        this.userList = data;
-      } catch (e) {
-        this.$message.error("获取成员列表失败:" + e);
+      
+      const response = await request({
+        url: this.prefix + systemSearchUser(),
+        method: "post",
+        data: {
+          all: this.allChecked,
+          belongIds: belongIds,
+          fuCondition: trim(this.searchText),
+        },
+      });
+      
+      const { success, message, data } = response;
+      if (!success) {
+        return this.$message.error("获取成员列表失败:" + message);
       }
+      
+      this.userList = data;
     },
 
     async getCurrent() {
       this.prefix = Cookies.get("plt-api-route") || "";
-      try {
-        const { success, message, data } = await request({
-          url: this.prefix + getCurrent(),
-          method: "get",
-        });
-        if (!success) {
-          return this.$message.error("获取当前用户信息失败:" + message);
-        }
-        if (data) {
-          this.current = data;
-        }
-      } catch (e) {
-        this.$message.error("获取当前用户信息失败:" + e);
+      
+      const response = await request({
+        url: this.prefix + getCurrent(),
+        method: "get",
+      });
+      
+      const { success, message, data } = response;
+      if (!success) {
+        return this.$message.error("获取当前用户信息失败:" + message);
+      }
+      
+      if (data) {
+        this.current = data;
       }
     },
 
@@ -266,6 +271,21 @@ export default {
     height: 56px;
     box-sizing: border-box;
     border-bottom: 1px solid #d8d8d8;
+    
+    :deep(.el-form) {
+      display: flex;
+      align-items: center;
+      flex-wrap: nowrap;
+      
+      .el-form-item {
+        margin-bottom: 0;
+        margin-right: 10px;
+        
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
   }
 
   .depart-box {

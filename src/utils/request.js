@@ -118,12 +118,16 @@ service.interceptors.request.use(
       JSON.stringify(config.data || {}) === JSON.stringify(lastRequestInfo.params || {}) &&
       currentTime - lastRequestInfo.time < throttleDelay
     ) {
-      const jieliu = {
-        tips: "请求太频繁，已被节流",
-        url: config.url,
-        errorCode: 10000,
-      };
-      return Promise.reject(jieliu);
+      // 节流时返回一个特殊的成功响应，默认静默处理
+      console.log(`请求被节流: ${config.url}`);
+      return Promise.resolve({
+        data: { success: true, message: null, data: null, throttled: true },
+        status: 200,
+        statusText: 'OK',
+        headers: {},
+        config,
+        request: {}
+      });
     }
 
     lastRequestInfo = {
@@ -160,25 +164,24 @@ service.interceptors.response.use(
       });
       console.error("请求异常", response);
       return Promise.reject(new Error(res.message || "Error"));
-    }
-
-    if (
-      res &&
-      !res.success &&
-      res.message === "请修改密码" &&
-      !window.location.hash.startsWith("#/login")
-    ) {
+    } else {
       if (
-        response.request &&
-        response.request.responseURL &&
-        response.request.responseURL.indexOf("/api/online-heartbeat") !== -1
+        res &&
+        !res.success &&
+        res.message === "请修改密码" &&
+        !window.location.hash.startsWith("#/login")
       ) {
-        loginOut();
+        if (
+          response.request &&
+          response.request.responseURL &&
+          response.request.responseURL.indexOf("/api/online-heartbeat") !== -1
+        ) {
+          loginOut();
+        }
+        return Promise.reject(new Error(res.message || "Error"));
       }
-      return Promise.reject(new Error(res.message || "Error"));
+      return res;
     }
-
-    return res;
   },
   error => {
     endLoading();
