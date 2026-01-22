@@ -69,21 +69,18 @@
       <div class="process-right">
         <!-- 右侧头部：非add模式显示 -->
         <div v-if="!isAddMode" class="right-header">
-          <template v-if="!isReadonly">
-            <div class="node-name">{{ nodeName }}</div>
-            <div class="node-user">{{ nodeUser }}</div>
-          </template>
+          <div class="node-name">{{ nodeName }}</div>
+          <div class="node-user">{{ nodeUser }}</div>
         </div>
         <!-- 右侧内容卡片 -->
         <div class="right-card" :class="{ 'readonly-card': isReadonly}">
           <!-- 卡片头部：待办模式显示 -->
-          <div v-if="!isReadonly && !isAddMode" class="right-card-header">相关意见</div>
+          <div v-if="!isAddMode" class="right-card-header">相关意见</div>
           <!-- 卡片内容 -->
           <div class="right-card-body">
-            <!-- 可办理模式：审批意见 + 日志 -->
-            <template v-if="!isAddMode">
+            <!-- 审批意见：仅在需要时显示 -->
+            <template v-if="showOpinion">
               <ProcessOpinion
-                v-if="showOpinion"
                 ref="processOpinion"
                 :business-id="businessId"
                 :proc-task-id="procTaskId"
@@ -95,14 +92,14 @@
                 @success="handleOpinionSuccess"
                 @error="handleOpinionError"
               />
-              <div class="logs-section">
-                <ProcessLogs ref="processLogs" :business-id="businessId" />
-              </div>
+              <!-- 分割线 -->
+              <div class="divider-line"></div>
             </template>
-            <!-- 其他模式：仅日志 -->
-            <template v-else>
+            
+            <!-- 流程日志：始终显示 -->
+            <div class="logs-section">
               <ProcessLogs ref="processLogs" :business-id="businessId" />
-            </template>
+            </div>
           </div>
         </div>
       </div>
@@ -234,14 +231,19 @@ export default {
       );
     },
     isReadonly() {
-      // 只读页面：view, done, finished, fine, sent, cc, todo
-      return ["view", "done", "finished", "fine", "sent", "cc", "todo"].includes(this.page);
+      // 只读页面：view, done, finished, fine, sent, cc
+      return ["view", "done", "finished", "fine", "sent", "cc"].includes(this.page);
     },
     isAddMode() {
       return ["add", "mine"].includes(this.page);
     },
     showOpinion() {
-      return ["todo", "wait", "mine"].includes(this.page);
+      // 显示审批意见的条件：
+      // 1. 不是新增模式（排除add状态，包括新增和保存待发）
+      // 2. 有任务ID（表示流程已提交，处于流转中）
+      // 3. 不是只读状态
+      const result = !this.isAddMode && this.procTaskId && !this.isReadonly;
+      return result;
     },
     // 从iframeConfig获取原始路径（用于iframe兜底）
     resolvedFormUrl() {
@@ -673,10 +675,11 @@ export default {
       padding: 20px 0;
     }
 
-    .logs-section {
-      margin-top: 26px;
-      padding-top: 20px;
+    .divider-line {
+      height: 1px;
+      background: none;
       border-top: 1px dashed #e4e7ed;
+      margin: 26px 0 24px 0;
     }
 
     .empty-content {
@@ -700,10 +703,10 @@ export default {
     margin-bottom: 12px;
 
     > .el-button {
-      width: 88px;
-      min-width: 88px;
+      width: 72px;
+      min-width: 72px;
       height: auto;
-      font-size: 18px;
+      font-size: 16px;
     }
 
     .header-title-area {

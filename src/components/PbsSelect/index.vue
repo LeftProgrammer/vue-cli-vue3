@@ -4,10 +4,11 @@
       v-model="pbsName"
       placeholder="请选择"
       :class="readonly ? 'disabledBtn' : 'defaultBtn'"
-      disabled
+      :readonly="true"
+      :disabled="readonly || disabled"
     >
       <template #append>
-        <div @click="choose" style="padding: 0 20px">
+        <div @click="choose">
           <el-icon><ArrowRight /></el-icon>
         </div>
       </template>
@@ -374,11 +375,13 @@ export default {
 
 .defaultBtn {
   :deep(.el-input-group__append) {
-    background-color: #fff;
-    // border: 1px solid #0096ff !important;
-    // color: #0096ff !important;
-    padding: 0 !important;
+    background-color: var(--el-fill-color-light);
+    border: 1px solid var(--el-color-primary);
+    color: var(--el-color-primary);
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     .el-button {
       text-align: center;
     }

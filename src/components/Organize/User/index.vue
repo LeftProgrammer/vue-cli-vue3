@@ -5,17 +5,25 @@
       readonly: readonly || disabled
     }"
   >
-    <div class="choose-dev">
-      <div class="tags text" v-if="userNames.length == 0">请选择</div>
-      <div class="tags" v-else>
-        <el-tag v-for="(name, i) in userNames" :key="i" type="info">
-          {{ name }}
-        </el-tag>
-      </div>
-      <div class="choosebtn" @click="choose">
-        <i class="el-icon-arrow-right"></i>
-      </div>
-    </div>
+    <el-input
+      :model-value="displayValue"
+      :placeholder="userNames.length > 0 ? '' : '请选择'"
+      :readonly="true"
+      :disabled="readonly || disabled"
+    >
+      <template v-if="userNames.length > 0" #prefix>
+        <div style="display: flex; align-items: center; gap: 4px; padding-left: 8px;">
+          <el-tag v-for="(name, i) in userNames" :key="i" type="info" size="small">
+            {{ name }}
+          </el-tag>
+        </div>
+      </template>
+      <template #append>
+        <div @click="choose">
+          <el-icon><ArrowRight /></el-icon>
+        </div>
+      </template>
+    </el-input>
 
     <!--不要删除，需要将父页面组件进行校验及时刷新-->
     <el-input
@@ -208,6 +216,7 @@ import * as api from "./api";
 import { BelongTo } from "./api";
 import { fromApp } from "@/utils/index";
 import TreeTableLayout from "@/components/ContentLayout/TreeTable";
+import { ArrowRight } from "@element-plus/icons-vue";
 
 // @Component({
 //   name: "ExeCorModal"
@@ -217,7 +226,8 @@ let _CorpTypes = ["yzdw", "sjdw", "jldw", "sgdw", "dsfdw"];
 export default {
   name: "Organize-User-Index",
   components: {
-    TreeTableLayout
+    TreeTableLayout,
+    ArrowRight
   },
   emits: ["update:modelValue", "update:userId", "change", "closed"],
   props: {
@@ -384,6 +394,8 @@ export default {
     /**获取当前用户 */
     getCurrentUser(userId, dialogShow) {
       if (!userId) {
+        this.choosedUsers = [];
+        this.userName = "";
         return;
       }
       if (userId.indexOf("_") >= 0) {
@@ -601,7 +613,7 @@ export default {
         this.$message.warning("请先选择施工标段！");
         return;
       }
-      this.$set(this.queryParams, "username", "");
+      this.queryParams.username = "";
       if (this.fromapp) {
         window.scrollTo({
           left: 0,
@@ -911,6 +923,10 @@ export default {
     userNames() {
       let names = this.userName.split(",").filter((x) => x);
       return names;
+    },
+    /**显示值，当有标签时显示空字符串，否则显示用户名 */
+    displayValue() {
+      return this.userNames.length > 0 ? "" : this.userName;
     }
   }
 };
@@ -919,68 +935,17 @@ export default {
 <style scoped lang="scss">
 .Organize-User {
   :deep(.el-input-group__append) {
-    background-color: #f5f7fa;
-    color: #1298fa;
-    border: 1px solid #1298fa;
+    background-color: var(--el-fill-color-light);
+    color: var(--el-color-primary);
+    border: 1px solid var(--el-color-primary);
   }
 
-  :deep(.choose-dev) {
-    height: 36px;
-    background-color: #f5f7fa;
-    background-image: none;
-    border-radius: 4px;
-    border: 1px solid #dcdfe6;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    .tags {
-      width: calc(100% - 60px);
-      height: 100%;
-      color: #bbbdc3;
-      overflow-y: auto;
-      text-align: left;
-
-      .el-tag {
-        margin-left: 5px;
-        color: #606266;
-      }
-    }
-
-    .text {
-      text-indent: 15px;
-    }
-  }
-
-  .choosebtn {
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    width: 56px;
-    align-items: center;
-    cursor: pointer;
-    border-left: 1px solid #dcdfe6;
-    // color: #1298fa;
-    background-color: white;
-    border-top-left-radius: 0px;
-    border-top-right-radius: 4px;
-    border-bottom-left-radius: 0px;
-    border-bottom-right-radius: 4px;
-  }
-
+  
   &.readonly {
     :deep(.el-input-group__append) {
-      color: grey;
-      border-color: #e4e7ed;
-    }
-
-    .choosebtn {
-      cursor: default;
-      color: grey;
-      border-color: #e4e7ed;
-      border-top: none;
-      border-right: none;
-      border-bottom: none;
+      color: var(--el-text-color-disabled);
+      border-color: var(--el-border-color);
+      cursor: not-allowed;
     }
   }
 }

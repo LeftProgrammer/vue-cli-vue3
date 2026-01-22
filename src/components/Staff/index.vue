@@ -324,7 +324,7 @@ export default {
         this.$message.warning('当前为只读模式，无法选择');
         return;
       }
-      this.$set(this.queryParams, 'name', '');
+      this.queryParams.name = '';
       if (this.fromapp) {
         window.scrollTo({
           left: 0,

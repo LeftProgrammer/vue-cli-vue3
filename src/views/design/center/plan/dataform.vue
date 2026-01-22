@@ -174,7 +174,7 @@
               <span v-show="row.isClassify === true">
                 {{ row.projectPbsName }}
               </span>
-              <el-form-item :error="row.pbsError">
+              <el-form-item :error="row.pbsError" style="margin-bottom: 0;">
                 <pbs-select
                   v-show="row.isClassify !== true"
                   v-model="row.projectPbs"
