@@ -1,6 +1,6 @@
 <template>
   <div class="process-getor">
-    <!-- 添加模式头部：横跨整个页面 -->
+    <!-- 添加模式头部 -->
     <div v-if="isAddMode" class="add-mode-header">
       <el-button type="primary" :loading="sending" @click="handleSend">
         <el-icon><Promotion /></el-icon>
@@ -20,7 +20,7 @@
       <!-- 左侧：表单区域 -->
       <div class="process-left">
         <!-- 左侧头部 - 非add模式 -->
-        <div v-if="!isAddMode" class="left-header">
+        <div v-if="topShow && !isAddMode" class="left-header">
           <div class="business-title">{{ businessTitle }}</div>
           <div class="business-sub">{{ businessSub }}</div>
         </div>
@@ -68,7 +68,7 @@
       <!-- 右侧：审批区域 -->
       <div class="process-right">
         <!-- 右侧头部：非add模式显示 -->
-        <div v-if="!isAddMode" class="right-header">
+        <div v-if="topShow && !isAddMode" class="right-header">
           <div class="node-name">{{ nodeName }}</div>
           <div class="node-user">{{ nodeUser }}</div>
         </div>
@@ -141,6 +141,10 @@ export default {
     saveApi: {
       type: Function,
       default: null,
+    },
+    topShow: {
+      type: Boolean,
+      default: true,
     },
   },
   emits: ["childEvt"],

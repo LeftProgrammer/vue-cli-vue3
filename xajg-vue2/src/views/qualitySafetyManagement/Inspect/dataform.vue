@@ -88,17 +88,20 @@
           </el-form-item>
         </el-col>
       </el-row>
-      <el-col :span="24">
-        <el-form-item label="整改前照片" prop="beforeFileToken">
-          <uploadFile
-            v-model="formData.beforeFileToken"
-            accept=".png,.jpg,.jpeg"
-            :limit="5"
-            :max-size="50"
-            :readonly="readonly"
-          />
-        </el-form-item>
-      </el-col>
+      <el-row>
+
+        <el-col :span="24">
+          <el-form-item label="整改前照片" prop="beforeFileToken">
+            <uploadFile
+              v-model="formData.beforeFileToken"
+              accept=".png,.jpg,.jpeg"
+              :limit="5"
+              :max-size="50"
+              :readonly="readonly"
+            />
+          </el-form-item>
+        </el-col>
+      </el-row>
       <el-row>
         <el-col v-if="flowShow('rectifyMeasures')" :span="24">
           <el-form-item label="整改措施" prop="rectifyMeasures">
@@ -176,6 +179,7 @@ import { FlowFormMixin } from "@/mixins/FlowFormMixin";
 import { fromApp } from "@/utils/index";
 import { dateFormat } from "@/utils";
 import bimPoint from "@/components/Bim/Point/index";
+import { readonly } from "vue";
 export default {
   name: "DataForm",
   components: { bimPoint },

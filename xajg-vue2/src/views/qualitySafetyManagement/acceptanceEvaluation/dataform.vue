@@ -721,7 +721,10 @@ export default {
         type: "user",
         value: this.formData.constructionQuality,
       };
-
+      extData["unitProjectAttr"] = {
+        type: "number",
+        value: this.formData.unitProjectAttr,
+      };
       this.sendFlowJson = extData;
       console.log("this.sendFlowJson", this.sendFlowJson);
     },

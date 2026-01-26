@@ -51,131 +51,50 @@
           stripe
           border
         >
-          <el-table-column label="序号" align="center" width="60">
+          <el-table-column label="序号" align="center" width="60" fixed="left">
             <template #default="{ $index }">
               {{ $index + 1 + (searchData.current - 1) * searchData.pageSize }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="volumeCode"
-            label="案卷档号"
-            min-width="150"
-            show-overflow-tooltip
-          >
+          <el-table-column prop="fondsCode" label="全宗号" width="100" align="center" />
+          <el-table-column prop="volumeCode" label="案卷档号" min-width="120" show-overflow-tooltip>
             <template #default="{ row }">
-              <el-link
-                :underline="false"
-                type="primary"
-                @click="handleVolume(row)"
-              >
+              <el-link :underline="false" type="primary" @click="handleVolume(row)">
                 {{ row.volumeCode }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="volumeTitle"
-            label="案卷题名"
-            min-width="200"
-            show-overflow-tooltip
-          >
+          <el-table-column prop="projectCode" label="分类号" width="100" align="center" />
+          <el-table-column prop="projectName" label="项目名称" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="sortNo" label="顺序号" width="80" align="center" />
+          <el-table-column prop="copies" label="套数" width="60" align="center" />
+          <el-table-column prop="volumeTitle" label="案卷题名" min-width="150" show-overflow-tooltip>
             <template #default="{ row }">
-              <el-link
-                :underline="false"
-                type="primary"
-                @click="handleVolume(row)"
-              >
+              <el-link :underline="false" type="primary" @click="handleVolume(row)">
                 {{ row.volumeTitle }}
               </el-link>
             </template>
           </el-table-column>
-          <el-table-column
-            prop="securityLevel"
-            label="密级"
-            width="80"
-            align="center"
-          >
+          <el-table-column prop="totalPages" label="总页数" width="80" align="center" />
+          <el-table-column prop="totalFiles" label="总件数" width="80" align="center" />
+          <el-table-column prop="retentionPeriod" label="保管期限" width="100" align="center" />
+          <el-table-column prop="securityLevel" label="密级" width="80" align="center">
             <template #default="{ row }">
               {{ getSecurityLevelName(row.securityLevel) }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="startDate"
-            label="起始日期"
-            width="110"
-            align="center"
-          />
-          <el-table-column
-            prop="endDate"
-            label="终止日期"
-            width="110"
-            align="center"
-          />
-          <el-table-column
-            prop="projectCode"
-            label="项目编码"
-            width="120"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            prop="projectName"
-            label="项目名称"
-            min-width="150"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            prop="filingUnitName"
-            label="立卷单位"
-            min-width="150"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            prop="filingPerson"
-            label="立卷人"
-            width="90"
-            align="center"
-          />
-          <el-table-column
-            prop="filingDate"
-            label="立卷日期"
-            width="110"
-            align="center"
-          />
-          <el-table-column
-            prop="status"
-            label="状态"
-            width="90"
-            align="center"
-          >
-            <template #default="{ row }">
-              <el-tag :type="getStatusType(row.status)">
-                {{ getStatusName(row.status) }}
-              </el-tag>
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="totalFiles"
-            label="总件数"
-            width="80"
-            align="center"
-          />
-          <el-table-column
-            prop="totalPages"
-            label="总页数"
-            width="80"
-            align="center"
-          />
-          <el-table-column
-            label="操作"
-            width="80"
-            align="center"
-            fixed="right"
-          >
+          <el-table-column prop="startDate" label="起始日期" width="110" align="center" />
+          <el-table-column prop="endDate" label="终止日期" width="110" align="center" />
+          <el-table-column prop="filingUnitName" label="立卷单位" min-width="150" show-overflow-tooltip />
+          <el-table-column prop="filingPerson" label="组卷人" width="90" align="center" />
+          <el-table-column prop="archiveDate" label="归档日期" width="110" align="center" />
+          <el-table-column prop="checker" label="检查人" width="90" align="center" />
+          <el-table-column prop="checkDate" label="检查日期" width="110" align="center" />
+          <el-table-column label="操作" width="80" align="center" fixed="right">
             <template #default="{ row }">
               <list-button
                 :data="row"
-                :btns="[
-                  { title: '文件', method: 'files' },
-                ]"
+                :btns="[{ title: '文件', method: 'files' }]"
                 @files="handleFiles"
               />
             </template>

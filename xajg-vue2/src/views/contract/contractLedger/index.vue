@@ -615,6 +615,7 @@ export default {
       this.type = "edit";
       this.oprateRow.dialogShow = true;
       this.oprateRow.data = row;
+      this.oprateRow.isView = false;
       this.title = "编辑";
       console.log(row);
     },

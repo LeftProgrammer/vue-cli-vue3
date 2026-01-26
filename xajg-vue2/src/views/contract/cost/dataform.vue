@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-draggable
-    :oprateRow="oprateRow"
+    :oprate-row="oprateRow"
     :title="title"
     :visible.sync="dialogShow"
     :destroy-on-close="false"
@@ -159,19 +159,19 @@
                 <td>
                   {{
                     tableData['工程预付款'].lastPrice +
-                    tableData['材料预付款'].lastPrice
+                      tableData['材料预付款'].lastPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程预付款'].thisPrice +
-                    tableData['材料预付款'].thisPrice
+                      tableData['材料预付款'].thisPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程预付款'].endPrice +
-                    tableData['材料预付款'].endPrice
+                      tableData['材料预付款'].endPrice
                   }}
                 </td>
                 <td />
@@ -402,31 +402,31 @@
                 <td>
                   {{
                     tableData['工程量清单项目'].lastPrice +
-                    tableData['变更项目'].lastPrice +
-                    tableData['计日工项目'].lastPrice +
-                    tableData['索赔项目'].lastPrice +
-                    tableData['价格调整'].lastPrice +
-                    tableData['其他'].lastPrice
+                      tableData['变更项目'].lastPrice +
+                      tableData['计日工项目'].lastPrice +
+                      tableData['索赔项目'].lastPrice +
+                      tableData['价格调整'].lastPrice +
+                      tableData['其他'].lastPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程量清单项目'].thisPrice +
-                    tableData['变更项目'].thisPrice +
-                    tableData['计日工项目'].thisPrice +
-                    tableData['索赔项目'].thisPrice +
-                    tableData['价格调整'].thisPrice +
-                    tableData['其他'].thisPrice
+                      tableData['变更项目'].thisPrice +
+                      tableData['计日工项目'].thisPrice +
+                      tableData['索赔项目'].thisPrice +
+                      tableData['价格调整'].thisPrice +
+                      tableData['其他'].thisPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程量清单项目'].endPrice +
-                    tableData['变更项目'].endPrice +
-                    tableData['计日工项目'].endPrice +
-                    tableData['索赔项目'].endPrice +
-                    tableData['价格调整'].endPrice +
-                    tableData['其他'].endPrice
+                      tableData['变更项目'].endPrice +
+                      tableData['计日工项目'].endPrice +
+                      tableData['索赔项目'].endPrice +
+                      tableData['价格调整'].endPrice +
+                      tableData['其他'].endPrice
                   }}
                 </td>
                 <td />
@@ -437,37 +437,37 @@
                 <td>
                   {{
                     tableData['工程预付款'].lastPrice +
-                    tableData['材料预付款'].lastPrice +
-                    tableData['工程量清单项目'].lastPrice +
-                    tableData['变更项目'].lastPrice +
-                    tableData['计日工项目'].lastPrice +
-                    tableData['索赔项目'].lastPrice +
-                    tableData['价格调整'].lastPrice +
-                    tableData['其他'].lastPrice
+                      tableData['材料预付款'].lastPrice +
+                      tableData['工程量清单项目'].lastPrice +
+                      tableData['变更项目'].lastPrice +
+                      tableData['计日工项目'].lastPrice +
+                      tableData['索赔项目'].lastPrice +
+                      tableData['价格调整'].lastPrice +
+                      tableData['其他'].lastPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程预付款'].thisPrice +
-                    tableData['材料预付款'].thisPrice +
-                    tableData['工程量清单项目'].thisPrice +
-                    tableData['变更项目'].thisPrice +
-                    tableData['计日工项目'].thisPrice +
-                    tableData['索赔项目'].thisPrice +
-                    tableData['价格调整'].thisPrice +
-                    tableData['其他'].thisPrice
+                      tableData['材料预付款'].thisPrice +
+                      tableData['工程量清单项目'].thisPrice +
+                      tableData['变更项目'].thisPrice +
+                      tableData['计日工项目'].thisPrice +
+                      tableData['索赔项目'].thisPrice +
+                      tableData['价格调整'].thisPrice +
+                      tableData['其他'].thisPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程预付款'].endPrice +
-                    tableData['材料预付款'].endPrice +
-                    tableData['工程量清单项目'].endPrice +
-                    tableData['变更项目'].endPrice +
-                    tableData['计日工项目'].endPrice +
-                    tableData['索赔项目'].endPrice +
-                    tableData['价格调整'].endPrice +
-                    tableData['其他'].endPrice
+                      tableData['材料预付款'].endPrice +
+                      tableData['工程量清单项目'].endPrice +
+                      tableData['变更项目'].endPrice +
+                      tableData['计日工项目'].endPrice +
+                      tableData['索赔项目'].endPrice +
+                      tableData['价格调整'].endPrice +
+                      tableData['其他'].endPrice
                   }}
                 </td>
                 <td />
@@ -654,19 +654,19 @@
                 <td>
                   -{{
                     tableData['工程预付款1'].lastPrice +
-                    tableData['材料预付款1'].lastPrice
+                      tableData['材料预付款1'].lastPrice
                   }}
                 </td>
                 <td>
                   -{{
                     tableData['工程预付款1'].thisPrice +
-                    tableData['材料预付款1'].thisPrice
+                      tableData['材料预付款1'].thisPrice
                   }}
                 </td>
                 <td>
                   -{{
                     tableData['工程预付款1'].endPrice +
-                    tableData['材料预付款1'].endPrice
+                      tableData['材料预付款1'].endPrice
                   }}
                 </td>
                 <td />
@@ -708,7 +708,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>质量安全扣款</td>
@@ -746,26 +746,26 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>小计（六）</td>
                 <td>
                   -{{
                     tableData['违约赔偿扣款'].lastPrice +
-                    tableData['质量安全扣款'].lastPrice
+                      tableData['质量安全扣款'].lastPrice
                   }}
                 </td>
                 <td>
                   -{{
                     tableData['违约赔偿扣款'].thisPrice +
-                    tableData['质量安全扣款'].thisPrice
+                      tableData['质量安全扣款'].thisPrice
                   }}
                 </td>
                 <td>
                   -{{
                     tableData['违约赔偿扣款'].endPrice +
-                    tableData['质量安全扣款'].endPrice
+                      tableData['质量安全扣款'].endPrice
                   }}
                 </td>
                 <td />
@@ -814,28 +814,28 @@
                 <td>
                   -{{
                     tableData['工程预付款1'].lastPrice +
-                    tableData['材料预付款1'].lastPrice +
-                    tableData['违约赔偿扣款'].lastPrice +
-                    tableData['其他2'].lastPrice +
-                    tableData['质量安全扣款'].lastPrice
+                      tableData['材料预付款1'].lastPrice +
+                      tableData['违约赔偿扣款'].lastPrice +
+                      tableData['其他2'].lastPrice +
+                      tableData['质量安全扣款'].lastPrice
                   }}
                 </td>
                 <td>
                   -{{
                     tableData['工程预付款1'].thisPrice +
-                    tableData['材料预付款1'].thisPrice +
-                    tableData['违约赔偿扣款'].thisPrice +
-                    tableData['其他2'].thisPrice +
-                    tableData['质量安全扣款'].thisPrice
+                      tableData['材料预付款1'].thisPrice +
+                      tableData['违约赔偿扣款'].thisPrice +
+                      tableData['其他2'].thisPrice +
+                      tableData['质量安全扣款'].thisPrice
                   }}
                 </td>
                 <td>
                   -{{
                     tableData['工程预付款1'].endPrice +
-                    tableData['材料预付款1'].endPrice +
-                    tableData['违约赔偿扣款'].endPrice +
-                    tableData['其他2'].endPrice +
-                    tableData['质量安全扣款'].endPrice
+                      tableData['材料预付款1'].endPrice +
+                      tableData['违约赔偿扣款'].endPrice +
+                      tableData['其他2'].endPrice +
+                      tableData['质量安全扣款'].endPrice
                   }}
                 </td>
                 <td />
@@ -847,58 +847,58 @@
                 <td>
                   {{
                     tableData['工程预付款'].lastPrice +
-                    tableData['材料预付款'].lastPrice +
-                    tableData['工程量清单项目'].lastPrice +
-                    tableData['变更项目'].lastPrice +
-                    tableData['计日工项目'].lastPrice +
-                    tableData['索赔项目'].lastPrice +
-                    tableData['价格调整'].lastPrice +
-                    tableData['其他'].lastPrice -
-                    tableData['进度款'].lastPrice -
-                    tableData['其他1'].lastPrice -
-                    tableData['工程预付款1'].lastPrice -
-                    tableData['材料预付款1'].lastPrice -
-                    tableData['违约赔偿扣款'].lastPrice -
-                    tableData['其他2'].lastPrice -
-                    tableData['质量安全扣款'].lastPrice
+                      tableData['材料预付款'].lastPrice +
+                      tableData['工程量清单项目'].lastPrice +
+                      tableData['变更项目'].lastPrice +
+                      tableData['计日工项目'].lastPrice +
+                      tableData['索赔项目'].lastPrice +
+                      tableData['价格调整'].lastPrice +
+                      tableData['其他'].lastPrice -
+                      tableData['进度款'].lastPrice -
+                      tableData['其他1'].lastPrice -
+                      tableData['工程预付款1'].lastPrice -
+                      tableData['材料预付款1'].lastPrice -
+                      tableData['违约赔偿扣款'].lastPrice -
+                      tableData['其他2'].lastPrice -
+                      tableData['质量安全扣款'].lastPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程预付款'].thisPrice +
-                    tableData['材料预付款'].thisPrice +
-                    tableData['工程量清单项目'].thisPrice +
-                    tableData['变更项目'].thisPrice +
-                    tableData['计日工项目'].thisPrice +
-                    tableData['索赔项目'].thisPrice +
-                    tableData['价格调整'].thisPrice +
-                    tableData['其他'].thisPrice -
-                    tableData['进度款'].thisPrice -
-                    tableData['其他1'].thisPrice -
-                    tableData['工程预付款1'].thisPrice -
-                    tableData['材料预付款1'].thisPrice -
-                    tableData['违约赔偿扣款'].thisPrice -
-                    tableData['其他2'].thisPrice -
-                    tableData['质量安全扣款'].thisPrice
+                      tableData['材料预付款'].thisPrice +
+                      tableData['工程量清单项目'].thisPrice +
+                      tableData['变更项目'].thisPrice +
+                      tableData['计日工项目'].thisPrice +
+                      tableData['索赔项目'].thisPrice +
+                      tableData['价格调整'].thisPrice +
+                      tableData['其他'].thisPrice -
+                      tableData['进度款'].thisPrice -
+                      tableData['其他1'].thisPrice -
+                      tableData['工程预付款1'].thisPrice -
+                      tableData['材料预付款1'].thisPrice -
+                      tableData['违约赔偿扣款'].thisPrice -
+                      tableData['其他2'].thisPrice -
+                      tableData['质量安全扣款'].thisPrice
                   }}
                 </td>
                 <td>
                   {{
                     tableData['工程预付款'].endPrice +
-                    tableData['材料预付款'].endPrice +
-                    tableData['工程量清单项目'].endPrice +
-                    tableData['变更项目'].endPrice +
-                    tableData['计日工项目'].endPrice +
-                    tableData['索赔项目'].endPrice +
-                    tableData['价格调整'].endPrice +
-                    tableData['其他'].endPrice -
-                    tableData['进度款'].endPrice -
-                    tableData['其他1'].endPrice -
-                    tableData['工程预付款1'].endPrice -
-                    tableData['材料预付款1'].endPrice -
-                    tableData['违约赔偿扣款'].endPrice -
-                    tableData['其他2'].endPrice -
-                    tableData['质量安全扣款'].endPrice
+                      tableData['材料预付款'].endPrice +
+                      tableData['工程量清单项目'].endPrice +
+                      tableData['变更项目'].endPrice +
+                      tableData['计日工项目'].endPrice +
+                      tableData['索赔项目'].endPrice +
+                      tableData['价格调整'].endPrice +
+                      tableData['其他'].endPrice -
+                      tableData['进度款'].endPrice -
+                      tableData['其他1'].endPrice -
+                      tableData['工程预付款1'].endPrice -
+                      tableData['材料预付款1'].endPrice -
+                      tableData['违约赔偿扣款'].endPrice -
+                      tableData['其他2'].endPrice -
+                      tableData['质量安全扣款'].endPrice
                   }}
                 </td>
                 <td />
@@ -940,7 +940,7 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td>其中：安全生产经费</td>
@@ -978,27 +978,27 @@
                     :rows="1"
                   />
                 </td>
-                <td></td>
+                <td />
               </tr>
               <tr>
                 <td colspan="2">本期实际支付金额</td>
                 <td colspan="2">
                   小写:{{
                     tableData['工程预付款'].thisPrice +
-                    tableData['材料预付款'].thisPrice +
-                    tableData['工程量清单项目'].thisPrice +
-                    tableData['变更项目'].thisPrice +
-                    tableData['计日工项目'].thisPrice +
-                    tableData['索赔项目'].thisPrice +
-                    tableData['价格调整'].thisPrice +
-                    tableData['其他'].thisPrice -
-                    tableData['进度款'].thisPrice -
-                    tableData['其他1'].thisPrice -
-                    tableData['工程预付款1'].thisPrice -
-                    tableData['材料预付款1'].thisPrice -
-                    tableData['违约赔偿扣款'].thisPrice -
-                    tableData['其他2'].thisPrice -
-                    tableData['质量安全扣款'].thisPrice
+                      tableData['材料预付款'].thisPrice +
+                      tableData['工程量清单项目'].thisPrice +
+                      tableData['变更项目'].thisPrice +
+                      tableData['计日工项目'].thisPrice +
+                      tableData['索赔项目'].thisPrice +
+                      tableData['价格调整'].thisPrice +
+                      tableData['其他'].thisPrice -
+                      tableData['进度款'].thisPrice -
+                      tableData['其他1'].thisPrice -
+                      tableData['工程预付款1'].thisPrice -
+                      tableData['材料预付款1'].thisPrice -
+                      tableData['违约赔偿扣款'].thisPrice -
+                      tableData['其他2'].thisPrice -
+                      tableData['质量安全扣款'].thisPrice
                   }}
                 </td>
                 <td colspan="3">
@@ -1090,7 +1090,7 @@
     </el-row>
     <detailTable
       v-if="oprateRow1.dialogShow"
-      :oprateRow="oprateRow1"
+      :oprate-row="oprateRow1"
       :type="oprateRow1.type"
       :title="oprateRow1.title"
       :visible="oprateRow1.dialogShow"
@@ -1112,9 +1112,28 @@ import { FormMixin } from '@/mixins/FormMixin'
 import detailTable from './detailTable.vue'
 import { page as contractPage } from '../contractSign/api'
 export default {
-  name: 'dataform',
+  name: 'Dataform',
   components: { detailTable },
   mixins: [FormMixin],
+  props: {
+    /**显示弹窗 */
+    visible: {
+      type: Boolean,
+      default: false
+    },
+    type: {
+      type: String,
+      default: ''
+    },
+    title: {
+      type: String,
+      default: ''
+    },
+    oprateRow: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
       /**PBS选择 */
@@ -1135,28 +1154,32 @@ export default {
       tableData: {}
     }
   },
+  watch: {
+    visible: {
+      handler(newValue) {
+        if (newValue) {
+          const newData = { ...this.oprateRow.data }
+          this.formData = newData
+          newData.detailList.forEach((x) => {
+            this.tableData[x.name] = {
+              ...x,
+              endPrice: Number(x.endPrice),
+              lastPrice: Number(x.lastPrice),
+              thisPrice: Number(x.thisPrice),
+              remark: x.remark
+            }
+          })
+        }
+        this.dialogShow = newValue
+      },
+      immediate: true,
+      deep: true
+    }
+  },
   created() {
     this.getContractPage()
   },
-  props: {
-    /**显示弹窗 */
-    visible: {
-      type: Boolean,
-      default: false
-    },
-    type: {
-      type: String,
-      default: ''
-    },
-    title: {
-      type: String,
-      default: ''
-    },
-    oprateRow: {
-      type: Object,
-      default: () => ({})
-    }
-  },
+  mounted() {},
   methods: {
     /**
      * @description 获取所有的合同
@@ -1165,7 +1188,7 @@ export default {
       const { data, success } = await contractPage({
         current: 1,
         entity: {},
-        pageSize: 20,
+        pageSize: 999,
         size: 999,
         total: 3
       })
@@ -1237,29 +1260,6 @@ export default {
 
     timeFormat(time, type) {
       return dateFormat(time, type || 'YYYY-MM-DD HH:mm:ss')
-    }
-  },
-  mounted() {},
-  watch: {
-    visible: {
-      handler(newValue) {
-        if (newValue) {
-          const newData = { ...this.oprateRow.data }
-          this.formData = newData
-          newData.detailList.forEach((x) => {
-            this.tableData[x.name] = {
-              ...x,
-              endPrice: Number(x.endPrice),
-              lastPrice: Number(x.lastPrice),
-              thisPrice: Number(x.thisPrice),
-              remark: x.remark
-            }
-          })
-        }
-        this.dialogShow = newValue
-      },
-      immediate: true,
-      deep: true
     }
   }
 }

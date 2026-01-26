@@ -1,12 +1,14 @@
 <template>
-  <div id="gantt_report"></div>
+  <div id="gantt_report" />
 </template>
 <script>
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import { dateFormat } from "@/utils";
+import { GanttColumnResizeMixin } from "@/mixins/GanttColumnResizeMixin";
 
 export default {
+  mixins: [GanttColumnResizeMixin],
   data() {
     return {
       index: 1,
@@ -58,6 +60,10 @@ export default {
         ],
       });
       gantt.render();
+      // 初始化列宽拖拽
+      this.$nextTick(() => {
+        this.initColumnResize();
+      });
     },
     setGanttConfig() {
       // gantt.config["scales"] = [
@@ -265,7 +271,6 @@ export default {
           label: "编码",
           tree: true,
           min_width: 120,
-          max_width: 120,
           align: "left",
         },
         {
@@ -423,6 +428,7 @@ export default {
   color: #000 !important;
   font-weight: 550 !important;
 }
+@import "@/styles/gantt-column-resize.scss";
 </style>
 
 <!-- 1、data里面的部分属性的key是不能更改的，比如id，parent，start_date、end_date、progress、open

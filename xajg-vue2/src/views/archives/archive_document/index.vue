@@ -49,6 +49,11 @@
           style="margin-right: 10px"
           @click="handleAdd"
         >新增</el-button>
+        <el-button
+          icon="el-icon-document"
+          style="margin-right: 10px"
+          @click="handleDownloadTemplate"
+        >模板下载</el-button>
         <el-upload
           ref="importUpload"
           :action="importAction"
@@ -58,10 +63,22 @@
           :before-upload="beforeImport"
           :on-success="handleImportSuccess"
           :on-error="handleImportError"
+          :disabled="!volumeInfo.volumeId"
           accept=".xlsx,.xls"
         >
-          <el-button icon="el-icon-upload2" :loading="importLoading">导入</el-button>
+          <el-button
+            icon="el-icon-upload2"
+            :loading="importLoading"
+            :disabled="!volumeInfo.volumeId"
+          >导入</el-button>
         </el-upload>
+        <el-button
+          icon="el-icon-download"
+          style="margin-left: 10px"
+          :loading="exportLoading"
+          :disabled="!volumeInfo.volumeId"
+          @click="handleExport"
+        >导出</el-button>
         <el-button
           type="danger"
           icon="el-icon-delete"
@@ -144,6 +161,12 @@
           <el-table-column
             prop="pageNo"
             label="页号"
+            width="100"
+            align="center"
+          />
+          <el-table-column
+            prop="retentionPeriod"
+            label="保管期限"
             width="100"
             align="center"
           />
@@ -271,6 +294,8 @@ export default defineComponent({
       currentDocumentId: "",
       // 导入相关
       importLoading: false,
+      // 导出相关
+      exportLoading: false,
       // 多选相关
       selectedRows: [],
     };
@@ -444,8 +469,19 @@ export default defineComponent({
     handleFormSuccess() {
       this.getList();
     },
+    // 模板下载
+    handleDownloadTemplate() {
+      const link = document.createElement("a");
+      link.href = "/static/template/文件管理导入模板.xls";
+      link.download = "文件管理导入模板.xls";
+      link.click();
+    },
     // 导入前校验
     beforeImport(file) {
+      if (!this.volumeInfo.volumeId) {
+        this.$message.warning("请先选择案卷");
+        return false;
+      }
       const isExcel =
         file.type ===
           "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
@@ -466,8 +502,21 @@ export default defineComponent({
     handleImportSuccess(response) {
       this.importLoading = false;
       if (response.success) {
-        this.$message.success(response.data);
-        this.getList();
+        const { successCount, failCount, failRows } = response.data;
+        if (failCount === 0) {
+          this.$message.success(`导入成功，共 ${successCount} 条`);
+        } else if (successCount === 0) {
+          const rows = failRows.map((r) => r.rowIndex).join("、");
+          this.$message.error(`导入失败：共 ${failCount} 条（第 ${rows} 行）`);
+        } else {
+          const rows = failRows.map((r) => r.rowIndex).join("、");
+          this.$message.warning(
+            `导入完成：成功 ${successCount} 条，失败 ${failCount} 条（第 ${rows} 行）`
+          );
+        }
+        if (successCount > 0) {
+          this.getList();
+        }
       } else {
         this.$message.error(response.message || "导入失败");
       }
@@ -477,6 +526,27 @@ export default defineComponent({
       this.importLoading = false;
       console.error("导入失败:", error);
       this.$message.error("导入失败，请稍后重试");
+    },
+    // 导出Excel
+    handleExport() {
+      if (!this.volumeInfo.volumeId) {
+        this.$message.warning("请先选择案卷");
+        return;
+      }
+      this.$confirm("确定导出当前案卷下所有文件数据？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "info",
+      })
+        .then(() => {
+          this.exportLoading = true;
+          const token = getToken();
+          const volumeId = this.volumeInfo.volumeId;
+          const url = `/api/archives/document/export?volumeId=${volumeId}&X-Token=${token}`;
+          window.open(url, "_blank");
+          this.exportLoading = false;
+        })
+        .catch(() => {});
     },
     // 多选变化
     handleSelectionChange(selection) {

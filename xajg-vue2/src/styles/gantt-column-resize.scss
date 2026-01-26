@@ -1,0 +1,8 @@
+/* 甘特图列宽调整手柄样式 */
+/deep/ .custom-column-resizer {
+  background: transparent;
+  transition: background-color 0.2s;
+}
+/deep/ .custom-column-resizer:hover {
+  background-color: rgba(0, 123, 255, 0.3);
+}

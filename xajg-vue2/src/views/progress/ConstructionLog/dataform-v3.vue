@@ -7,7 +7,7 @@
           <el-button type="primary" @click="downTemp()"> 模版下载</el-button>
           <el-button type="primary" @click="triggerFileInput()">导入</el-button>
         </div>
-        <el-divider></el-divider>
+        <el-divider />
       </el-col>
     </el-row>
     <el-row>
@@ -21,11 +21,11 @@
           <el-col :span="12">
             <el-form-item label="施工单位:" prop="constructionUnit">
               <el-select
-                @visible-change="$visibleChange($event, 'el-popper')"
+                v-model="formData.constructionUnit"
                 :disabled="readonly"
                 class="w-100pre"
-                v-model="formData.constructionUnit"
                 placeholder="请选择"
+                @visible-change="$visibleChange($event, 'el-popper')"
                 @change="handleSelectChange"
               >
                 <el-option
@@ -33,20 +33,19 @@
                   :key="item.corpName"
                   :label="item.corpName"
                   :value="item.corpName"
-                >
-                </el-option>
+                />
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="标段名称" prop="sectionId" align="center">
               <el-select
-                @visible-change="$visibleChange($event, 'el-popper')"
-                class="w-100pre"
                 v-model="formData.sectionId"
+                class="w-100pre"
                 placeholder="请选择"
                 clearable
                 :disabled="readonly"
+                @visible-change="$visibleChange($event, 'el-popper')"
                 @change="handleSectionChange"
               >
                 <el-option
@@ -68,31 +67,28 @@
                 value-format="yyyy-MM-dd"
                 placeholder="选择开始日期"
                 :disabled="readonly"
-              >
-              </el-date-picker>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="天气" prop="weather" align="center">
               <el-input
-                class="w-100pre"
                 v-model="formData.weather"
+                class="w-100pre"
                 placeholder="请输入天气"
                 :disabled="readonly"
-              >
-              </el-input>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="5">
             <el-form-item label="气温" prop="temperature" align="center">
               <el-input
-                class="w-100pre"
                 v-model="formData.temperature"
+                class="w-100pre"
                 placeholder="请输入气温"
                 maxlength="20"
                 :disabled="readonly"
-              >
-              </el-input>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="1">
@@ -106,13 +102,12 @@
               align="center"
             >
               <el-input
-                class="w-100pre"
                 v-model="formData.constructionSite"
+                class="w-100pre"
                 placeholder="请输入施工部位"
                 maxlength="100"
                 :disabled="readonly"
-              >
-              </el-input>
+              />
             </el-form-item>
           </el-col>
 
@@ -123,16 +118,15 @@
               align="center"
             >
               <el-input
+                v-model="formData.constructionContent"
                 class="w-100pre"
                 type="textarea"
-                v-model="formData.constructionContent"
                 placeholder="请输入施工内容"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 4 }"
                 maxlength="2000"
                 :disabled="readonly"
-              >
-              </el-input>
+              />
             </el-form-item>
           </el-col>
           <!-- <el-col :span="12">
@@ -249,16 +243,15 @@
               align="center"
             >
               <el-input
+                v-model="formData.otherContent"
                 class="w-100pre"
                 type="textarea"
-                v-model="formData.otherContent"
                 placeholder="请输入"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 4 }"
                 maxlength="2000"
                 :disabled="readonly"
-              >
-              </el-input>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -268,16 +261,15 @@
               align="center"
             >
               <el-input
+                v-model="formData.workTomorrow"
                 class="w-100pre"
                 type="textarea"
-                v-model="formData.workTomorrow"
                 placeholder="请输入"
                 show-word-limit
                 :autosize="{ minRows: 2, maxRows: 4 }"
                 maxlength="2000"
                 :disabled="readonly"
-              >
-              </el-input>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -288,12 +280,12 @@
               <user
                 v-model="formData.constructionProductionManager"
                 :readonly="flowDisabled('constructionProductionManager')"
-                :enableThrottle="true"
-              ></user>
+                :enable-throttle="true"
+              />
             </el-form-item>
           </el-col>
 
-          <el-col :span="12" v-if="flowShow('professionalSupervisoryEngineer')">
+          <el-col v-if="flowShow('professionalSupervisoryEngineer')" :span="12">
             <el-form-item
               label="专业监理工程师"
               prop="professionalSupervisoryEngineer"
@@ -301,8 +293,8 @@
               <user
                 v-model="formData.professionalSupervisoryEngineer"
                 :readonly="flowDisabled('professionalSupervisoryEngineer')"
-                :enableThrottle="true"
-              ></user>
+                :enable-throttle="true"
+              />
             </el-form-item>
           </el-col>
           <el-col v-if="flowShow('supervisorDirector')" :span="12">
@@ -310,8 +302,8 @@
               <user
                 v-model="formData.supervisorDirector"
                 :readonly="flowDisabled('supervisorDirector')"
-                :enableThrottle="true"
-              ></user>
+                :enable-throttle="true"
+              />
             </el-form-item>
           </el-col>
 
@@ -328,11 +320,11 @@
       </el-form>
     </el-row>
     <input
-      type="file"
       ref="fileInput"
+      type="file"
       style="display: none"
       @change="handleFileUpload"
-    />
+    >
   </div>
 </template>
 
@@ -349,7 +341,7 @@ import { page as contractPage } from '@/views/contract/contractSign/api'
 import * as XLSX from 'xlsx'
 
 export default {
-  name: 'dataform',
+  name: 'Dataform',
   components: {},
   mixins: [FlowFormMixin, UploadFileMixin],
   data() {
@@ -556,6 +548,158 @@ export default {
         }
         return Boolean(show)
       }
+    }
+  },
+  watch: {
+    tableData: {
+      handler() {
+        if (this.tableData && this.tableData.length) {
+          this.formData.designPlanDetailList = this.tableData.filter(
+            (x) => x.isClassify === false
+          )
+        }
+      },
+      immediate: true
+    },
+    startStakeMarkvalue1: {
+      handler(newvalue) {
+        if (newvalue && this.startStakeMarkvalue2) {
+          this.$set(
+            this.formData,
+            'startStakeMark',
+            newvalue + this.startStakeMarkvalue2
+          )
+        } else {
+          this.$set(this.formData, 'startStakeMark', '')
+        }
+        // 这里也要做一个判断 以防万一  这个人先输入后面的在输入前面的
+        // 整数部分
+        let parInt = parseInt(
+          (Number(this.formData.drillingFootage) +
+            Number(this.startStakeMarkvalue2)) /
+            1000
+        )
+        // 余数部分
+        let flot = ''
+        if (
+          Number(this.formData.drillingFootage) +
+            Number(this.startStakeMarkvalue2) >=
+          1000
+        ) {
+          flot =
+            (Number(this.formData.drillingFootage) +
+              Number(this.startStakeMarkvalue2)) %
+            1000
+        } else {
+          flot =
+            Number(this.formData.drillingFootage) +
+            Number(this.startStakeMarkvalue2)
+        }
+        if (parInt > 0) {
+          this.endStakeMark1 = Number(newvalue) + parInt
+        } else {
+          this.endStakeMark1 = Number(newvalue)
+        }
+        this.endStakeMark2 = Number(flot).toFixed(3)
+      },
+      immediate: true,
+      deep: true
+    },
+    startStakeMarkvalue2: {
+      handler(newvalue) {
+        console.log('startStakeMarkvalue2', newvalue)
+        if (this.startStakeMarkvalue1 && newvalue) {
+          this.formData.startStakeMark = this.$set(
+            this.formData,
+            'startStakeMark',
+            this.startStakeMarkvalue1 + Number(newvalue)
+          )
+        } else {
+          this.$set(this.formData, 'startStakeMark', '')
+        }
+        // 如果当前 startStakeMarkvalue2   +this.formData.drillingFootage 大于等于1000 就  endStakeMark1＋1
+        // 整数部分
+        let parInt = parseInt(
+          (Number(newvalue) + Number(this.formData.drillingFootage)) / 1000
+        )
+        console.log('parInt', parInt)
+        // 余数部分
+        let flot = ''
+        if (Number(newvalue) + Number(this.formData.drillingFootage) >= 1000) {
+          flot =
+            (Number(newvalue) + Number(this.formData.drillingFootage)) % 1000
+        } else {
+          flot = Number(newvalue) + Number(this.formData.drillingFootage)
+        }
+        console.log('flot', flot)
+        if (parInt > 0) {
+          this.endStakeMark1 = Number(this.startStakeMarkvalue1) + parInt
+        } else {
+          this.endStakeMark1 = Number(this.startStakeMarkvalue1)
+        }
+        this.endStakeMark2 = Number(flot).toFixed(3)
+      },
+      immediate: true,
+      deep: true
+    },
+    //
+
+    'formData.startStakeMark': {
+      handler(newvalue) {
+        // 如果当前 startStakeMarkvalue2   +this.formData.drillingFootage 大于等于1000 就  endStakeMark1＋1
+        // 整数部分
+        // let parInt = parseInt(
+        //   (Number(newvalue) + Number(this.startStakeMarkvalue2)) / 1000
+        // );
+        // // 余数部分
+        // let flot = "";
+        // if (Number(newvalue) + Number(this.startStakeMarkvalue2) >= 1000) {
+        //   flot = (Number(newvalue) + Number(this.startStakeMarkvalue2)) % 1000;
+        // } else {
+        //   flot = Number(newvalue) + Number(this.startStakeMarkvalue2);
+        // }
+        // if (parInt > 0) {
+        //   this.endStakeMark1 = Number(this.startStakeMarkvalue1) + parInt;
+        // } else {
+        //   this.endStakeMark1 = this.startStakeMarkvalue1;
+        // }
+        this.endStakeMark2 = (
+          Number(
+            this.formData.drillingFootage ? this.formData.drillingFootage : 0
+          ) + Number(newvalue)
+        ).toFixed(3)
+      },
+      immediate: true,
+      deep: true
+    },
+    'formData.drillingFootage': {
+      handler(newvalue) {
+        // 如果当前 startStakeMarkvalue2   +this.formData.drillingFootage 大于等于1000 就  endStakeMark1＋1
+
+        this.endStakeMark2 = (
+          Number(newvalue ? newvalue : 0) + Number(this.formData.startStakeMark)
+        ).toFixed(3)
+      },
+      immediate: true,
+      deep: true
+    },
+    'formData.uploadFile': {
+      handler(newvalue) {
+        console.log('数据变化', newvalue)
+      },
+      deep: true
+    },
+    'formData.sectionId': {
+      handler(newvalue) {
+        let a = this.sectionOptions.find((item) => item.id == newvalue)
+        if (a) {
+          this.formData.sectionCode = a.code
+        } else {
+          this.formData.sectionCode = ''
+        }
+      },
+      immediate: true,
+      deep: true
     }
   },
 
@@ -1448,165 +1592,13 @@ export default {
       this.htxxOptions = []
       contractPage({
         current: 1,
-        pageSize: 20,
+        pageSize: 999,
         size: 999,
         entity: {},
         total: 0
       }).then((res) => {
         this.htxxOptions = res.data.records || []
       })
-    }
-  },
-  watch: {
-    tableData: {
-      handler() {
-        if (this.tableData && this.tableData.length) {
-          this.formData.designPlanDetailList = this.tableData.filter(
-            (x) => x.isClassify === false
-          )
-        }
-      },
-      immediate: true
-    },
-    startStakeMarkvalue1: {
-      handler(newvalue) {
-        if (newvalue && this.startStakeMarkvalue2) {
-          this.$set(
-            this.formData,
-            'startStakeMark',
-            newvalue + this.startStakeMarkvalue2
-          )
-        } else {
-          this.$set(this.formData, 'startStakeMark', '')
-        }
-        // 这里也要做一个判断 以防万一  这个人先输入后面的在输入前面的
-        // 整数部分
-        let parInt = parseInt(
-          (Number(this.formData.drillingFootage) +
-            Number(this.startStakeMarkvalue2)) /
-            1000
-        )
-        // 余数部分
-        let flot = ''
-        if (
-          Number(this.formData.drillingFootage) +
-            Number(this.startStakeMarkvalue2) >=
-          1000
-        ) {
-          flot =
-            (Number(this.formData.drillingFootage) +
-              Number(this.startStakeMarkvalue2)) %
-            1000
-        } else {
-          flot =
-            Number(this.formData.drillingFootage) +
-            Number(this.startStakeMarkvalue2)
-        }
-        if (parInt > 0) {
-          this.endStakeMark1 = Number(newvalue) + parInt
-        } else {
-          this.endStakeMark1 = Number(newvalue)
-        }
-        this.endStakeMark2 = Number(flot).toFixed(3)
-      },
-      immediate: true,
-      deep: true
-    },
-    startStakeMarkvalue2: {
-      handler(newvalue) {
-        console.log('startStakeMarkvalue2', newvalue)
-        if (this.startStakeMarkvalue1 && newvalue) {
-          this.formData.startStakeMark = this.$set(
-            this.formData,
-            'startStakeMark',
-            this.startStakeMarkvalue1 + Number(newvalue)
-          )
-        } else {
-          this.$set(this.formData, 'startStakeMark', '')
-        }
-        // 如果当前 startStakeMarkvalue2   +this.formData.drillingFootage 大于等于1000 就  endStakeMark1＋1
-        // 整数部分
-        let parInt = parseInt(
-          (Number(newvalue) + Number(this.formData.drillingFootage)) / 1000
-        )
-        console.log('parInt', parInt)
-        // 余数部分
-        let flot = ''
-        if (Number(newvalue) + Number(this.formData.drillingFootage) >= 1000) {
-          flot =
-            (Number(newvalue) + Number(this.formData.drillingFootage)) % 1000
-        } else {
-          flot = Number(newvalue) + Number(this.formData.drillingFootage)
-        }
-        console.log('flot', flot)
-        if (parInt > 0) {
-          this.endStakeMark1 = Number(this.startStakeMarkvalue1) + parInt
-        } else {
-          this.endStakeMark1 = Number(this.startStakeMarkvalue1)
-        }
-        this.endStakeMark2 = Number(flot).toFixed(3)
-      },
-      immediate: true,
-      deep: true
-    },
-    //
-
-    'formData.startStakeMark': {
-      handler(newvalue) {
-        // 如果当前 startStakeMarkvalue2   +this.formData.drillingFootage 大于等于1000 就  endStakeMark1＋1
-        // 整数部分
-        // let parInt = parseInt(
-        //   (Number(newvalue) + Number(this.startStakeMarkvalue2)) / 1000
-        // );
-        // // 余数部分
-        // let flot = "";
-        // if (Number(newvalue) + Number(this.startStakeMarkvalue2) >= 1000) {
-        //   flot = (Number(newvalue) + Number(this.startStakeMarkvalue2)) % 1000;
-        // } else {
-        //   flot = Number(newvalue) + Number(this.startStakeMarkvalue2);
-        // }
-        // if (parInt > 0) {
-        //   this.endStakeMark1 = Number(this.startStakeMarkvalue1) + parInt;
-        // } else {
-        //   this.endStakeMark1 = this.startStakeMarkvalue1;
-        // }
-        this.endStakeMark2 = (
-          Number(
-            this.formData.drillingFootage ? this.formData.drillingFootage : 0
-          ) + Number(newvalue)
-        ).toFixed(3)
-      },
-      immediate: true,
-      deep: true
-    },
-    'formData.drillingFootage': {
-      handler(newvalue) {
-        // 如果当前 startStakeMarkvalue2   +this.formData.drillingFootage 大于等于1000 就  endStakeMark1＋1
-
-        this.endStakeMark2 = (
-          Number(newvalue ? newvalue : 0) + Number(this.formData.startStakeMark)
-        ).toFixed(3)
-      },
-      immediate: true,
-      deep: true
-    },
-    'formData.uploadFile': {
-      handler(newvalue) {
-        console.log('数据变化', newvalue)
-      },
-      deep: true
-    },
-    'formData.sectionId': {
-      handler(newvalue) {
-        let a = this.sectionOptions.find((item) => item.id == newvalue)
-        if (a) {
-          this.formData.sectionCode = a.code
-        } else {
-          this.formData.sectionCode = ''
-        }
-      },
-      immediate: true,
-      deep: true
     }
   }
 }

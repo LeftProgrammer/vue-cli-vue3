@@ -1,12 +1,14 @@
 <template>
-  <div id="gantt_day_report" ref="gantt_day_report"></div>
+  <div id="gantt_day_report" ref="gantt_day_report" />
 </template>
 <script>
 import { gantt } from 'dhtmlx-gantt'
 import 'dhtmlx-gantt/codebase/dhtmlxgantt.css'
 import { dateFormat } from '@/utils'
+import { GanttColumnResizeMixin } from '@/mixins/GanttColumnResizeMixin'
 
 export default {
+  mixins: [GanttColumnResizeMixin],
   data() {
     return {
       index: 1,
@@ -54,6 +56,10 @@ export default {
         data: data
       })
       gantt.render()
+      // 初始化列宽拖拽
+      this.$nextTick(() => {
+        this.initColumnResize()
+      })
     },
     setGanttConfig(flag) {
       if (!flag) gantt.clearAll()
@@ -272,7 +278,6 @@ export default {
           label: '编码',
           tree: true,
           min_width: 150,
-          max_width: 150,
           align: 'left'
         },
         {
@@ -286,14 +291,12 @@ export default {
           name: 'planDay',
           label: '原定工期',
           min_width: 100,
-          max_width: 100,
           align: 'center'
         },
         {
           name: 'startDate',
           label: '计划开始',
           min_width: 120,
-          max_width: 120,
           align: 'center',
           template: (task) => {
             return dateFormat(task.startDate, 'YYYY-MM-DD')
@@ -304,7 +307,6 @@ export default {
           name: 'endDate',
           label: '计划结束',
           min_width: 120,
-          max_width: 120,
           align: 'center',
           template: (task) => {
             return dateFormat(task.endDate, 'YYYY-MM-DD')
@@ -315,7 +317,6 @@ export default {
           name: 'actualStartDate',
           label: '实际开始',
           min_width: 120,
-          max_width: 120,
           align: 'center',
           template: (task) => {
             if (!task.actualStartDate) return ''
@@ -341,7 +342,6 @@ export default {
           name: 'actualEndDate',
           label: '实际结束',
           min_width: 120,
-          max_width: 120,
           align: 'center',
           template: (task) => {
             if (!task.actualEndDate) return ''
@@ -367,14 +367,12 @@ export default {
           name: 'planNum',
           label: '计划完成量',
           min_width: 120,
-          max_width: 120,
           align: 'center'
         },
         {
           name: 'actualNum',
           label: '累计完成量',
           min_width: 120,
-          max_width: 120,
           align: 'center',
           template: actualNumConetnt
         },
@@ -382,21 +380,18 @@ export default {
           name: 'reportNum',
           label: '当天完成量',
           min_width: 120,
-          max_width: 120,
           align: 'center'
         },
         {
           name: 'remark',
           label: '填报说明',
           min_width: 120,
-          max_width: 120,
           align: 'center'
         },
         {
           name: 'buttons',
           label: '操作',
           align: 'center',
-          max_width: 100,
           min_width: 100,
           template: colContent,
           resize: true
@@ -458,6 +453,7 @@ export default {
   color: #000 !important;
   font-weight: 550 !important;
 }
+@import '@/styles/gantt-column-resize.scss';
 </style>
 
 <!-- 1、data里面的部分属性的key是不能更改的，比如id，parent，start_date、end_date、progress、open

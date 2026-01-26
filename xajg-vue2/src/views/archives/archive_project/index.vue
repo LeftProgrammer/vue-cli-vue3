@@ -10,7 +10,7 @@
     >
       <template slot="form">
         <el-form :model="searchData" :inline="true">
-          <el-form-item label="项目编码">
+          <el-form-item label="分类号">
             <el-input
               v-model="searchData.projectCode"
               clearable
@@ -79,7 +79,7 @@
           </el-table-column>
           <el-table-column
             prop="projectCode"
-            label="项目编码"
+            label="分类号"
             min-width="150"
             show-overflow-tooltip
           >
@@ -200,10 +200,20 @@
       >
         <el-row :gutter="20">
           <el-col :span="12">
-            <el-form-item label="项目编码" prop="projectCode">
+            <el-form-item label="全宗号" prop="fondsCode">
+              <el-input
+                v-model="formData.fondsCode"
+                placeholder="请输入全宗号"
+                maxlength="50"
+                show-word-limit
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="分类号" prop="projectCode">
               <el-input
                 v-model="formData.projectCode"
-                placeholder="请输入项目编码"
+                placeholder="请输入分类号"
                 maxlength="50"
                 show-word-limit
               />
@@ -215,16 +225,6 @@
                 v-model="formData.projectName"
                 placeholder="请输入项目名称"
                 maxlength="200"
-                show-word-limit
-              />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="全宗号" prop="fondsCode">
-              <el-input
-                v-model="formData.fondsCode"
-                placeholder="请输入全宗号"
-                maxlength="50"
                 show-word-limit
               />
             </el-form-item>

@@ -36,7 +36,7 @@
             <el-input v-model="formData.sortNo" placeholder="请输入" />
           </el-form-item>
         </el-col>
-        <el-col :span="12">
+        <!-- <el-col :span="12">
           <el-form-item label="案卷类别" prop="volumeCategory">
             <el-select
               v-model="formData.volumeCategory"
@@ -51,7 +51,7 @@
               />
             </el-select>
           </el-form-item>
-        </el-col>
+        </el-col> -->
         <!-- 第3行：保管期限、密级 -->
         <el-col :span="12">
           <el-form-item label="保管期限" prop="retentionPeriod">
@@ -87,7 +87,7 @@
         </el-col>
         <!-- 第4行：起始日期、终止日期 -->
         <el-col :span="12">
-          <el-form-item label="起始日期">
+          <el-form-item label="起始日期" prop="startDate">
             <el-date-picker
               v-model="formData.startDate"
               type="date"
@@ -98,7 +98,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="终止日期">
+          <el-form-item label="终止日期" prop="endDate">
             <el-date-picker
               v-model="formData.endDate"
               type="date"
@@ -167,7 +167,7 @@
           </el-form-item>
         </el-col>
         <el-col :span="12">
-          <el-form-item label="立卷人" prop="filingPerson">
+          <el-form-item label="组卷人" prop="filingPerson">
             <el-input v-model="formData.filingPerson" placeholder="请输入" maxlength="50" show-word-limit />
           </el-form-item>
         </el-col>
@@ -207,7 +207,7 @@
         </el-col>
         <!-- 第10行：归档日期、互见号 -->
         <el-col :span="12">
-          <el-form-item label="归档日期">
+          <el-form-item label="归档日期" prop="archiveDate">
             <el-date-picker
               v-model="formData.archiveDate"
               type="date"
@@ -344,9 +344,6 @@ export default defineComponent({
           { required: true, message: "请输入案卷题名", trigger: "blur" },
         ],
         sortNo: [{ required: true, message: "请输入顺序号", trigger: "blur" }],
-        volumeCategory: [
-          { required: true, message: "请选择案卷类别", trigger: "change" },
-        ],
         retentionPeriod: [
           { required: true, message: "请选择保管期限", trigger: "change" },
         ],
@@ -361,6 +358,15 @@ export default defineComponent({
         ],
         filingDate: [
           { required: true, message: "请选择立卷日期", trigger: "change" },
+        ],
+        startDate: [
+          { required: true, message: "请选择起始日期", trigger: "change" },
+        ],
+        endDate: [
+          { required: true, message: "请选择终止日期", trigger: "change" },
+        ],
+        archiveDate: [
+          { required: true, message: "请选择归档日期", trigger: "change" },
         ],
         status: [{ required: true, message: "请选择状态", trigger: "change" }],
       },

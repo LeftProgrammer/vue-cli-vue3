@@ -69,6 +69,32 @@
           :disabled="!currentProject.id"
           @click="handleAdd"
         >新增</el-button>
+        <el-button
+          icon="el-icon-download"
+          @click="handleDownloadTemplate"
+        >模板下载</el-button>
+        <el-upload
+          ref="importUpload"
+          :action="importAction"
+          :data="importData"
+          :headers="importHeaders"
+          :show-file-list="false"
+          :before-upload="beforeImport"
+          :on-success="handleImportSuccess"
+          :on-error="handleImportError"
+          :disabled="!currentProject.id"
+          accept=".xlsx,.xls"
+          style="display: inline-block; margin-left: 10px;"
+        >
+          <el-button icon="el-icon-upload2" :loading="importLoading" :disabled="!currentProject.id">导入</el-button>
+        </el-upload>
+        <el-button
+          icon="el-icon-download"
+          :loading="exportLoading"
+          :disabled="!currentProject.id"
+          style="margin-left: 10px;"
+          @click="handleExport"
+        >导出</el-button>
       </template>
       <template slot="table">
         <div class="content">
@@ -136,6 +162,12 @@
                 </template>
               </el-table-column>
               <el-table-column
+                prop="sortNo"
+                label="顺序号"
+                width="80"
+                align="center"
+              />
+              <el-table-column
                 prop="volumeTitle"
                 label="案卷题名"
                 min-width="200"
@@ -152,12 +184,6 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="sortNo"
-                label="顺序号"
-                width="80"
-                align="center"
-              />
-              <el-table-column
                 prop="retentionPeriod"
                 label="保管期限"
                 width="90"
@@ -168,15 +194,11 @@
                 </template>
               </el-table-column>
               <el-table-column
-                prop="securityLevel"
-                label="密级"
+                prop="copies"
+                label="套数"
                 width="70"
                 align="center"
-              >
-                <template #default="{ row }">
-                  {{ getSecurityLevelName(row.securityLevel) }}
-                </template>
-              </el-table-column>
+              />
               <el-table-column
                 prop="startDate"
                 label="起始日期"
@@ -197,13 +219,13 @@
               />
               <el-table-column
                 prop="filingPerson"
-                label="立卷人"
+                label="组卷人"
                 width="90"
                 align="center"
               />
               <el-table-column
-                prop="filingDate"
-                label="立卷日期"
+                prop="archiveDate"
+                label="归档日期"
                 width="110"
                 align="center"
               />
@@ -273,6 +295,7 @@
 import { defineComponent } from "vue";
 import { getVolumePage, deleteVolume } from "@/api/archivesManage";
 import { getProjectList } from "@/api/archivesManage";
+import { getToken } from "@/utils/auth";
 import TreeTableLayout from "@/components/ContentLayout/TreeTable";
 import ListButton from "@/components/ListButton";
 import ArchiveDocument from "@/views/archives/archive_document/index.vue";
@@ -335,7 +358,29 @@ export default defineComponent({
       dialogTitle: "",
       isView: false,
       currentVolumeId: "",
+      // 导入相关
+      importLoading: false,
+      // 导出相关
+      exportLoading: false,
     };
+  },
+  computed: {
+    // 导入接口地址
+    importAction() {
+      return "/api/archives/volume/import";
+    },
+    // 导入附加参数
+    importData() {
+      return {
+        projectId: this.currentProject.id,
+      };
+    },
+    // 导入请求头
+    importHeaders() {
+      return {
+        "X-Token": getToken(),
+      };
+    },
   },
   watch: {
     treeFilterText(val) {
@@ -535,6 +580,84 @@ export default defineComponent({
     // 表单提交成功回调
     handleFormSuccess() {
       this.getList();
+    },
+    // 下载导入模板
+    handleDownloadTemplate() {
+      window.open("/static/template/案卷管理导入模板.xls", "_blank");
+    },
+    // 导入前校验
+    beforeImport(file) {
+      if (!this.currentProject.id) {
+        this.$message.warning("请先选择档案项目");
+        return false;
+      }
+      const isExcel =
+        file.type ===
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" ||
+        file.type === "application/vnd.ms-excel";
+      if (!isExcel) {
+        this.$message.error("只能上传 Excel 文件（.xlsx 或 .xls）");
+        return false;
+      }
+      const isLt10M = file.size / 1024 / 1024 < 10;
+      if (!isLt10M) {
+        this.$message.error("文件大小不能超过 10MB");
+        return false;
+      }
+      this.importLoading = true;
+      return true;
+    },
+    // 导入成功
+    handleImportSuccess(response) {
+      this.importLoading = false;
+      if (response.success) {
+        const { successCount, failCount, failRows } = response.data || {};
+        if (failCount > 0 && failRows && failRows.length > 0) {
+          const failRowNums = failRows.map((r) => r.row).join(", ");
+          this.$message.warning(
+            `导入完成，成功 ${successCount} 条，失败 ${failCount} 条（第 ${failRowNums} 行）`
+          );
+        } else {
+          this.$message.success(`导入成功，共导入 ${successCount} 条数据`);
+        }
+        this.getList();
+      } else {
+        this.$message.error(response.message || "导入失败");
+      }
+    },
+    // 导入失败
+    handleImportError(error) {
+      this.importLoading = false;
+      console.error("导入失败:", error);
+      this.$message.error("导入失败，请稍后重试");
+    },
+    // 导出Excel
+    handleExport() {
+      if (!this.currentProject.id) {
+        this.$message.warning("请先选择档案项目");
+        return;
+      }
+      this.exportLoading = true;
+      try {
+        const token = getToken();
+        const params = new URLSearchParams({
+          "X-Token": token,
+          projectId: this.currentProject.id,
+        });
+        // 添加筛选条件
+        if (this.searchData.volumeCode) {
+          params.append("volumeCode", this.searchData.volumeCode);
+        }
+        if (this.searchData.volumeTitle) {
+          params.append("volumeTitle", this.searchData.volumeTitle);
+        }
+        window.open(`/api/archives/volume/export?${params.toString()}`, "_blank");
+      } catch (error) {
+        console.error("导出失败:", error);
+        this.$message.error("导出失败");
+      } finally {
+        this.exportLoading = false;
+      }
     },
   },
 });

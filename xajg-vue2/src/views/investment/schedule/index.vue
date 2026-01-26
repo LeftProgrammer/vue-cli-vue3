@@ -2,9 +2,9 @@
   <div class="page-archival-catalogue">
     <TreeTableLayout
       class="full-height-layout"
+      :show-page="false"
       @query="handelSearchButtonClick"
       @reset="handelResetButtonClick"
-      :showPage="false"
     >
       <template slot="form">
         <el-form :model="searchData" :inline="true">
@@ -24,24 +24,23 @@
               <div class="tree-toolbar">
                 <el-date-picker
                   v-model="selectedYear"
-                  @change="handelYearChange"
                   type="year"
                   placeholder="选择年"
-                >
-                </el-date-picker>
+                  @change="handelYearChange"
+                />
               </div>
               <el-tree
                 ref="tree"
+                :key="treeRefreshKey"
                 :highlight-current="true"
                 class="tree"
                 :data="treeData"
                 :props="defaultProps"
                 default-expand-all
                 :filter-node-method="filterNode"
-                @node-click="handleNodeClick"
                 node-key="id"
                 :expand-on-click-node="false"
-                :key="treeRefreshKey"
+                @node-click="handleNodeClick"
               >
                 <span
                   slot-scope="{ data, node }"
@@ -59,7 +58,7 @@
                 </span>
               </el-tree>
             </div>
-            <DragLine @moveEnd="handelMoveEnd" :minMoveX="0"></DragLine>
+            <DragLine :min-move-x="0" @moveEnd="handelMoveEnd" />
           </div>
 
           <div class="table-wrapper">
@@ -81,8 +80,7 @@
                 <template #default="{ row }">
                   <span
                     :style="{ paddingLeft: (row.level || 0) * 16 + 'px' }"
-                    >{{ row.name }}</span
-                  >
+                  >{{ row.name }}</span>
                 </template>
               </el-table-column>
 
@@ -135,8 +133,8 @@
     <DataForm
       :visible="showItemDialog"
       title="投资计划详情"
-      :investmentYear="selectedYear"
-      :oprateRow="{ data: formData, isView: false }"
+      :investment-year="selectedYear"
+      :oprate-row="{ data: formData, isView: false }"
       :type="'edit'"
       @ok="handleSaveSuccess"
       @closed="closeItemDialog"
@@ -145,28 +143,28 @@
 </template>
 
 <script>
-import { list, remove, getInvestmentCategoryTree } from './api'
-import { FlowListMixin } from '@/mixins/FlowListMixin'
-import { dateFormat } from '@/utils'
-import DataForm from './dataform.vue'
-import moment from 'moment'
-import DragLine from '@/views/archives/shared_component/DragLine'
-import TreeTableLayout from '@/components/ContentLayout/TreeTable'
+import { list, remove, getInvestmentCategoryTree } from "./api";
+import { FlowListMixin } from "@/mixins/FlowListMixin";
+import { dateFormat } from "@/utils";
+import DataForm from "./dataform.vue";
+import moment from "moment";
+import DragLine from "@/views/archives/shared_component/DragLine";
+import TreeTableLayout from "@/components/ContentLayout/TreeTable";
 export default {
-  name: 'investmentPlan',
+  name: "InvestmentPlan",
   // mixins: [FlowListMixin],
   components: {
     TreeTableLayout,
     DragLine,
-    DataForm
+    DataForm,
   },
   data() {
     return {
-      priceUnit: '元',
+      priceUnit: "元",
       treeData: [],
       defaultProps: {
-        children: 'children',
-        label: 'name'
+        children: "children",
+        label: "name",
       },
       searchData: {},
       tableData: [],
@@ -177,134 +175,174 @@ export default {
       showItemDialog: false,
       treeRefreshKey: 0,
       settlementRecordDetailSubs: [],
-      formData: {}
-    }
+      formData: {},
+    };
   },
 
   mounted() {
-    this.getTreeData()
+    this.getTreeData();
   },
   methods: {
     dateFormat,
     moment,
     closeItemDialog() {
-      this.showItemDialog = false
+      this.showItemDialog = false;
     },
     handelYearChange() {
-      this.getTreeData()
+      this.getTreeData();
     },
     getTreeData() {
       getInvestmentCategoryTree({
-        year: moment(this.selectedYear).format('YYYY')
+        year: moment(this.selectedYear).format("YYYY"),
       }).then((res) => {
         if (res.success) {
-          this.treeData = res.data
-          this.treeRefreshKey++
+          this.treeData = res.data;
+          this.treeRefreshKey++;
           if (this.treeData.length > 0) {
-            this.handleNodeClick(this.treeData[0])
+            this.handleNodeClick(this.treeData[0]);
           }
         } else {
-          this.treeData = []
-          this.treeRefreshKey++
+          this.treeData = [];
+          this.treeRefreshKey++;
         }
-      })
+      });
     },
     filterNode(value, data) {
-      if (!value) return true
-      const labelKey = this.defaultProps.label || 'label'
-      const text = data[labelKey] || ''
-      return text.indexOf(value) !== -1
+      if (!value) return true;
+      const labelKey = this.defaultProps.label || "label";
+      const text = data[labelKey] || "";
+      return text.indexOf(value) !== -1;
     },
     getNodeIcon(data) {
-      if (data.nodeType === 'item') {
+      if (data.nodeType === "item") {
         // 为项目类型节点显示文档图标
-        return 'el-icon-document'
+        return "el-icon-document";
       } else if (data.children && data.children.length > 0) {
         // 有子节点的树显示打开的文件夹
-        return 'el-icon-folder-opened'
+        return "el-icon-folder-opened";
       } else {
         // 无子节点的树显示关闭的文件夹
-        return 'el-icon-folder'
+        return "el-icon-folder";
       }
     },
     handelMoveEnd(moveX) {
-      this.treeWidth = this.treeWidth + moveX
+      this.treeWidth = this.treeWidth + moveX;
     },
     handleNodeClick(data) {
-      this.selectionNode = data
-      const rows = this.flattenSubtree(data)
+      this.selectionNode = data;
+      const rows = this.flattenSubtree(data);
       this.tableData = rows.map((x) => {
-        return { code: x.code, name: x.name, investmentPlanDetails: [] }
-      })
-      this.getTableData()
+        return { code: x.code, name: x.name, investmentPlanDetails: [] };
+      });
+      this.getTableData();
     },
     flattenSubtree(root) {
-      const rows = []
+      const rows = [];
       const visit = (node, path) => {
-        const displayIndex = path.join('.')
-        const level = path.length - 1
-        const row = { ...node, displayIndex, level }
-        rows.push(row)
-        const children = Array.isArray(node.children) ? node.children : []
+        const displayIndex = path.join(".");
+        const level = path.length - 1;
+        const row = { ...node, displayIndex, level };
+        rows.push(row);
+        const children = Array.isArray(node.children) ? node.children : [];
         for (let i = 0; i < children.length; i++) {
-          visit(children[i], path.concat(i + 1))
+          visit(children[i], path.concat(i + 1));
         }
-      }
-      visit(root, [1])
-      return rows
+      };
+      visit(root, [1]);
+      return rows;
     },
     handelSearchButtonClick() {
-      this.$refs.tree.filter(this.searchData.name)
-      this.getTableData()
+      const keyword = this.searchData.name || "";
+      // 过滤树
+      this.$refs.tree.filter(keyword);
+      // 找到第一个匹配的节点并触发点击
+      this.$nextTick(() => {
+        const firstMatchNode = this.findFirstMatchNode(this.treeData, keyword);
+        if (firstMatchNode) {
+          this.$refs.tree.setCurrentKey(firstMatchNode.id);
+          this.handleNodeClick(firstMatchNode);
+          // 滚动到选中节点
+          this.$nextTick(() => {
+            const el = document.querySelector(".el-tree .is-current");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          });
+        }
+      });
+    },
+    findFirstMatchNode(nodes, keyword) {
+      if (!keyword) return nodes[0] || null;
+      for (const node of nodes) {
+        const labelKey = this.defaultProps.label || "label";
+        if ((node[labelKey] || "").indexOf(keyword) !== -1) {
+          return node;
+        }
+        if (node.children && node.children.length > 0) {
+          const found = this.findFirstMatchNode(node.children, keyword);
+          if (found) return found;
+        }
+      }
+      return null;
     },
     handelResetButtonClick() {
-      this.searchData.name = ''
-      this.$refs.tree.filter('')
-      this.getTableData()
+      this.searchData.name = "";
+      // 清空过滤，恢复完整树
+      this.$refs.tree.filter("");
+      // 默认选中第一个节点
+      this.$nextTick(() => {
+        if (this.treeData.length > 0) {
+          this.$refs.tree.setCurrentKey(this.treeData[0].id);
+          this.handleNodeClick(this.treeData[0]);
+          // 滚动到选中节点
+          this.$nextTick(() => {
+            const el = document.querySelector(".el-tree .is-current");
+            if (el) el.scrollIntoView({ behavior: "smooth", block: "center" });
+          });
+        }
+      });
     },
     handleSaveSuccess() {
-      this.getTableData()
+      this.getTableData();
     },
 
     closedDialog() {
-      this.oprateRow.dialogShow = false
+      this.oprateRow.dialogShow = false;
     },
     handleHeaderDragEnd() {
       this.$nextTick(() => {
-        this.$refs.multipleTable.doLayout()
-      })
+        this.$refs.multipleTable.doLayout();
+      });
     },
     reset() {
-      this.searchData = {}
-      this.getTableData()
+      this.searchData = {};
+      this.getTableData();
     },
     getTableData() {
       list({
         categoryCode: this.selectionNode.code,
-        investmentYear: moment(this.selectedYear).format('YYYY')
+        investmentYear: moment(this.selectedYear).format("YYYY"),
       }).then((res) => {
         if (res.success) {
-          const data = res.data || []
+          const data = res.data || [];
           this.tableData.forEach((x) => {
-            const details = data.find((y) => y.categoryCode == x.code)
+            const details = data.find((y) => y.categoryCode == x.code);
             x.totalInvestmentAmount = details
               ? details.totalInvestmentAmount
-              : 0
-            x.id = details ? details.id : ''
+              : 0;
+            x.id = details ? details.id : "";
             x.investmentPlanDetails = details
               ? details.investmentPlanDetails
-              : []
-          })
+              : [];
+          });
         }
-      })
+      });
     },
     handleEdit(row) {
-      this.showItemDialog = true
-      this.formData = row
-      console.log('handleEdit', row)
-    }
-  }
-}
+      this.showItemDialog = true;
+      this.formData = row;
+      console.log("handleEdit", row);
+    },
+  },
+};
 </script>
 
 <style scoped lang="scss">

@@ -597,9 +597,8 @@ export default {
       const { data, success } = await contractPage({
         current: 1,
         entity: {},
-        pageSize: 20,
+        pageSize: 999,
         size: 999,
-        total: 3,
       });
       if (!success) {
         this.$message.error("获取合同失败");

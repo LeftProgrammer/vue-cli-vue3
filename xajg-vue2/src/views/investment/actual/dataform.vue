@@ -124,7 +124,7 @@
       <el-button @click="dialogShow = false">
         {{ oprateRow.isView ? '关闭' : '取消' }}
       </el-button>
-      <el-button v-if="!oprateRow.isView" type="primary" @click="save">
+      <el-button v-if="!oprateRow.isView" type="primary" @click="handleSubmit">
         确定
       </el-button>
     </div>
@@ -132,7 +132,7 @@
 </template>
 
 <script>
-import { save } from './api'
+import { save, update } from './api'
 import { getInvestmentCategoryTree, list } from '../schedule/api'
 import moment from 'moment'
 import { dateFormat } from '@/utils'
@@ -307,7 +307,7 @@ export default {
       dfs(tree)
       return tree
     },
-    save() {
+    handleSubmit() {
       // 验证整个表单
       if (!this.validateForm()) {
         return
@@ -333,10 +333,13 @@ export default {
       )
 
       // 提交数据
-      save(submitData)
+      const requestFn = this.oprateRow.type == 'edit' ? update : save
+      requestFn(submitData)
         .then((res) => {
           if (res.success) {
-            this.$message.success('保存成功')
+            this.$message.success(
+              this.oprateRow.type == 'edit' ? '更新成功' : '保存成功'
+            )
             this.$emit('ok')
             this.closedHandle()
           } else {

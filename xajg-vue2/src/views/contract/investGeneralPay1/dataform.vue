@@ -1367,7 +1367,7 @@ export default {
       const { data, success } = await contractPage({
         current: 1,
         entity: {},
-        pageSize: 20,
+        pageSize: 999,
         size: 999,
         total: 3
       })

@@ -24,8 +24,11 @@
         <el-button @click="downloadTemplate()"> 模板下载 </el-button>
         <el-upload
           action="/api/investment/category/import"
+          name="file"
+          :data="{ year: pageParams.investmentYear }"
           :show-file-list="false"
           :on-success="fileChange"
+          :on-error="importError"
         >
           <el-button style="margin-left: 10px">导入</el-button>
         </el-upload>
@@ -165,8 +168,16 @@ export default {
         // console.log('🚀 ~ getTableData ~  this.treeData :', this.treeData)
       });
     },
-    fileChange() {
-      this.getTableData();
+    fileChange(res) {
+      if (res.success) {
+        this.$message.success("导入成功");
+        this.getTableData();
+      } else {
+        this.$message.error(res.message || "导入失败");
+      }
+    },
+    importError() {
+      this.$message.error("导入失败，请检查文件格式");
     },
     /**
      * 将扁平数组转成树形结构（按 code 版本号排序）

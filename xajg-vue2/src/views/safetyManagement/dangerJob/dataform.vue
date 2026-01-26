@@ -547,7 +547,7 @@ export default {
             }
           },
           pageSize: 999,
-          size: 20
+          size: 999
         }).then((res) => {
           this.staffDataAll = res.data.records || []
           this.staffData = [...this.staffDataAll]

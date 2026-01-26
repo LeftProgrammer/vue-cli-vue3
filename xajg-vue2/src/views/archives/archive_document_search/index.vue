@@ -74,31 +74,51 @@
           stripe
           border
         >
-          <el-table-column label="序号" align="center" width="60">
+          <el-table-column label="序号" align="center" width="60" fixed="left">
             <template #default="{ $index }">
               {{ $index + 1 + (searchData.current - 1) * searchData.pageSize }}
             </template>
           </el-table-column>
           <el-table-column
-            prop="documentCode"
-            label="文件编号"
+            prop="fondsCode"
+            label="全宗号"
+            width="100"
+            align="center"
+          />
+          <el-table-column
+            prop="volumeCode"
+            label="案卷档号"
+            min-width="120"
+            show-overflow-tooltip
+          />
+          <el-table-column
+            prop="projectCode"
+            label="分类号"
+            width="100"
+            align="center"
+          />
+          <el-table-column
+            prop="projectName"
+            label="项目名称"
             min-width="150"
             show-overflow-tooltip
-          >
-            <template #default="{ row }">
-              <el-link
-                :underline="false"
-                type="primary"
-                @click="handleView(row)"
-              >
-                {{ row.documentCode }}
-              </el-link>
-            </template>
-          </el-table-column>
+          />
+          <el-table-column
+            prop="sortNo"
+            label="顺序号"
+            width="80"
+            align="center"
+          />
+          <el-table-column
+            prop="copies"
+            label="套数"
+            width="60"
+            align="center"
+          />
           <el-table-column
             prop="documentTitle"
             label="文件题名"
-            min-width="250"
+            min-width="150"
             show-overflow-tooltip
           >
             <template #default="{ row }">
@@ -112,28 +132,40 @@
             </template>
           </el-table-column>
           <el-table-column
-            prop="volumeCode"
-            label="案卷档号"
+            prop="documentCode"
+            label="文件编号"
             min-width="120"
             show-overflow-tooltip
           />
           <el-table-column
-            prop="volumeTitle"
-            label="案卷题名"
-            min-width="200"
+            prop="responsible"
+            label="责任者"
+            width="90"
+            align="center"
+          />
+          <el-table-column
+            prop="documentDate"
+            label="日期"
+            width="110"
+            align="center"
+          />
+          <el-table-column
+            prop="pageNo"
+            label="页号"
+            width="80"
+            align="center"
+          />
+          <el-table-column
+            prop="filingUnitId"
+            label="立卷单位"
+            min-width="120"
             show-overflow-tooltip
           />
           <el-table-column
-            prop="projectCode"
-            label="项目编码"
-            width="120"
-            show-overflow-tooltip
-          />
-          <el-table-column
-            prop="projectName"
-            label="项目名称"
-            min-width="200"
-            show-overflow-tooltip
+            prop="retentionPeriod"
+            label="保管期限"
+            width="100"
+            align="center"
           />
           <el-table-column
             prop="securityLevel"
@@ -145,18 +177,6 @@
               {{ getSecurityLevelName(row.securityLevel) }}
             </template>
           </el-table-column>
-          <el-table-column
-            prop="responsible"
-            label="责任人"
-            width="100"
-            align="center"
-          />
-          <el-table-column
-            prop="documentDate"
-            label="日期"
-            width="110"
-            align="center"
-          />
           <!-- <el-table-column
             label="操作"
             width="80"

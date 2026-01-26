@@ -126,10 +126,7 @@
               <el-input
                 v-model="formData.rectifyComment"
                 type="textarea"
-                :disabled="
-                  flowInfo?.page != 'todo' ||
-                    formData.matterTaskTodo?.procTaskName != '确认安全隐患'
-                "
+                :readonly="readonly"
                 :autosize="{ minRows: 2, maxRows: 6 }"
                 maxlength="2000"
                 show-word-limit

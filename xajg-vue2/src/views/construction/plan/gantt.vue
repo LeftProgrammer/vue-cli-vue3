@@ -6,8 +6,10 @@ import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import { dateFormat } from "@/utils";
 import { getDictItemList } from "@/api/dict";
+import { GanttColumnResizeMixin } from "@/mixins/GanttColumnResizeMixin";
 
 export default {
+  mixins: [GanttColumnResizeMixin],
   data() {
     return {
       index: 1,
@@ -322,7 +324,6 @@ export default {
         {
           name: "planDay",
           label: "计划工期",
-          max_width: 100,
           min_width: 100,
           align: "right",
         },
@@ -330,7 +331,6 @@ export default {
         // {
         //   name: "pbsName",
         //   label: "工程部位",
-        //   max_width: 180,
         //   min_width: 180,
         //   align: "left",
         // },
@@ -338,7 +338,6 @@ export default {
           name: "startDate",
           label: "计划开始日期",
           min_width: 120,
-          max_width: 120,
           align: "center",
           template: (task) => {
             return dateFormat(task.startDate, "YYYY-MM-DD");
@@ -348,7 +347,6 @@ export default {
           name: "endDate",
           label: "计划结束日期",
           min_width: 120,
-          max_width: 120,
           align: "center",
           template: (task) => {
             return dateFormat(task.endDate, "YYYY-MM-DD");
@@ -357,7 +355,6 @@ export default {
         {
           name: "weight",
           label: "相对权重",
-          max_width: 100,
           min_width: 100,
           align: "center",
         },
@@ -374,7 +371,6 @@ export default {
           name: "buttons",
           label: "操作",
           align: "center",
-          max_width: 160,
           min_width: 160,
           template: colContent,
           resize: true,
@@ -386,84 +382,6 @@ export default {
       const { data } = await getDictItemList("task_type");
       this.taskTypes = data;
       console.log("taskTypes", data);
-    },
-    /**
-     * 自定义实现列宽调整功能（免费版不支持此功能）
-     */
-    initColumnResize() {
-      const gridHeader = document.querySelector(".gantt_grid_scale");
-      if (!gridHeader) return;
-
-      // 先清除已有的调整手柄，避免重复添加
-      const existingResizers = gridHeader.querySelectorAll(".custom-column-resizer");
-      existingResizers.forEach((resizer) => resizer.remove());
-
-      const headerCells = gridHeader.querySelectorAll(".gantt_grid_head_cell");
-
-      headerCells.forEach((cell, index) => {
-        // 跳过最后一列（操作列）
-        if (index >= headerCells.length - 1) return;
-
-        // 创建调整手柄
-        const resizer = document.createElement("div");
-        resizer.className = "custom-column-resizer";
-        resizer.style.cssText = `
-          position: absolute;
-          right: 0;
-          top: 0;
-          width: 6px;
-          height: 100%;
-          cursor: col-resize;
-          z-index: 10;
-        `;
-        cell.style.position = "relative";
-        cell.appendChild(resizer);
-
-        let startX, startWidth, columnIndex;
-
-        resizer.addEventListener("mousedown", (e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          startX = e.pageX;
-          startWidth = cell.offsetWidth;
-          columnIndex = index;
-
-          const onMouseMove = (e) => {
-            const diff = e.pageX - startX;
-            const newWidth = Math.max(60, startWidth + diff);
-
-            // 更新表头宽度
-            cell.style.width = newWidth + "px";
-
-            // 更新 gantt 配置
-            if (gantt.config.columns[columnIndex]) {
-              gantt.config.columns[columnIndex].width = newWidth;
-            }
-
-            // 更新数据行对应列的宽度
-            const dataCells = document.querySelectorAll(
-              `.gantt_row .gantt_cell:nth-child(${columnIndex + 1})`
-            );
-            dataCells.forEach((dataCell) => {
-              dataCell.style.width = newWidth + "px";
-            });
-          };
-
-          const onMouseUp = () => {
-            document.removeEventListener("mousemove", onMouseMove);
-            document.removeEventListener("mouseup", onMouseUp);
-            // 重新渲染甘特图以应用新宽度
-            gantt.render();
-            // 重新初始化调整手柄（因为 render 会清除 DOM）
-            this.$nextTick(() => {
-              this.initColumnResize();
-            });
-          };
-
-          document.addEventListener("mousemove", onMouseMove);
-          document.addEventListener("mouseup", onMouseUp);
-        });
-      });
     },
   },
 };
@@ -519,14 +437,7 @@ export default {
   color: #000 !important;
   font-weight: 550 !important;
 }
-/* 自定义列宽调整手柄样式 */
-/deep/ .custom-column-resizer {
-  background: transparent;
-  transition: background-color 0.2s;
-}
-/deep/ .custom-column-resizer:hover {
-  background-color: rgba(0, 123, 255, 0.3);
-}
+@import "@/styles/gantt-column-resize.scss";
 </style>
 
 <!-- 1、data里面的部分属性的key是不能更改的，比如id，parent，start_date、end_date、progress、open

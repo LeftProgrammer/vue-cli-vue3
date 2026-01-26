@@ -69,13 +69,7 @@
             <el-input v-model="formData.pageNo" placeholder="请输入" maxlength="50" show-word-limit />
           </el-form-item>
         </el-col>
-        <!-- 第4行：关键词 -->
-        <el-col :span="24">
-          <el-form-item label="关键词">
-            <el-input v-model="formData.keywords" placeholder="请输入" maxlength="200" show-word-limit />
-          </el-form-item>
-        </el-col>
-        <!-- 第5行：责任者、日期 -->
+        <!-- 第4行：责任者、日期 -->
         <el-col :span="12">
           <el-form-item label="责任者" prop="responsible">
             <el-input v-model="formData.responsible" placeholder="请输入" maxlength="100" show-word-limit />
@@ -92,7 +86,38 @@
             />
           </el-form-item>
         </el-col>
-        <!-- 第6行：备注 -->
+        <!-- 第5行：保管期限 -->
+        <el-col :span="12">
+          <el-form-item label="保管期限" prop="retentionPeriod">
+            <el-select
+              v-model="formData.retentionPeriod"
+              placeholder="请选择"
+              style="width: 100%"
+            >
+              <el-option
+                v-for="item in retentionPeriodList"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12" />
+        <!-- 第6行：附件 -->
+        <el-col :span="24">
+          <el-form-item label="附件">
+            <el-input
+              v-model="formData.attachment"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入"
+              maxlength="500"
+              show-word-limit
+            />
+          </el-form-item>
+        </el-col>
+        <!-- 第7行：备注 -->
         <el-col :span="24">
           <el-form-item label="备注">
             <el-input
@@ -189,9 +214,17 @@ export default defineComponent({
         documentDate: [
           { required: true, message: "请选择日期", trigger: "change" },
         ],
+        retentionPeriod: [
+          { required: true, message: "请选择保管期限", trigger: "change" },
+        ],
       },
       // 密级
       securityLevelList: enums.SECURITY_LEVEL_ENUM.map((item) => ({
+        value: item.value,
+        label: item.name,
+      })),
+      // 保管期限
+      retentionPeriodList: enums.RETENTION_PERIOD_ENUM.map((item) => ({
         value: item.value,
         label: item.name,
       })),
@@ -230,9 +263,10 @@ export default defineComponent({
         documentCode: "",
         securityLevel: "",
         pageNo: "",
-        keywords: "",
         responsible: "",
         documentDate: "",
+        retentionPeriod: "",
+        attachment: "",
         remark: "",
       };
     },

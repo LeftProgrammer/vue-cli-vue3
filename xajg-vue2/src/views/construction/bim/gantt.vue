@@ -1,12 +1,14 @@
 <template>
-  <div id="gantt_bim"></div>
+  <div id="gantt_bim" />
 </template>
 <script>
 import { gantt } from "dhtmlx-gantt";
 import "dhtmlx-gantt/codebase/dhtmlxgantt.css";
 import { dateFormat } from "@/utils";
+import { GanttColumnResizeMixin } from "@/mixins/GanttColumnResizeMixin";
 
 export default {
+  mixins: [GanttColumnResizeMixin],
   data() {
     return {
       index: 1,
@@ -51,6 +53,10 @@ export default {
         links: [],
       });
       gantt.render();
+      // 初始化列宽拖拽
+      this.$nextTick(() => {
+        this.initColumnResize();
+      });
     },
     setGanttConfig() {
       // gantt.config.xml_date = "%Y-%m-%d"; // 模板可用于更改日期和标签的显示。
@@ -257,7 +263,6 @@ export default {
           label: "编码",
           tree: true,
           min_width: 120,
-          max_width: 120,
           align: "left",
         },
         {
@@ -271,14 +276,12 @@ export default {
           name: "planDay",
           label: "原定工期",
           min_width: 100,
-          max_width: 100,
           align: "center",
         },
         {
           name: "startDate",
           label: "计划开始",
           min_width: 120,
-          max_width: 120,
           align: "center",
           template: (task) => {
             return dateFormat(task.startDate, "YYYY-MM-DD");
@@ -289,7 +292,6 @@ export default {
           name: "endDate",
           label: "计划结束",
           min_width: 120,
-          max_width: 120,
           align: "center",
           template: (task) => {
             return dateFormat(task.endDate, "YYYY-MM-DD");
@@ -300,7 +302,6 @@ export default {
           name: "actualStartDate",
           label: "实际开始",
           min_width: 120,
-          max_width: 120,
           align: "center",
           template: (task) => {
             if (!task.actualStartDate) return "";
@@ -326,7 +327,6 @@ export default {
           name: "actualEndDate",
           label: "实际结束",
           min_width: 120,
-          max_width: 120,
           align: "center",
           template: (task) => {
             if (!task.actualEndDate) return "";
@@ -408,6 +408,7 @@ export default {
   color: #000 !important;
   font-weight: 550 !important;
 }
+@import "@/styles/gantt-column-resize.scss";
 </style>
 
 <!-- 1、data里面的部分属性的key是不能更改的，比如id，parent，start_date、end_date、progress、open

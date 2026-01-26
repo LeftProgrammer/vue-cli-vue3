@@ -13,7 +13,7 @@
           <div
             class="w-8 h-8 mr-16 shadow-dot"
             style="background-color: #ffb86c; border-radius: 50%"
-          ></div>
+          />
           <div class="line-25 font-14">{{ item.todoTitle }}--{{ item.procTaskName }}</div>
         </div>
       </div>
@@ -23,8 +23,7 @@
           :image-size="240"
           :description="''"
           :image="require('../assets/empty.png')"
-        >
-        </el-empty>
+        />
       </div>
     </div>
   </div>
@@ -67,13 +66,13 @@ export default {
     },
     // 跳转到待办页面
     todoPath(businessId) {
-      this.$router.push({ path: "/common/flow", query: { businessId } });
+      this.$router.push({ path: "/common/flow", query: { businessId }});
     },
     // 获取待办
     async getTodoList() {
       const res = await todoList({
         current: 1,
-        pageSize: 20,
+        pageSize: 999,
         size: 999
       });
       this.todoDataList = res.data.records;

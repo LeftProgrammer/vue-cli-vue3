@@ -2,11 +2,11 @@
   <div class="page-archive-record">
     <TreeTableLayout
       :page="searchData"
+      title="文件列表"
       @pageSizeChange="handelPageSizeChange"
       @pageCurrentChange="handelCurrentChange"
       @query="handelSearchButtonClick"
       @reset="handelResetButtonClick"
-      title="文件列表"
     >
       <template slot="form">
         <el-form :model="searchData" :inline="true">
@@ -51,9 +51,7 @@
         </el-form>
       </template>
       <template slot="opratebtns">
-        <el-button type="primary" plain @click="archiveAdvanceStoreDownload"
-          >导出</el-button
-        >
+        <el-button type="primary" plain @click="archiveAdvanceStoreDownload">导出</el-button>
       </template>
       <template slot="table">
         <div class="content">
@@ -67,9 +65,9 @@
                 :props="defaultProps"
                 default-expand-all
                 :filter-node-method="filterNode"
-                @node-click="handelNodeClick"
                 node-key="id"
                 :expand-on-click-node="false"
+                @node-click="handelNodeClick"
               >
                 <span
                   slot-scope="{ data }"
@@ -87,7 +85,7 @@
                 </span>
               </el-tree>
             </div>
-            <DragLine @moveEnd="handelMoveEnd" :minMoveX="0"></DragLine>
+            <DragLine :min-move-x="0" @moveEnd="handelMoveEnd" />
           </div>
 
           <div class="table-wrapper">
@@ -174,18 +172,10 @@
               >
                 <template slot-scope="{ row }">
                   <div class="table-btn">
-                    <el-button type="text" @click="showRow(row)"
-                      >查看</el-button
-                    >
-                    <el-button type="text" @click="downloadFile(row.recordsId)"
-                      >下载</el-button
-                    >
-                    <el-button type="text" @click="showRecord(row.businessId)"
-                      >审核记录</el-button
-                    >
-                    <el-button type="text" @click="previewFile(row.localReport)"
-                      >四性检测报告</el-button
-                    >
+                    <el-button type="text" @click="showRow(row)">查看</el-button>
+                    <el-button type="text" @click="downloadFile(row.recordsId)">下载</el-button>
+                    <el-button type="text" @click="showRecord(row.businessId)">审核记录</el-button>
+                    <el-button type="text" @click="previewFile(row.localReport)">四性检测报告</el-button>
                   </div>
                 </template>
               </el-table-column>
@@ -263,8 +253,7 @@
                 end-placeholder="结束"
                 disabled
                 style="width: 100%"
-              >
-              </el-date-picker>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -459,8 +448,7 @@
               type="text"
               :title="row.name"
               @click="showFileRow(row)"
-              >{{ row.name }}</el-button
-            >
+            >{{ row.name }}</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="code" label="文件编号" align="center" />
@@ -644,13 +632,13 @@
       @closed="handleClosed('multiArchiveFlowShow')"
     >
       <SzgcProcessGetor
-        ref="SzgcProcessGetorMultiArchiveFlow"
         v-if="multiArchiveFlowShow"
+        ref="SzgcProcessGetorMultiArchiveFlow"
         :top-show="false"
         :page="multiArchiveFlowPageType"
-        :dataAll="multiArchiveDataAll"
+        :data-all="multiArchiveDataAll"
         @childEvt="childEvtHandle('multiArchiveFlowShow')"
-      ></SzgcProcessGetor>
+      />
     </el-dialog>
   </div>
 </template>

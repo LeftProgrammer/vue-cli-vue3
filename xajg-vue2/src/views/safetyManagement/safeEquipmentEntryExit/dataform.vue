@@ -73,7 +73,7 @@
             </el-form-item>
           </el-col>
           <el-col v-if="flowShow('needReview')" :span="12">
-            <el-form-item label="是否需要监理审核" prop="needReview">
+            <el-form-item label="是否需要安全监理工程师审核" prop="needReview">
               <el-switch
                 v-model="formData.needReview"
                 :disabled="flowDisabled('needReview')"
@@ -117,6 +117,7 @@ import { save, unitAllList } from "./api";
 import { page } from "@/views/safetyManagement/equipmentManagement/api";
 import { FlowFormMixin } from "@/mixins/FlowFormMixin";
 import SafeEquip from "@/components/Organize/SafeEquip/index.vue";
+import { parseTime } from "@/utils";
 
 // 进退场类型枚举
 const ENTRY_EXIT_TYPES = {
@@ -149,7 +150,7 @@ export default {
       //正在加载
       loading: false,
       url: {
-        list: "/api/safe/equipment/outgoing/page",
+        list: "/api/safe/equipment/entryExit/page",
       },
       belongUnit: [],
       equipmentList: [],
@@ -325,6 +326,7 @@ export default {
         .join(",");
       fields.safeEquipIds = fields.safeEquipIds.join(",");
       fields.needReview = fields.needReview ? 1 : 2;
+      fields.startEndDate = new Date(fields.startEndDate).getTime();
       save(fields)
         .then((res) => {
           const { success, message } = res;
@@ -346,6 +348,7 @@ export default {
       const row = await this.getFlowRow();
       if (row) {
         this.formData = row;
+        this.formData.startEndDate = parseTime(this.formData.startEndDate, "{y}-{m}-{d}");
         this.formData.needReview = this.formData.needReview == 1;
         const ids = this.formData.safeEquipIds.split(",");
         this.$nextTick(() => {

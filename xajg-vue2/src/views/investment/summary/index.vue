@@ -1,7 +1,7 @@
 <template>
   <div class="page-compare">
     <TreeTableLayout
-      :showPage="false"
+      :show-page="false"
       class="full-height-layout"
       @query="handelSearchButtonClick"
       @reset="handelResetButtonClick"
@@ -11,7 +11,7 @@
           {{ isLock ? '解锁' : '锁定' }}
         </el-button>
         <el-button :disabled="!isLock" @click="viewFile"> 预览 </el-button>
-        <el-button @click="handelExport" :disabled="!isLock"> 导出 </el-button>
+        <el-button :disabled="!isLock" @click="handelExport"> 导出 </el-button>
       </template>
       <template slot="form">
         <el-form :model="searchData" :inline="true">
@@ -65,7 +65,7 @@
                 </span>
               </el-tree>
             </div>
-            <DragLine @moveEnd="handelMoveEnd" :minMoveX="0" />
+            <DragLine :min-move-x="0" @moveEnd="handelMoveEnd" />
           </div>
 
           <div class="table-wrapper">
@@ -132,9 +132,9 @@
                       (monthData.actualByCodeMonth[row.code]
                         ? monthData.actualByCodeMonth[row.code][i]
                         : 0) -
-                      (monthData.planByCodeMonth[row.code]
-                        ? monthData.planByCodeMonth[row.code][i]
-                        : 0)
+                        (monthData.planByCodeMonth[row.code]
+                          ? monthData.planByCodeMonth[row.code][i]
+                          : 0)
                     }}
                   </template>
                 </el-table-column>
@@ -147,14 +147,14 @@
                           : 0
                       )
                         ? Math.ceil(
-                            ((monthData.actualByCodeMonth[row.code]
-                              ? monthData.actualByCodeMonth[row.code][i]
-                              : 0) /
-                              (monthData.planByCodeMonth[row.code]
-                                ? monthData.planByCodeMonth[row.code][i]
-                                : 0)) *
-                              100
-                          ) + '%'
+                          ((monthData.actualByCodeMonth[row.code]
+                            ? monthData.actualByCodeMonth[row.code][i]
+                            : 0) /
+                            (monthData.planByCodeMonth[row.code]
+                              ? monthData.planByCodeMonth[row.code][i]
+                              : 0)) *
+                            100
+                        ) + '%'
                         : 0
                     }}
                   </template>
@@ -170,9 +170,9 @@
                   {{
                     monthData.actualByCodeMonth[row.code]
                       ? monthData.actualByCodeMonth[row.code].reduce(
-                          (a, b) => a + Number(b || 0),
-                          0
-                        )
+                        (a, b) => a + Number(b || 0),
+                        0
+                      )
                       : ''
                   }}
                 </template>
@@ -188,26 +188,26 @@
                     (
                       monthData.planByCodeMonth[row.code]
                         ? monthData.planByCodeMonth[row.code].reduce(
-                            (a, b) => a + Number(b || 0),
-                            0
-                          )
+                          (a, b) => a + Number(b || 0),
+                          0
+                        )
                         : 0
                     )
                       ? Math.ceil(
-                          ((monthData.actualByCodeMonth[row.code]
-                            ? monthData.actualByCodeMonth[row.code].reduce(
-                                (a, b) => a + Number(b || 0),
-                                0
-                              )
-                            : 0) /
-                            (monthData.planByCodeMonth[row.code]
-                              ? monthData.planByCodeMonth[row.code].reduce(
-                                  (a, b) => a + Number(b || 0),
-                                  0
-                                )
-                              : 0)) *
-                            100
-                        ) + '%'
+                        ((monthData.actualByCodeMonth[row.code]
+                          ? monthData.actualByCodeMonth[row.code].reduce(
+                            (a, b) => a + Number(b || 0),
+                            0
+                          )
+                          : 0) /
+                          (monthData.planByCodeMonth[row.code]
+                            ? monthData.planByCodeMonth[row.code].reduce(
+                              (a, b) => a + Number(b || 0),
+                              0
+                            )
+                            : 0)) *
+                          100
+                      ) + '%'
                       : 0
                   }}
                 </template>
@@ -221,8 +221,8 @@
     <DataForm
       :visible="showItemDialog"
       :title="'概算执行详情'"
-      :investmentYear="selectedYear"
-      :oprateRow="{ data: formData, isView: false }"
+      :investment-year="selectedYear"
+      :oprate-row="{ data: formData, isView: false }"
       :type="'edit'"
       @ok="handleSaveSuccess"
       @closed="closeItemDialog"
@@ -260,7 +260,7 @@ import moment from 'moment'
 import DragLine from '@/views/archives/shared_component/DragLine'
 import TreeTableLayout from '@/components/ContentLayout/TreeTable'
 export default {
-  name: 'investmentPlan',
+  name: 'InvestmentPlan',
   // mixins: [FlowListMixin],
   components: {
     TreeTableLayout,
@@ -372,11 +372,54 @@ export default {
       return rows
     },
     handelSearchButtonClick() {
-      this.getTableData()
+      const keyword = this.searchData.name || ''
+      // 过滤树
+      this.$refs.tree.filter(keyword)
+      // 找到第一个匹配的节点并触发点击
+      this.$nextTick(() => {
+        const firstMatchNode = this.findFirstMatchNode(this.treeData, keyword)
+        if (firstMatchNode) {
+          this.$refs.tree.setCurrentKey(firstMatchNode.id)
+          this.handleNodeClick(firstMatchNode)
+          // 滚动到选中节点
+          this.$nextTick(() => {
+            const el = document.querySelector('.el-tree .is-current')
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          })
+        }
+      })
+    },
+    findFirstMatchNode(nodes, keyword) {
+      if (!keyword) return nodes[0] || null
+      for (const node of nodes) {
+        const labelKey = this.defaultProps.label || 'label'
+        if ((node[labelKey] || '').indexOf(keyword) !== -1) {
+          return node
+        }
+        if (node.children && node.children.length > 0) {
+          const found = this.findFirstMatchNode(node.children, keyword)
+          if (found) return found
+        }
+      }
+      return null
     },
     handelResetButtonClick() {
       this.pageParams = {}
-      this.getTableData()
+      this.searchData = {}
+      // 清空过滤，恢复完整树
+      this.$refs.tree.filter('')
+      // 默认选中第一个节点
+      this.$nextTick(() => {
+        if (this.treeData.length > 0) {
+          this.$refs.tree.setCurrentKey(this.treeData[0].id)
+          this.handleNodeClick(this.treeData[0])
+          // 滚动到选中节点
+          this.$nextTick(() => {
+            const el = document.querySelector('.el-tree .is-current')
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          })
+        }
+      })
     },
     handleSaveSuccess() {
       this.getTableData()
